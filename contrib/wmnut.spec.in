@@ -1,0 +1,98 @@
+# wmnut.spec
+#
+# Copyright (c) 2003 Arnaud Quette arnaud.quette@free.fr
+#
+%define name wmnut
+%define version @VERSION@
+%define release 1
+%define manifest %{_builddir}/%{name}-%{version}-%{release}.manifest
+
+Name: %{name}
+Version: %{version}
+Release: %{release}
+Copyright: GPL
+Group: Application/Misc
+Source: http://wmnut.tuxfamily.org/files/%{name}-%{version}.tar.bz2
+BuildRoot: /var/tmp/%{name}-%{version}
+Packager: Arnaud Quette arnaud.quette@free.fr
+URL: http://wmnut.tuxfamily.org/
+
+# optional items
+#Vendor: Arnaud Quette
+#Distribution:
+#Icon:
+#URL:
+#
+# source + patches
+Source: %{name}-%{version}.tar.gz
+#Source1:
+#Patch:
+#Patch1:
+
+# RPM info
+#Provides:
+#Requires:
+#Conflicts:
+#Prereq:
+
+#Prefix: /usr
+
+Summary: A wmaker dock app that displays UPS statistics from NUT's upsd
+
+%description
+A wmaker dock app that displays UPS statistics from NUT's upsd
+WMNUT monitors UPS statistics through the NUT (Network UPS Tools,
+www.exploits.org/nut) framework on Linux and other systems.  This information,
+presented in a nice visual format, can be invaluable on stations using an UPS.
+
+%prep
+rm -rf $RPM_BUILD_ROOT
+
+%setup -q
+#%patch0 -p1
+
+%build
+./configure --prefix=/usr
+# %configure
+make
+
+%install
+# make DESTDIR=$RPM_BUILD_ROOT install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT
+%makeinstall
+
+# __os_install_post is implicitly expanded after the
+# %install section... do it now, and then disable it,
+# so all work is done before building manifest.
+
+%{?__os_install_post}
+%define __os_install_post %{nil}
+
+# build the file list automagically into %{manifest}
+
+cd $RPM_BUILD_ROOT
+rm -f %{manifest}
+find . -type d \
+        | sed '1,2d;s,^\.,\%attr(-\,root\,root) \%dir ,' >> %{manifest}
+find . -type f \
+        | sed 's,^\.,\%attr(-\,root\,root) ,' >> %{manifest}
+find . -type l \
+        | sed 's,^\.,\%attr(-\,root\,root) ,' >> %{manifest}
+
+#%pre
+#%post
+#%preun
+#%postun
+
+%clean
+rm -f %{manifest}
+rm -rf $RPM_BUILD_ROOT
+
+%files -f %{manifest}
+%defattr(-,root,root)
+#%doc README
+#%docdir
+#%config
+
+%changelog

@@ -1,0 +1,101 @@
+%define name 		wmnut
+%define version 	@VERSION@
+%define release 	1mdk
+%define summary		A wmaker dock app that displays UPS statistics from NUT's upsd.
+
+Name: 			%{name}
+Summary: 		%{summary}
+Version: 		%{version}
+Release: 		%{release}
+License:		GPL
+URL:			http://wmnut.mgeups.org/
+Source: 		http://wmnut.mgeups.org/files/%{name}-%{version}.tar.bz2
+Group:			Graphical desktop/WindowMaker
+BuildRequires:		nut-devel >= 2.0.0
+BuildRequires:		XFree86-devel
+BuildRoot: 		%{_tmppath}/%{name}-%{version}-buildroot
+
+%description
+A wmaker dock app that displays UPS statistics from NUT's upsd.
+WMNUT monitors UPS statistics through the NUT (Network UPS Tools,
+www.networkupstools.org) framework on Linux and other systems.  This information,
+presented in a nice visual format, can be invaluable on stations using an UPS.
+
+%prep
+[ -d %buildroot ] && rm -rf %buildroot
+%setup -q
+
+
+%build
+
+%configure
+
+%make
+
+%install
+
+%makeinstall
+
+%{__strip} %buildroot/%{_bindir}/*
+
+install -D -m 644 icons/%{name}-mdk-16.png %buildroot%{_miconsdir}/%{name}.png
+install -D -m 644 icons/%{name}-mdk-32.png %buildroot%{_iconsdir}/%{name}.png
+install -D -m 644 icons/%{name}-mdk-48.png %buildroot%{_liconsdir}/%{name}.png
+
+install -m 755 -d %buildroot%{_menudir}
+cat << EOF > %buildroot%{_menudir}/%{name}
+?package(%{name}):command="%{_bindir}/%{name}" icon="%{name}.png"\\
+                  needs="wmaker" section="Applications/Monitoring" \\
+                  title="WMNut" longtitle="UPS monitoring in a dockapp"
+EOF
+
+cat << EOF > %buildroot%{_menudir}/%{name}-kde
+?package(%{name}):command="%{_bindir}/%{name} -w" icon="%{name}.png"\\
+                  needs="kde" section="Applications/Monitoring" \\
+                  title="WMNut" longtitle="UPS monitoring in a dockapp"
+EOF
+
+cat << EOF > %buildroot%{_menudir}/%{name}-gnome
+?package(%{name}):command="%{_bindir}/%{name} -w" icon="%{name}.png"\\
+                  needs="gnome" section="Applications/Monitoring" \\
+                  title="WMNut" longtitle="UPS monitoring in a dockapp"
+EOF
+
+%clean
+rm -rf %buildroot
+
+%post
+%{update_menus}
+
+%postun
+%{clean_menus}
+
+%files
+%defattr (-,root,root)
+%doc AUTHORS BUGS ChangeLog COPYING INSTALL NEWS README TODO wmnutrc
+%_bindir/wmnut
+%_menudir/wmnut*
+%_iconsdir/*
+%_mandir/man1/wmnut.1.bz2
+
+
+%changelog
+* Wed Jan 05 2005 Arnaud Quette <arnaud.quette@mgeups.com> 0.61-1mdk
+- re integrate the official Mandrake .spec and update it
+- install the default wmnutrc in /etc
+- update NUT URL
+- provide a sample wmnutrc for users monitoring non localhost UPS
+or more than one unit
+
+* Tue Nov 25 2003 Marcel Pol <mpol@mandrake.org> 0.60-3mdk
+- buildrequires
+
+* Fri Nov 21 2003 Arnaud de Lorbeau <adelorbeau@mandrakesoft.com> 0.60-2mdk
+- Add menu for kde and gnome
+
+* Thu Nov 20 2003 Arnaud de Lorbeau <adelorbeau@mandrakesoft.com> 0.60-1mdk
+- Initial mdk contrib
+- Work on spec
+
+* Fri Oct 17 2003 Arnaud Quette <arnaud.quette@free.fr> 0.59-1mdk
+- Initial packaging.

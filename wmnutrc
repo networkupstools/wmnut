@@ -1,0 +1,47 @@
+# .wmnutrc
+# configuration file for wmnut, WindowMaker dock applet.
+
+# Define up to 9 upsnames ([upsname@]hostname, default is localhost)
+# Note that UPS(s) are automagically discovered from the hostname
+######
+# UPS=bar.com
+# UPS=foo2@bar.com
+# ...
+# UPS=foo9@bar.com
+
+# Verbose mode : display NUT available features and base value.
+Verbose=off
+
+# Windowed mode (opposite to native withdrawn mode for Window Maker).
+# Default start in withdrawn shape (for WindowMaker)
+WithDrawn=on
+
+# Send messages to users terminals when Low and critical.
+Alert=on
+
+# send alert every 5 minutes when Low
+LAlertRate=300
+
+# send alert every 2 minutes when Critical
+CAlertRate=120
+       
+# Blink rate for battery and communication status. (0 for no blinking.)
+BlinkRate=3	 # blinks per second 
+
+# Controls beeping when you get to CriticalLevel
+Beep=off
+
+# Beep at Critical Level. Volume is between -100% to 100%.
+Volume=50
+
+# Define battery levels at which red or yellow LED turns on.
+# CriticalLevel takes precedence if LowLevel<CriticalLevel.
+LowLevel=40
+CriticalLevel=10
+
+# Use a low-color pixmap to conserve colors on 8-bit displays.
+UseLowColorPixmap=off
+
+
+# NOT USED FOR THE MOMENT
+#UpdateRate    		= 0.8;   /* Number of updates per second */

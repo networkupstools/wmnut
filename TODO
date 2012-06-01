@@ -1,0 +1,49 @@
+TODO list for WMNUT
+--------------------------------------------------------------
+
+Planned for 0.60.0
+	* Add install-conf rule to Makefile for wmnutrc
+	
+Planned for 0.70.0
+	* Status overview (9 R/G/B/none LED) between arrows and panel
+	
+Planned for 0.80.0
+	* Page 0 dedicated as a "launcher" page (to call wmnut configuration
+		GUI, or external application)
+		
+Planned for 0.90.0
+	* wmnut configuration GUI to ease user configuration,
+	
+Planned for 1.0.0
+	* Above and below features, no bugs and no user request pending.
+
+Not scheduled yet or backgrounded:	
+
+	* autoconf for getopt: EOF (Solaris) vs. -1 (HP-UX, AIX)
+	* Derivate a gkrellm applet (or include an option)
+	* Validate and enhance other platforms support (FreeBSD,
+	  NetBSD, Solaris and other NUT supported platforms),
+	  and other window managers support
+	* Add an option to choose between battery load in bargraph
+	  or with a battery (asapm style)
+	or Themability (skins !)
+	* Nice logo.
+	* Background color option
+	* Enlarge border in windowed mode to facilitate window moving
+	* consider creating /var/run/wmnut.pid (for fixing multi instance pb)
+	* Add setitimer to flush_expose() to deal with no X11 events
+
+Abandoned features
+	* Derivate a gnome / kde applet (or include an option). This is part
+		of other projects.
+	* dynamically reread rcfiles files on SIGUSR1
+
+
+Your feedback is greatly appreciated! If you have nice
+suggestions, ideas, whatever, that aren't on this list, feel 
+free to mail them to:
+
+		arnaud.quette@free.fr
+		arnaud.quette@mgeups.com
+
+If you don't let me know... how am I suppose to know? ;-)

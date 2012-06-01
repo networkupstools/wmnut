@@ -1,0 +1,6 @@
+- segfault on FreeBSD (using -w option).
+- problems with windowed mode (segfault too, or misdrawing).
+
+Please send bug reports to arnaud.quette@free.fr and
+describe the problem as detailed as you can.
+

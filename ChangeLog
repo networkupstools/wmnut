@@ -1,0 +1,178 @@
+2012-05-10  Arnaud Quette  <ArnaudQuette@eaton.com>
+	* wmnut-0.63:
+
+	  + acinclude.m4: removed since it's not useful
+	  + configure.ac: rework libupsclient detection, using pkg-config, and
+	    remove the call to jm_CHECK_TYPE_STRUCT_UTIMBUF (from acinclude.m4).
+	    WMNut now requires NUT 2.2.1 minimum!
+	  + README: update requirements to NUT 2.2.1 minimum
+	  + src/wmnut.{c,h}: switch to UPSCONN_t, as required by recent NUT
+	  + config.{sub,guess}, ...: refreshed with the latest autotools
+	  + rcfiles.c: fix some warning
+
+2006-01-13  Arnaud Quette  <arnaud.quette@mgeups.com>
+	* wmnut-0.62:
+	  
+	  + Disable the XBell detection ad calls as these are not much usefull,
+	  and cause some problems with the switch to Xorg and X11R7
+	  + Update the missing file
+
+2005-01-05  Arnaud Quette  <arnaud.quette@mgeups.com>
+
+	* wmnut-0.61:
+	  
+	  + Switch to NUT 2.0 API (compatible with NUT 1.4 and 2.0)
+	  + Rework host handling (autodetection of UPS(s) on host,
+	  as you can't anymore address directly an host, ie localhost,
+	  without specifying the UPS)
+	  + update Mandrake spec file from the official one
+	  + Enhanced Solaris support, through getopt modification (thanks to David Butts)
+	  
+2003-11-08  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.60:
+	  
+	  + Enable libupsclient autodetection (from nut-1.4.1-pre3) 
+
+2003-10-18  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.59:
+	  
+	  + better handling of communication with upsd 
+	  + reworked autoconf mechanism (for autoconf 2.50 or later)
+	    by renaming configure.in to configure.ac, and updating
+	    various things in configure.ac
+	  + reworked Mandrake packaging spec file
+	  + xpm icons converted to png for Mandrake packaging.
+
+2003-07-14  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.58:
+	
+	  + switch command line parsing to getopt() to make it cleaner.
+
+2003-05-internal  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.57:
+	
+	  + Bug hunting (thanks to P. Marzouk): fixed a bug which prevented from
+	  	restoring values when a UPS was temporarily unavailable.
+
+2003-04-internal  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.56:
+	
+	  + Fixed cleaner a minor warning in rcfiles.c (Bill Richter)
+	  
+2003-03-22  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.55:
+	
+	  + Dropped out INFO_RUNTIME support to INFO_BATT_RUNTIME only
+	  + Re-enabled debug output (through -V option)
+	  + Re-enabled blinking communication status on lost communication
+	  + Re-enabled code that handle unsupported variables
+	  + Enhanced (again) nut files detection and handling in configure.in
+		Now WMNut can detect if the path given for --with-nut-* is a binary
+		installation from source or package, or if it is a source directory.
+	  + Back the standard naming scheme, using the pre-defined PACKAGE
+		variable in config.h
+	  + Added in contrib a basic ebuild script for Gentoo GNU/Linux
+
+2003-03-20  Arnaud Quette  <arnaud.quette@free.fr>
+
+	* wmnut-0.54:
+	
+	  + Fixed a minor warning in rcfiles.c
+	  Thanks to Bill Richter for his help in beta testing:
+	  + Fixed a packaging problem (call to autoheader)
+	  + Enhanced nut files detection and handling in configure.in
+
+2003-03-09  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.53:
+	
+	  + Added configure option (--with-nut) to specify a global location
+	    (directories) for upsclient.oh.
+
+2003-03-06  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.52:
+
+	  + Bug hunting (thanks to Russell Kroll): ignore SIGPIPE, so upsd stop
+	  	doesn't result in a crash of WMNut (which results in a Wharf crash)
+	  + typo fix in Changelog and README (thanks to Bill Richter)
+	  + Spell checking and various update (thanks to Bill Richter)
+	  + Include autoconf/automake depends (install-sh, config.sub/guess,
+	  	missing and mkinstalldirs)
+	  + Added configure options (--with-nut-libs and --with-nut-includes)
+	  	to specify location (directories) for upsclient.oh and improved
+		configure rules to automatically check for upsclient.oh
+	  
+2003-02-16  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.51:
+			
+	  + (0.30) Switched to new NUT client library (files upsclient.h/o)
+	  + (0.40) Switched to autoconf/automake to enhance multi platforms support
+	  + Include packaging files for RPM (Mandrake) based
+	  + Did a bit of code cleaning.
+	  + Fixed some minor bugs
+	  + Various minor changes (reformated/renamed CHANGES, ...)
+
+2002-05-05  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.1.0:
+				
+	  + WMNut now supports multiple host monitoring.
+	  + Modified code to hide all values on lost communication.
+	  + Enhanced rcfile code.
+	  + Enhanced data (NUT) fetch code and add TCP mode.
+	  + Enhanced code to handle unsupported values and their display.
+
+2002-03-16  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.0.9:
+	
+	  + Added rc files support (/etc/wmnutrc and ~/.wmnutrc).
+	  + Modified Makefile to allow easy override of various parameters (NUT,
+	    X11, install directories).
+	  + Replaced "-display" command line option with "-d" (easier, but 
+	    "-display" is still supported for compatibility).
+	  + Modified wmgeneral.h to define WMNUT_NAME (default is wmnut).
+	  + Modified code not to bail out every times when accessing unsupported variables.
+	  + Reformated help (-h argument) output so it now fits in 80 characters.
+	  + Modified code to handle FreeBSD X11 problems (Segfault on XCloseDisplay).
+	  + Modified code to handle blinking red "C" when communication is lost.
+	  + Fixed Makefile to use CFLAGS instead of COPTS and to include DEBUG flags.
+	  + Added full window name (form: "wmnut:upsname", eg "wmnut:el800@localhost").
+	  + Did a bit of code cleaning.
+	  + Fixed a bug for multiple blinking events at the same time. 
+
+2002-01-19  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.0.8:
+			
+	  + Added blinking battery (Red/Yellow/Green) when On Battery (respectively
+	    Critical/Low/High).
+	  + Added  blinking 'C' when Communication Lost (Data stale).
+	  + Modified INSTALL to include "make install-misc" from NUT needed.
+	  + Modified fetch code to handle unsupported features (RUNTIME)
+	    and other error codes.
+	  + Added X11 Atom management to allow clean window close (corrects the
+	   "Broken pipe" message when exiting).
+	  + Added cleanup on exit (need to be completed).
+	  + Added a -w windowed mode (opposite to native withdrawn mode for Window
+	    Maker). This allows better window handling on other Window Managers).
+	  + Fixed some problems with FreeBSD (forgotten #ifdef).
+	  + Did a bit of code cleaning (not completed).
+	  + Modified wmnut_master_LowColor.xpm according to wmnut_master.xpm
+	    The -l (LowColor) option now works.
+	  + Modified wmnut_master*.xpm to make green plug as default (was blue)
+	    according to Bill Richter (huge thanks to him for his help !).
+	  + Added "-v" option to print WMNUT version and information.
+	  + Added "-V" option to print available features and base values.
+
+2002-01-01  Arnaud Quette  <arnaud.quette@free.fr>
+	
+	* wmnut-0.0.7: initial version.

@@ -1,0 +1,17 @@
+*** Packaging scripts for various OS
+
+1) Usage note:
+--------------
+
+You need to call configure, from the
+top level directory, to generate an
+updated version of your packaging script.
+
+2) Existing packaging scripts:
+------------------------------
+
+* Mandrake GNU/Linux: wmnut-mdk.spec
+* Other RPM based: wmnut.spec
+* Gentoo Linux (basic and not tested): wmnut.ebuild
+
+author: Arnaud Quette <arnaud.quette@free.fr>
