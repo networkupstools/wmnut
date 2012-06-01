@@ -352,10 +352,12 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 		exit(1);
 	}
 
-	XSetWMIconName(display, win, &name);
 	XSetWMName(display, win, &name);
-	SetWindowName(wname);
-  
+	if ( !withdrawn ) {
+		XSetWMIconName(display, win, &name);
+		SetWindowName(wname);
+	}
+
   /* Create GC for drawing */
   
   gcm = GCForeground | GCBackground | GCGraphicsExposures;
