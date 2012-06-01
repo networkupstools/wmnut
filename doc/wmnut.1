@@ -1,18 +1,18 @@
-.TH WMNUT 1 "22 February 2003" 
+.TH WMNUT 1 "01 June 2012" 
 .SH NAME
 WMNUT \- Dockable UPS Monitor
 .SH SYNOPSIS
 .B wmnut
-[-A T1 T2] [-b BlinkRate] [-B BeepVolume] [-C CriticalLevel] [-d display] [-h] [-l] [-L LowLevel] [-U upsname] [-v] [-V] [-w]
+[\-A T1 T2] [\-b BlinkRate] [\-B BeepVolume] [\-C CriticalLevel] [\-d display] [\-h] [\-l] [\-L LowLevel] [\-U upsname] [\-v] [\-V] [\-w]
 .SH DESCRIPTION
 .PP
 WMNUT is an UPS Monitor. It is used to visually display and
-interpret details of up to 9 UPSs status via NUT - Network UPS Tools
+interpret details of up to 9 UPSs status via NUT \- Network UPS Tools
 framework.
 .PP
-WMNUT is dockable using WindowMaker and AfterStep window-managers;
-under other window-managers, WMNUT should be used with "-w" option
-to appear as a nicely-sized 64x64 application with a background.
+WMNUT is dockable using WindowMaker and AfterStep window\-managers;
+under other window\-managers, WMNUT should be used with "\-w" option
+to appear as a nicely\-sized 64x64 application with a background.
 .PP
 WMNUT provides the following information: 
 .TP
@@ -24,7 +24,7 @@ WMNUT provides the following information:
 .TP
 \- Runtime to empty, ie time left to battery depletion (MM:SS),
 .TP
-- Communication status with UPS (Blinking Red/Green "C").
+\- Communication status with UPS (Blinking Red/Green "C").
 .SH OPTIONS
 .TP
 .B \-A <T1 T2>            
@@ -36,7 +36,7 @@ T2 is seconds between messages when Critical.
 Blink rate for red LED. (0 for no blinking.)
 .TP
 .B \-B <Volume>           
-Beep at Critical Level. Volume is between -100% to 100%. This function has been disabled, at least temporarily.
+Beep at Critical Level. Volume is between \-100% to 100%. This function has been disabled, at least temporarily.
 .TP
 .B \-C <CriticalLevel>    
 Define level at which red LED turns on.
@@ -48,7 +48,7 @@ Use alternate display.
 Display help screen.
 .TP
 .B \-l                    
-Use a low-color pixmap to conserve colors on 8-bit displays.
+Use a low\-color pixmap to conserve colors on 8\-bit displays.
 .TP
 .B \-L <LowLevel>         
 Define level at which yellow LED turns on.
@@ -56,7 +56,7 @@ CriticalLevel takes precedence if LowLevel<CriticalLevel.
 .TP
 .B \-U <upsname>          
 Define upsname ([upsname@]hostname, default is localhost).
-You can use up to 9 call to -U <upsname> to monitor multiple UPSs.
+You can use up to 9 call to \-U <upsname> to monitor multiple UPSs.
 .TP
 .B \-v                    
 Print version (includes important WMNUT info).
