@@ -2,7 +2,7 @@ dnl ====================================================================
 dnl | WMNut: configure.ac                                              |
 dnl ====================================================================
 
-AC_INIT([wmnut],[0.63],[aquette.dev@gmail.com])
+AC_INIT([wmnut],[0.64],[aquette.dev@gmail.com])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE($PACKAGE_NAME, $PACKAGE_VERSION)

@@ -1,3 +1,15 @@
+2012-06-04  Arnaud Quette  <arnaud.quette@free.fr>
+	* wmnut-0.64:
+
+	  + configure.ac: WMNut actually requires NUT 2.4.0 minimum, not 2.2.1!
+	  + src/wmgeneral.c: Only use XSetWMName() in withdrawn (native dockapp)
+	    mode. This fixes Debian bug #565751
+	  + src/wmnut.c: cleanup debug functions and general layout
+	  + doc/wmnut.1: Escape hyphens to make groff happy
+	  + README.asciidoc: Rewrite README in Asciidoc format, to replace homepage
+	    and README
+	  + contrib/wmnut.desktop: Distribute a .desktop file, for windowed mode
+
 2012-05-10  Arnaud Quette  <ArnaudQuette@eaton.com>
 	* wmnut-0.63:
 
