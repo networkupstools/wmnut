@@ -1,28 +1,28 @@
 /*
  * wmnut.c  -- core implementation of WMNUT
  *
- *  Copyright (C)
- *    2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
+ * Copyright (C)
+ *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
  *
- *  based on wmapm originally written by (huge thanks) 
- *	Chris D. Faulhaber <jedgar@speck.ml.org>. Version 3.0
- *	and extensively modified version of version 2.0 
- *	by Michael G. Henderson <mghenderson@lanl.gov>.
+ * based on wmapm originally written by
+ * Chris D. Faulhaber <jedgar@speck.ml.org>. Version 3.0
+ * and extensively modified version of version 2.0 
+ * by Michael G. Henderson <mghenderson@lanl.gov>.
  *
- * 	This program is free software; you can redistribute it and/or modify
- * 	it under the terms of the GNU General Public License as published by
- * 	the Free Software Foundation; either version 2, or (at your option)
- * 	any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- * 	This program is distributed in the hope that it will be useful,
- * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * 	GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 	You should have received a copy of the GNU General Public License
- * 	along with this program (see the file COPYING); if not, write to the
- * 	Free Software Foundation, Inc.,
- * 	59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program (see the file COPYING); if not, write to the
+ * Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  */
 
@@ -40,23 +40,23 @@ int 	GetPrevHost();
 void 	InitCom();
 
 /* base parameters */
-int Alert = 0;			/* Controls whether alert is sent to
-				   all users via wall: Off by default  */
+/* Controls whether alert is sent to all users via wall: Off by default */
+int Alert = 0;
 char *upshost = NULL;
-int Verbose = 0;		/* 1 for verbose mode : displays NUT 
-				   available features and base values */
+/* 1 for verbose mode : displays NUT available features and base values */
+int Verbose = 0;
 int	CriticalLevel = 10;
 int	LowLevel = 40;
 float BlinkRate = 3.0;		/* blinks per second */
 float UpdateRate = 0.8; 	/* Number of updates per second */
-int	Beep = 0;	 	/* Controls beeping when you get to 
-				   CriticalLevel: Off by default */
-int	Volume = 50;	 	/* ring bell at 50% volume */
-int	UseLowColorPixmap = 0; 	/* Use a lower number of colors for the
-				   poor saps on 8-bit displays */
+/* Controls beeping when you get to CriticalLevel: Off by default */
+int	Beep = 0;
+int	Volume = 50;	 		/* ring bell at 50% volume */
+/* Use a lower number of colors for the poor saps on 8-bit displays */
+int	UseLowColorPixmap = 0;
 float LAlertRate = 300.0;	/* send alert every 5 minutes when Low */
 float CAlertRate = 120.0;	/* send alert every 2 minutes when Critical */
-int WithDrawn = 1;		/* start in withdrawn shape (for WindowMaker) */
+int WithDrawn = 1;			/* start in withdrawn shape (for WindowMaker) */
 
 #define RETRY_COUNT	10
 int TryCount = 0;
@@ -69,70 +69,70 @@ nut_info Hosts;
 
 rckeys	wmnut_keys[13];
 
-#define DEBUG0(a, b) 	{ if (Verbose) fprintf(stdout, a, b); }
-#define DEBUG1(a, b, c) { if (Verbose) fprintf(stdout, a, b, c); }
-#define DEBUG2(a, b) 	{ if (Verbose) fprintf(stderr, a, b); }
-#define DEBUG3(a, b, c) { if (Verbose) fprintf(stderr, a, b, c); }
+/* Debug macros */
+#define DEBUGOUT(...) 	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
+#define DEBUGERR(...) 	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
 
 /* 
  * Get a variable from the UPS
  ********************************************************* */
 int get_ups_var (char *variable, char *value)
 {
-  int retcode;
-  unsigned int	numq, numa;
-  const	char	*query[4];
-  char	**answer;
-  
-  DEBUG1("Trying to get variable: %s (on %s)\n", variable, CurHost->upsname);
-  
-  query[0] = "VAR";
-  query[1] = CurHost->upsname;
-  query[2] = variable;
-  
-  numq = 3;
-  
-  if ((retcode = upscli_get(&CurHost->connexion, numq, query, &numa, &answer))  < 0)
-	{
-	/*  if ((retcode = upscli_getvar(&CurHost->connexion, CurHost->upsname,
-		variable, value, SMALLBUF)) < 0) { */
-	
-	  DEBUG3("Error: %s (%s)\n", upscli_strerror(&CurHost->connexion),
-			 variable);
-	  
-	  /* should cover driver and upsd disconnection */
-	  if (CurHost->connexion.upserror == UPSCLI_ERR_DATASTALE)
-		CurHost->comm_status = COM_LOST;
-	  
-	  if ((CurHost->connexion.upserror == UPSCLI_ERR_READ) ||
-		  (CurHost->connexion.upserror == UPSCLI_ERR_INVALIDARG))
-		{
-		  CurHost->comm_status = COM_LOST;
-		  InitCom();
+	int retcode;
+	unsigned int	numq, numa;
+	const	char	*query[4];
+	char	**answer;
+
+	DEBUGOUT("Trying to get variable: %s (on %s)\n", variable, CurHost->upsname);
+
+	query[0] = "VAR";
+	query[1] = CurHost->upsname;
+	query[2] = variable;
+
+	numq = 3;
+
+	if ((retcode = upscli_get(&CurHost->connexion, numq, query, &numa, &answer)) < 0) {
+
+		/*  if ((retcode = upscli_getvar(&CurHost->connexion, CurHost->upsname,
+			variable, value, SMALLBUF)) < 0) { */
+
+		DEBUGERR("Error: %s (%s)\n", upscli_strerror(&CurHost->connexion),
+			variable);
+
+		/* should cover driver and upsd disconnection */
+		if (CurHost->connexion.upserror == UPSCLI_ERR_DATASTALE)
+			CurHost->comm_status = COM_LOST;
+
+		if ((CurHost->connexion.upserror == UPSCLI_ERR_READ) ||
+			(CurHost->connexion.upserror == UPSCLI_ERR_INVALIDARG)) {
+
+			CurHost->comm_status = COM_LOST;
+			InitCom();
 		}
 
-	  if (CurHost->connexion.upserror == UPSCLI_ERR_VARNOTSUPP)
-		retcode = VARNOTSUPP;
-	  
-	  /* 	  return retcode; */
+		if (CurHost->connexion.upserror == UPSCLI_ERR_VARNOTSUPP)
+			retcode = VARNOTSUPP;
+
+		/* 	  return retcode; */
 	}
-  else {
-	retcode = OK;
-	strcpy(value, answer[3]);
-	DEBUG1("Var: %s = %s\n", variable, value);
-    CurHost->comm_status = COM_OK;
-  }
-  
-  return retcode;
+	else {
+		retcode = OK;
+		strcpy(value, answer[3]);
+		DEBUGOUT("Var: %s = %s\n", variable, value);
+		CurHost->comm_status = COM_OK;
+	}
+
+	return retcode;
 }
 
 void get_ups_info(void) 
 {
 	char value[SMALLBUF];
 	int	retVal;
-	
+
 	/* Get UPS status */
 	if (get_ups_var ("ups.status", value) > NOK) {
+
 		if (!strncmp(value, "OL", 2))
 			CurHost->ups_status = UPS_ONLINE;
 		else if (!strncmp(value, "OB", 2))
@@ -146,41 +146,48 @@ void get_ups_info(void)
 	}
 	else
 		CurHost->ups_status = UPS_DEFAULT;
-	
+
 	/* Get battery charge level */
 	if ((CurHost->battery_runtime != VARNOTSUPP)
 		|| (TryCount >= RETRY_COUNT)) {
+
 		retVal = get_ups_var ("battery.charge", value);
+
 		if (retVal == OK)
 			CurHost->battery_percentage = atoi(value);
 		else
 			CurHost->battery_percentage = retVal;
 	}
-	
+
 	/* Get runtime to empty */
 	if ((CurHost->battery_runtime != VARNOTSUPP)
 		|| (TryCount >= RETRY_COUNT)) {
+
 		retVal = get_ups_var ("battery.runtime", value);
+
 		if (retVal == OK)
 			CurHost->battery_runtime = atoi(value);
 		else
 			CurHost->battery_runtime = retVal;
 	}
-	
+
 	/* Get Battery load level */
 	if ((CurHost->battery_load != VARNOTSUPP)
 		|| (TryCount >= RETRY_COUNT)) {
+
 		retVal = get_ups_var ("ups.load", value);
+
 		if (retVal == OK)
 			CurHost->battery_load = atoi(value);
 		else 
 			CurHost->battery_load = retVal;
 	}
+
 	if (TryCount >= RETRY_COUNT)
 		TryCount = 0;
 	else
 		TryCount++;
-	
+
 	return;
 }
 
@@ -193,14 +200,14 @@ int main(int argc, char *argv[]) {
  
 	/* ignore upsd stop and don't crash (thanks to Russell Kroll) */ 
 	signal(SIGPIPE, SIG_IGN);
-	
+
 	/* Set default values */ 
 	BlinkRate = 3.0;
 	UpdateRate = 1.0 / 1.25;
-	
+
 	/* Multiple hosts setup */
 	Hosts.curhosts_number = Hosts.hosts_number = 0;
-	
+
 	/* Create default parameters table */
 	AddRcKey(&wmnut_keys[0], "UPS", TYPE_STRING, upshost);
 	AddRcKey(&wmnut_keys[1], "LAlertRate", TYPE_FLOAT, &LAlertRate);
@@ -215,54 +222,49 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[10], "Verbose", TYPE_BOOL, &Verbose);
 	AddRcKey(&wmnut_keys[11], "WithDrawn", TYPE_BOOL, &WithDrawn);
 	AddRcKey(&wmnut_keys[12], NULL, TYPE_NULL, NULL);
-	
+
 	/* Initialise host structure */
 	InitHosts();
-	
-	/*
-	*  Parse rcfile command arguments.
-	*  First, try with /etc/wmnutrc else 
-	*  (if not exists), try ~/.wmnutrc 
-	*  Note that the 2nd override the 1st
-	*/
+
+	/* Parse rcfile command arguments.
+	 * First, try with /etc/wmnutrc else 
+	 * (if not exists), try ~/.wmnutrc 
+	 * Note that the 2nd override the 1st */
 	LoadRCFile(wmnut_keys);
 
-	/*
-	*  Parse any command line arguments.
-	*  Note that it overrides RCFiles params.
-	*/
+	/* Parse any command line arguments.
+	 * Note that it overrides RCFiles params */
 	ParseCMDLine(argc, argv);
 
 	for (i = 0; i < 12; i++ ) {
-	  switch(wmnut_keys[i].type) {
-	  case TYPE_STRING :
-	    DEBUG1("%s = %s\n", wmnut_keys[i].label, wmnut_keys[i].var.str);
-	    break;
-	  case TYPE_BOOL: 
-	  case TYPE_INT:
-	    DEBUG1("%s = %i\n", wmnut_keys[i].label, (int) *wmnut_keys[i].var.integer);
-	    break;
-	  case TYPE_FLOAT:
-	    DEBUG1("%s = %f\n", wmnut_keys[i].label, (float) *wmnut_keys[i].var.floater);
-	    break;
-	  case TYPE_NULL:
-	    break;	
-	  }
+		switch(wmnut_keys[i].type) {
+			case TYPE_STRING :
+				DEBUGOUT("%s = %s\n", wmnut_keys[i].label, wmnut_keys[i].var.str);
+				break;
+			case TYPE_BOOL: 
+			case TYPE_INT:
+				DEBUGOUT("%s = %i\n", wmnut_keys[i].label, (int) *wmnut_keys[i].var.integer);
+				break;
+			case TYPE_FLOAT:
+				DEBUGOUT("%s = %f\n", wmnut_keys[i].label, (float) *wmnut_keys[i].var.floater);
+				break;
+			case TYPE_NULL:
+				break;
+		}
 	}
 
 	/* original basic setup */
 	BlinkRate = (BlinkRate >= 0.0) ? BlinkRate : -1.0*BlinkRate;
 	UpdateRate = (UpdateRate >= 0.0) ? UpdateRate : -1.0*UpdateRate;
-	
+
 	nMax = (int)( 1.0e6/(2.0*UpdateRate*DELAY)  );
 	mMax = (BlinkRate > 0.0) ? (int)( 1.0e6/(2.0*BlinkRate*DELAY)  ) : nMax;
 	rMax = (int)( LAlertRate*1.0e6/(2.0*DELAY)  );
 	sMax = (int)( CAlertRate*1.0e6/(2.0*DELAY)  );
-	
-	/* if no UPS after rcfiles and cmd line, affect default */
+
+	/* if no UPS after rcfiles and cmd line, try with localhost */
 	if(Hosts.hosts_number == 0)
 		AddHost("localhost");
-	/* TODO => the above still works ??! */
 
 	/*  Check NUT daemon availability on all host(s) */
 	InitCom();
@@ -277,14 +279,13 @@ int main(int argc, char *argv[]) {
 	else
 		openXwindow(argc, argv, wmnut_master, wmnut_mask_bits, 
 					wmnut_mask_width, wmnut_mask_height, WithDrawn);
-    
+
 	/* Loop until we die... */
 	n = m = 32000;
 	r = rMax+1;
 	s = sMax+1;
 
 	while(1) {
-		
 		/* Only process nut info only every nMax cycles of this
 		*  loop. We run it faster to catch the xevents like button 
 		*  presses and expose events, etc...
@@ -295,16 +296,16 @@ int main(int argc, char *argv[]) {
 		if (n>nMax){
       
 			n = 0;
-			
+
 			/* invert toggle */
 			Toggle = (Toggle == OFF) ? ON : OFF;
-      
+
 			get_ups_info();
-	  
+
 			/* Check communication status */
 			if ((int)(CurHost->comm_status) == COM_LOST) {
 
-				DEBUG2("Communication lost with UPS %s\n", CurHost->hostname);
+				DEBUGERR("Communication lost with UPS %s\n", CurHost->hostname);
 
 				/*
 				*  Communication Status: COM_LOST.
@@ -328,7 +329,7 @@ int main(int argc, char *argv[]) {
       
 			/* Check UPS status */
 			switch (CurHost->ups_status) {
-	
+
 			/* case UPS_LOWBATT: */
 				case UPS_ONBATT:
 				{
@@ -343,28 +344,31 @@ int main(int argc, char *argv[]) {
 							*/
 							/* Toggle = OFF; */
 							copyXPMArea(99, 20, 12, 7, 30, 50);
-						} else{
+						}
+						else{
 							/* Toggle = ON; */
 							copyXPMArea(83, 20, 12, 7, 30, 50);
 						}
-					} else if(CurHost->battery_percentage <= LowLevel) {
+					}
+					else if(CurHost->battery_percentage <= LowLevel) {
 						/*
 						*  Battery Status: Low.
 						*  Blink the yellow battery [TODO : and digital %age] on/off...
 						*/
 						if (Toggle||(BlinkRate == 0.0)) {
-							
+
 							/* if (Beep) 
 								XBell(display, Volume);
 							*/
 							/* Toggle = OFF; */
 							copyXPMArea(99, 20, 12, 7, 30, 50);
-							
-						} else{
+						}
+						else{
 							/* Toggle = ON; */
 							copyXPMArea(69, 20, 12, 7, 30, 50);
 						}
-					} else{
+					}
+					else{
 						/*
 						*  Battery Status: High but charging.
 						*  Blink the green battery [TODO : and digital %age] on/off...
@@ -375,26 +379,26 @@ int main(int argc, char *argv[]) {
 								XBell(display, Volume);
 							*/
 							copyXPMArea(99, 20, 12, 7, 30, 50); 
-							
-						} else
+						}
+						else
 							copyXPMArea(83, 6, 12, 7, 30, 50);
 					}
 				}
 				break;
 	
 				case UPS_OVERLOAD:  
-				{	
+				{
 					/*
 					*  UPS is overloaded.
 					*  [TODO : Blink the battery load %age on/off...]
 					*/
 					/* Hide digits and '%' */
-					copyXPMArea(37, 34, 19, 7,37, 34);						
+					copyXPMArea(37, 34, 19, 7,37, 34);
 				}
 				break;
 	
 				case UPS_ONLINE:  
-				{	
+				{
 					/*
 					*   UPS on-line. I.e. we are "plugged-in".
 					*/
@@ -411,21 +415,21 @@ int main(int argc, char *argv[]) {
 				}
 				break;
 	
-				default: 	
+				default: 
 					break;
 			}
-      
+
 			/* 
 			*    Paste up the default !?! communication !?! status and runtime
 			*/
 			copyXPMArea(83, 93, 41, 9, 15, 7);
-                 
+
 			/*
 			*   Repaint buttons.
 			*/
 			copyXPMArea(42, 106, 13, 11, 5, 48);
 			copyXPMArea(57, 106, 13, 11, 46, 48);
-			
+
 			/* 
 			*   Repaint host number.
 			*/
@@ -436,7 +440,7 @@ int main(int argc, char *argv[]) {
 			*  
 			*         Time left before battery drains to 0%
 			*         If not supported (RUNTIME feature) --:--
-			*/	      
+			*/
 			if(CurHost->battery_runtime >= 0) {
 				/* convert in minutes */
 				time_left = CurHost->battery_runtime / 60;
@@ -476,9 +480,9 @@ int main(int argc, char *argv[]) {
 				copyXPMArea(76, 81, 19, 7, 37, 34);
 			}
 
-			/* 
-			*   Do Battery Percentage.
-			*/
+			/*
+			 *   Do Battery Percentage.
+			 */
 			
 			/* erase zone */
 			/*        copyXPMArea(76, 81, 19, 7, 7, 34);   */
@@ -488,11 +492,11 @@ int main(int argc, char *argv[]) {
 			if (CurHost->battery_percentage > 0) {
 				/* displays battery percent bis */
 				if (CurHost->battery_percentage == 100){
-					copyXPMArea(15, 81, 1, 7,  7, 34);           	/* If 100%, show 100% */
+					copyXPMArea(15, 81, 1, 7,  7, 34);		/* If 100%, show 100% */
 					copyXPMArea( 5, 81, 6, 7,  9, 34);
 					copyXPMArea( 5, 81, 6, 7, 15, 34);
-					copyXPMArea(64, 81, 6, 7, 21, 34);           	/* Show '%' */
-					copyXPMArea(66, 42, 49, 9, 7, 21);           	/* Show Meter */
+					copyXPMArea(64, 81, 6, 7, 21, 34);		/* Show '%' */
+					copyXPMArea(66, 42, 49, 9, 7, 21);		/* Show Meter */
 				}
 				else {	  
 					if (CurHost->battery_percentage >= 10)
@@ -505,15 +509,16 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*  Show Meter
-			*/
+			 *  Show Meter
+			 */
 			k = CurHost->battery_percentage * 49 / 100;
 			copyXPMArea(66, 42, k, 9, 7, 21);
 			if (k%2) 
 				copyXPMArea(66+k-1, 52, 1, 9, 7+k-1, 21);
 			else
 				copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
-		} else {      
+		}
+		else {      
 			/* Update the counter. When it hits nMax, we will
 			*  process nut information again */
 			++n;
@@ -530,239 +535,223 @@ int main(int argc, char *argv[]) {
 
 void InitCom()
 {
-  int i, ret;
-  char vars[LARGEBUF];
-  unsigned int	numq, numa;
-  const	char	*query[4];
-  char	**answer;
-  
-  /*  
-   *  Check NUT daemon availability on host(s) 
-   */   
-  GetFirstHost();
-  
-  for (i = 0; i <= (Hosts.hosts_number - 1) ; i++)
-    { 
-      /* Close existing com
-		 if( &CurHost->connexion)
-		 upscl	i_disconnect ( &Hosts.Ups_list[i -1]->connexion );
-      */
+	int i, ret;
+	char vars[LARGEBUF];
+	unsigned int	numq, numa;
+	const	char	*query[4];
+	char	**answer;
 
-      if (upscli_connect(&CurHost->connexion, CurHost->hostname,
-						 CurHost->port, UPSCLI_CONN_TRYSSL) < 0) 
-		{
-		  fprintf(stderr, "Error: %s\n", 
-				  upscli_strerror(&CurHost->connexion));
-      	}
-      else
-		{
-		  DEBUG2("Communication established with UPS %s\n", CurHost->hostname);
-		  CurHost->comm_status = COM_OK;
+	/*
+	 *  Check NUT daemon availability on host(s) 
+	 */
+	GetFirstHost();
+
+	for (i = 0; i <= (Hosts.hosts_number - 1) ; i++)
+	{
+		/* Close existing com
+		if( &CurHost->connexion)
+			upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
+		*/
+
+		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
+						 CurHost->port, UPSCLI_CONN_TRYSSL) < 0) {
+			fprintf(stderr, "Error: %s\n", 
+					upscli_strerror(&CurHost->connexion));
 		}
-      
-      query[0] = "VAR";
-      query[1] = CurHost->upsname;
-      numq = 2;
-	  
-      if (ret = upscli_list_start(&CurHost->connexion, numq, query) < 0)
+		else {
+			DEBUGERR("Communication established with UPS %s\n", CurHost->hostname);
+			CurHost->comm_status = COM_OK;
+		}
+
+		query[0] = "VAR";
+		query[1] = CurHost->upsname;
+		numq = 2;
+
+		if (ret = upscli_list_start(&CurHost->connexion, numq, query) < 0)
 		/* if (upscli_getlist(&CurHost->connexion, CurHost->upsname,
 			 UPSCLI_LIST_VARS, vars, sizeof(vars)) < 0) */
 		{
-		  DEBUG3("Unable to get variable list for %s - %s\n", 
-				 CurHost->upsname, upscli_strerror(&CurHost->connexion));
+			DEBUGERR("Unable to get variable list for %s - %s\n", 
+					CurHost->upsname, upscli_strerror(&CurHost->connexion));
 		}
-      else
-		{
-		  DEBUG3("Got variables list for %s@%s\n", 
-				 CurHost->upsname, CurHost->hostname);
-		  CurHost->comm_status = COM_OK;
+		else {
+			DEBUGERR("Got variables list for %s@%s\n", 
+					CurHost->upsname, CurHost->hostname);
+					CurHost->comm_status = COM_OK;
 
-		  /* FIXME: LIST VAR seems to be necessary here (otherwise,
-		   * we got an "Error: Protocol error" => check why */
-		  ret = upscli_list_next(&CurHost->connexion, numq, query, &numa, &answer);
-
-		  while (ret == 1) {
- 			/* VAR <upsname> <varname> <val> */
-			if (numa < 4) {
-			  DEBUG2("Error: insufficient data "
-					  "(got %d args, need at least 4)\n", numa);
-			  /* return EXIT_FAILURE; */
-			}
-			DEBUG3("%s: %s\n", answer[2], answer[3]);
+			/* FIXME: LIST VAR seems to be necessary here (otherwise,
+			 * we got an "Error: Protocol error" => check why */
 			ret = upscli_list_next(&CurHost->connexion, numq, query, &numa, &answer);
-		  }
-		  /* FIXME: fin test */
 
+			while (ret == 1) {
+				/* VAR <upsname> <varname> <val> */
+				if (numa < 4) {
+					DEBUGERR("Error: insufficient data "
+							"(got %d args, need at least 4)\n", numa);
+					/* return EXIT_FAILURE; */
+				}
+				DEBUGERR("%s: %s\n", answer[2], answer[3]);
+				ret = upscli_list_next(&CurHost->connexion, numq, query, &numa, &answer);
+			}
 		}
 
-      if (strlen(vars) == 0)
-		{
-		  DEBUG2("%s", "No data available check your configuration (ups.conf)\n");
+		if (strlen(vars) == 0) {
+			DEBUGERR("%s", "No data available check your configuration (ups.conf)\n");
 		}
-      GetNextHost();
-    }
+		GetNextHost();
+	}
 }
 
 /* init monitored UPS internal data */
 void InitHosts() 
 {
-  int i;
+	int i;
   
-  for ( i = 0 ; i >= 9 ; i++ )
-	{
-	  Hosts.Ups_list[i -1]->ups_status = -1;
-	  Hosts.Ups_list[i -1] = NULL;
+	for ( i = 0 ; i >= 9 ; i++ ) {
+		Hosts.Ups_list[i -1]->ups_status = -1;
+		Hosts.Ups_list[i -1] = NULL;
 	}
 }
 
 /* Clean all monitored UPS internal data */
 void CleanHosts()
-{	
-  int i;
-  
-  for ( i = 1 ; i <= Hosts.hosts_number ; i++ ) 
-    {
-      upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
- 
-	  if ( Hosts.Ups_list[i -1] != NULL )
-		{
-		  free ( Hosts.Ups_list[i -1] );
-		}
-    }
+{
+	int i;
+
+	for ( i = 1 ; i <= Hosts.hosts_number ; i++ ) {
+		upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
+
+		if ( Hosts.Ups_list[i -1] != NULL )
+			free ( Hosts.Ups_list[i -1] );
+	}
 }
 
 /* Add an UPS to be monitored
  * return 1 on success, 0 on failure (hostname already exist, ...) */
 int AddHost(char *hostname)
 {
-  int nbHosts, ret;
-  const	char	*query[4];
-  unsigned int	numq, numa;
-  char	**answer;
-  char  newhostname[32];
-  UPSCONN_t ups;
-  
-  DEBUG0("AddHost(%s)\n", hostname);
-  
-  if(Hosts.hosts_number < 9) 
-    {
-      /* CurHost = Hosts.Ups_list[nbHosts -1]; */
+	int nbHosts, ret;
+	const	char	*query[4];
+	unsigned int	numq, numa;
+	char	**answer;
+	char  newhostname[32];
+	UPSCONN_t ups;
 
-      /* UPS auto discovery mode : */
-      if (strchr(hostname, '@') == NULL)
-		{
-		  /* Connect to host... */
-		  if (upscli_connect(&ups, hostname,
-							 3493, UPSCLI_CONN_TRYSSL) < 0) 
-			return 0;
-	  
-		  /* ... and retrieve UPS list */
-		  query[0] = "UPS";
-		  numq = 1;
-		  
-		  ret = upscli_list_start(&ups, numq, query);
-		      
-		  if (ret < 0) {
-			return 0;
-			/* FIXME: check for an old upsd */
-		  }
-	  
-		  ret = upscli_list_next(&ups, numq, query, &numa, &answer);
+	DEBUGOUT("AddHost(%s)\n", hostname);
 
-		  while (ret == 1) {
-			/* UPS <upsname> "<description>" */
-			if (numa < 3) {
-			  fprintf(stderr, "Error: insufficient data "
-					  "(got %d args, need at least 4)\n", numa);
-			  return 0;
+	if(Hosts.hosts_number < 9) {
+		/* CurHost = Hosts.Ups_list[nbHosts -1]; */
+
+		/* UPS auto discovery mode : */
+		if (strchr(hostname, '@') == NULL) {
+			/* Connect to host... */
+			if (upscli_connect(&ups, hostname, 3493, UPSCLI_CONN_TRYSSL) < 0) 
+				return 0;
+
+			/* ... and retrieve UPS list */
+			query[0] = "UPS";
+			numq = 1;
+
+			ret = upscli_list_start(&ups, numq, query);
+
+			if (ret < 0) {
+				return 0;
+				/* FIXME: check for an old upsd */
 			}
-	    
-			printf("%s: %s\n", hostname, answer[1]);
-			sprintf(newhostname, "%s@%s", answer[1], hostname);
-			if (AddHost(newhostname))
-			  {
-				/* break; */
-				newhostname[0] = '\0';
-			  }
+
 			ret = upscli_list_next(&ups, numq, query, &numa, &answer);
-		  }
-		  /* 	  if( &ups ) */
-		  /* 	    { */
 
-		  upscli_disconnect ( &ups );
+			while (ret == 1) {
+				/* UPS <upsname> "<description>" */
+				if (numa < 3) {
+					fprintf(stderr, "Error: insufficient data "
+							"(got %d args, need at least 4)\n", numa);
 
-		  /* 	    } */
-		  return 1;
+					return 0;
+				}
+
+				DEBUGOUT("%s: %s\n", hostname, answer[1]);
+
+				sprintf(newhostname, "%s@%s", answer[1], hostname);
+				if (AddHost(newhostname)) {
+					/* break; */
+					newhostname[0] = '\0';
+				}
+				ret = upscli_list_next(&ups, numq, query, &numa, &answer);
+			}
+			/* if(&ups) */
+			/* 	    { */
+			upscli_disconnect ( &ups );
+			/* 	    } */
+			return 1;
 		}
-	  
-      Hosts.hosts_number++;
-      nbHosts = Hosts.hosts_number;
-      /*		Hosts.Ups_list[nbHosts -1] = (ups_info *)xmalloc(sizeof(ups_info)); */
-      Hosts.Ups_list[nbHosts -1] = (ups_info *)malloc(sizeof(ups_info));
 
-      if(Hosts.Ups_list[nbHosts -1] == NULL)
-		return 0;
-	  
-      upscli_splitname(hostname, &Hosts.Ups_list[nbHosts -1]->upsname, 
-					   &Hosts.Ups_list[nbHosts -1]->hostname, 
-					   &Hosts.Ups_list[nbHosts -1]->port);
-	  
-      Hosts.Ups_list[nbHosts -1]->hostnumber = nbHosts;
-      Hosts.Ups_list[nbHosts -1]->ups_status = -1;
-      Hosts.Ups_list[nbHosts -1]->comm_status = COM_LOST;
-      Hosts.Ups_list[nbHosts -1]->battery_percentage = -1;
-      Hosts.Ups_list[nbHosts -1]->battery_load = -1;
-      Hosts.Ups_list[nbHosts -1]->battery_runtime = -1;
-      
-      return 1;
-    }
-  else
-	{
-	  fprintf(stderr, "Error: Maximum number (9) of monitored hosts reached");
+		Hosts.hosts_number++;
+		nbHosts = Hosts.hosts_number;
+		/*		Hosts.Ups_list[nbHosts -1] = (ups_info *)xmalloc(sizeof(ups_info)); */
+		Hosts.Ups_list[nbHosts -1] = (ups_info *)malloc(sizeof(ups_info));
+
+		if(Hosts.Ups_list[nbHosts -1] == NULL)
+			return 0;
+
+		upscli_splitname(hostname, &Hosts.Ups_list[nbHosts -1]->upsname, 
+						&Hosts.Ups_list[nbHosts -1]->hostname, 
+						&Hosts.Ups_list[nbHosts -1]->port);
+
+		Hosts.Ups_list[nbHosts -1]->hostnumber = nbHosts;
+		Hosts.Ups_list[nbHosts -1]->ups_status = -1;
+		Hosts.Ups_list[nbHosts -1]->comm_status = COM_LOST;
+		Hosts.Ups_list[nbHosts -1]->battery_percentage = -1;
+		Hosts.Ups_list[nbHosts -1]->battery_load = -1;
+		Hosts.Ups_list[nbHosts -1]->battery_runtime = -1;
+
+		return 1;
 	}
-  return 0;
+	else
+		fprintf(stderr, "Error: Maximum number (9) of monitored hosts reached");
+
+	return 0;
 }
-  
-  
+
 void GetFirstHost()
 {
-  Hosts.curhosts_number = 1;
-  
-  /* align to tab */
-  CurHost = Hosts.Ups_list[Hosts.curhosts_number - 1];
-	
-  DEBUG1("(First) Monitored host : %d (%s)\n",
-		 Hosts.curhosts_number, CurHost->upsname);
+	Hosts.curhosts_number = 1;
+
+	/* align to tab */
+	CurHost = Hosts.Ups_list[Hosts.curhosts_number - 1];
+
+	DEBUGOUT("(First) Monitored host : %d (%s)\n",
+		Hosts.curhosts_number, CurHost->upsname);
 }
 
 int GetNextHost()
 {
-  if(Hosts.curhosts_number < Hosts.hosts_number)
-	Hosts.curhosts_number++;
-  else /* loop from last to first */
-	Hosts.curhosts_number = 1;
+	if(Hosts.curhosts_number < Hosts.hosts_number)
+		Hosts.curhosts_number++;
+	else /* loop from last to first */
+		Hosts.curhosts_number = 1;
 
-  /* align to tab */
-  CurHost = Hosts.Ups_list[Hosts.curhosts_number - 1];
-  
-  DEBUG1("(Next) Monitored host : %d (%s)\n",
-		 Hosts.curhosts_number, CurHost->upsname);
-  
-  return Hosts.curhosts_number;
+	/* align to tab */
+	CurHost = Hosts.Ups_list[Hosts.curhosts_number - 1];
+
+	DEBUGOUT("(Next) Monitored host : %d (%s)\n",
+		Hosts.curhosts_number, CurHost->upsname);
+
+	return Hosts.curhosts_number;
 }
 
 int GetPrevHost()
 {
-  if(Hosts.curhosts_number > 1)
-	Hosts.curhosts_number--;
-  else /* loop from first to last */
-	Hosts.curhosts_number = Hosts.hosts_number;
-  
-  /* align to tab */
-  CurHost = Hosts.Ups_list[Hosts.curhosts_number - 1];
-  
-  DEBUG1("(Prev) Monitored host : %d (%s)\n",
-		 Hosts.curhosts_number, CurHost->hostname);
-  
-  return Hosts.curhosts_number;
+	if(Hosts.curhosts_number > 1)
+		Hosts.curhosts_number--;
+	else /* loop from first to last */
+		Hosts.curhosts_number = Hosts.hosts_number;
+
+	/* align to tab */
+	CurHost = Hosts.Ups_list[Hosts.curhosts_number - 1];
+
+	DEBUGOUT("(Prev) Monitored host : %d (%s)\n",
+			Hosts.curhosts_number, CurHost->hostname);
+
+	return Hosts.curhosts_number;
 }
