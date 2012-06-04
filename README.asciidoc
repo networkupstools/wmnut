@@ -14,7 +14,7 @@ Window Maker, AfterStep, BlackBox, FluxBox, and Enlightenment.
 WMNut will run as a simple 64*64 pixels window in other Window Managers, or
 when using *-w*.
 
-image:images/WMnut_desc.png[]
+image:http://github.com/aquette/wmnut/raw/master/images/WMnut_desc.png[]
 
 WMNut provides multiple UPSs monitoring with:
 
@@ -151,21 +151,21 @@ Be sure to read the HINTS and TODO files too!
 Copyright and license
 ---------------------
 
-	WMNut is Copyright (C) 2002 - 2012 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
+WMNut is Copyright (C) 2002 - 2012 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
 
-	wmnut is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+wmnut is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 Credits
