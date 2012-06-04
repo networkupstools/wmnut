@@ -1,3 +1,5 @@
+EXTRA_DIST = README
 
-EXTRA_DIST = README wmnut.spec.in wmnut.ebuild.in
-
+# The desktop files
+desktopdir = $(datadir)/applications
+desktop_DATA = wmnut.desktop
