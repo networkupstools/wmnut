@@ -1,0 +1,7 @@
+.deps
+Makefile
+compat.o
+rcfiles.o
+wmgeneral.o
+wmnut
+wmnut.o
