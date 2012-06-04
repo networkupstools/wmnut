@@ -36,9 +36,8 @@ Download
 - link:http://github.com/aquette/wmnut/raw/master/ChangeLog[ChangeLog]
 
 ////////////////////////////////////////////////////////////////////////////////
-link:README[]
-link:HINTS[]
-link:TODO[]
+- link:http://github.com/aquette/wmnut/raw/master/HINTS[HINTS]
+- link:http://github.com/aquette/wmnut/raw/master/TODO[TODO]
 ////////////////////////////////////////////////////////////////////////////////
 
 - link:http://packages.debian.org/wmnut[Debian packages]
