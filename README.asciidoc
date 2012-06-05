@@ -31,7 +31,7 @@ system supporting X11.
 Download
 --------
 
-- link:https://github.com/downloads/aquette/wmnut/wmnut-0.64.tar.bz2[wmnut-0.64.tar.gz]
+- link:https://github.com/downloads/aquette/wmnut/wmnut-0.64.tar.gz[wmnut-0.64.tar.gz]
 - link:https://github.com/downloads/aquette/wmnut/wmnut-0.64.tar.bz2[wmnut-0.64.tar.bz2]
 - link:http://github.com/aquette/wmnut/raw/master/ChangeLog[ChangeLog]
 
