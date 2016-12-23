@@ -14,7 +14,7 @@ Window Maker, AfterStep, BlackBox, FluxBox, and Enlightenment.
 WMNut will run as a simple 64*64 pixels window in other Window Managers, or
 when using *-w*.
 
-image:http://github.com/aquette/wmnut/raw/master/images/WMnut_desc.png[]
+image:images/WMnut_desc.png[]
 
 WMNut provides multiple UPSs monitoring with:
 
@@ -33,7 +33,7 @@ Download
 
 - link:https://github.com/downloads/aquette/wmnut/wmnut-0.64.tar.gz[wmnut-0.64.tar.gz]
 - link:https://github.com/downloads/aquette/wmnut/wmnut-0.64.tar.bz2[wmnut-0.64.tar.bz2]
-- link:http://github.com/aquette/wmnut/raw/master/ChangeLog[ChangeLog]
+- link:https://github.com/aquette/wmnut/raw/master/ChangeLog[ChangeLog]
 
 ////////////////////////////////////////////////////////////////////////////////
 - link:http://github.com/aquette/wmnut/raw/master/HINTS[HINTS]
@@ -41,10 +41,10 @@ Download
 ////////////////////////////////////////////////////////////////////////////////
 
 - link:http://packages.debian.org/wmnut[Debian packages]
-- link:www.rpmfind.net/linux/rpm2html/search.php?query=wmnut[RPM packages]
+- link:http://www.rpmfind.net/linux/rpm2html/search.php?query=wmnut[RPM packages]
 
 Note that you can also access to
-link:http://github.com/aquette/wmnut/downloads[old and testing WMNut releases].
+link:https://github.com/aquette/wmnut/downloads[old and testing WMNut releases].
 
 Installation instructions
 -------------------------
@@ -130,6 +130,7 @@ or / and:
 
 [NOTE]
 ================================================================================
+- as of WMNut 0.65, wmnutrc is installed now, to /etc by default
 - if both files exist, "~/.wmnutrc" takes precedence,
 - command lines options takes precedence on configuration files,
 - on debian, a sample 'wmnutrc' is located in /usr/share/doc/wmnut/.
@@ -150,7 +151,7 @@ Be sure to read the HINTS and TODO files too!
 Copyright and license
 ---------------------
 
-WMNut is Copyright (C) 2002 - 2012 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
+WMNut is Copyright (C) 2002 - 2016 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
 
 wmnut is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ I'm interested in having feedback about how WMNut runs on other platforms
 (BSD, Solaris, ...) and searching for packagers on those platforms.
 
 If you have nice suggestions, ideas, whatever, that aren't on TODO list, feel free to mail them to me.
-Comments and remarks are also welcomed (mail to: link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]).
+Comments and remarks are also welcomed (link:mailto:aquette.dev@gmail.com[Arnaud Quette]).
 
 FAQ
 ---
@@ -226,14 +227,14 @@ Screenshots
 Withdrawn mode
 ~~~~~~~~~~~~~~
 
-image:http://github.com/aquette/wmnut/raw/master/images/wmnut-0_09w.jpg[]
+image:images/wmnut-0_09w.jpg[]
 
 Windowed mode (-w)
 ~~~~~~~~~~~~~~~~~~
 
-image:http://github.com/aquette/wmnut/raw/master/images/wmnut-0_09win.jpg[]
+image:images/wmnut-0_09win.jpg[]
 
 Windowed mode (-w) under KDE (Plastik)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-image:http://github.com/aquette/wmnut/raw/master/images/wmnut-0_60kde.jpg[]
+image:images/wmnut-0_60kde.jpg[]

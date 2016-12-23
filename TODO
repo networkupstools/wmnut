@@ -4,9 +4,6 @@ TODO list for WMNUT
 Note: WMNut is no more evolving, though still maintained. This means that
 the TODO list items below will probably never get implemented.
 
-Planned for 0.60.0
-	* Add install-conf rule to Makefile for wmnutrc
-
 Planned for 0.70.0
 	* Status overview (9 R/G/B/none LED) between arrows and panel
 
@@ -20,10 +17,10 @@ Planned for 0.90.0
 Planned for 1.0.0
 	* Above and below features, no bugs and no user request pending.
 
-Not scheduled yet or backgrounded:	
+Not scheduled yet or backgrounded:
 
 	* autoconf for getopt: EOF (Solaris) vs. -1 (HP-UX, AIX)
-	* Derivate a gkrellm applet (or include an option)
+	* Derive a gkrellm applet (or include an option)
 	* Validate and enhance other platforms support (FreeBSD,
 	  NetBSD, Solaris and other NUT supported platforms),
 	  and other window managers support
@@ -37,7 +34,7 @@ Not scheduled yet or backgrounded:
 	* Add setitimer to flush_expose() to deal with no X11 events
 
 Abandoned features
-	* Derivate a gnome / kde applet (or include an option). This is part
+	* Derive a gnome / kde applet (or include an option). This is part
 		of other projects.
 	* dynamically reread rcfiles files on SIGUSR1
 
