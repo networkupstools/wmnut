@@ -1,4 +1,9 @@
 2016-12-23  Arnaud Quette  <arnaud.quette@free.fr>
+	* wmnut-0.66:
+
+	  + fix XDG desktop file content and execution bit
+
+2016-12-23  Arnaud Quette  <arnaud.quette@free.fr>
 	* wmnut-0.65:
 
 	  + Add a rule to install wmnutrc to /etc
