@@ -11,12 +11,12 @@ wmnut_SOURCES = \
 	wmnut_master_LowColor.xpm \
 	wmnut_master.xpm 
 
-INCLUDES = \
+AM_CFLAGS =  \
 	@HEADER_SEARCH_PATH@ \
 	@NUT_HEADER@ \
-	@XCFLAGS@
-
-AM_CFLAGS = @DFLAGS@ @CFLAGS@
+	@XCFLAGS@ \
+	@DFLAGS@ \
+	@CFLAGS@
 
 wmnut_LDADD = \
 	@LIBRARY_SEARCH_PATH@ \

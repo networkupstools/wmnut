@@ -2,12 +2,12 @@ dnl ====================================================================
 dnl | WMNut: configure.ac                                              |
 dnl ====================================================================
 
-AC_INIT([wmnut],[0.64],[aquette.dev@gmail.com])
+AC_INIT([wmnut],[0.65])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE($PACKAGE_NAME, $PACKAGE_VERSION)
-
 AC_CONFIG_SRCDIR(src/wmnut.c)
+AM_INIT_AUTOMAKE
+
 AM_CONFIG_HEADER(config.h)
 
 dnl Checks for programs.
