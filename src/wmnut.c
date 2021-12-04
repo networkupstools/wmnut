@@ -266,6 +266,11 @@ int main(int argc, char *argv[]) {
 	if(Hosts.hosts_number == 0)
 		AddHost("localhost");
 
+	if(Hosts.hosts_number == 0) {
+		fputs("No UPS available.\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+
 	/*  Check NUT daemon availability on all host(s) */
 	InitCom();
 
