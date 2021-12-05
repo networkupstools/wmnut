@@ -266,6 +266,11 @@ int main(int argc, char *argv[]) {
 	if(Hosts.hosts_number == 0)
 		AddHost("localhost");
 
+	if(Hosts.hosts_number == 0) {
+		fputs("No UPS available.\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+
 	/*  Check NUT daemon availability on all host(s) */
 	InitCom();
 
@@ -471,6 +476,8 @@ int main(int argc, char *argv[]) {
 					if (CurHost->battery_load >= 10)
 						copyXPMArea((CurHost->battery_load / 10) * 6 + 4,
 										81, 6, 7, 37, 34); /* Show 10's */
+					else
+						copyXPMArea(76, 81, 6, 7, 37, 34); /* Erase 10's */
 					copyXPMArea((CurHost->battery_load % 10) * 6 + 4,
 									81, 6, 7, 43, 34);    	/* Show 1's */
 					copyXPMArea(64, 81, 7, 7, 50, 34);		/* Show '%' */

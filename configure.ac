@@ -99,9 +99,6 @@ fi
 AC_SUBST(DFLAGS)
 
 
-LDFLAGS="$XLIBS $X_EXTRA_LIBS"
-
-
 dnl ===============
 dnl Dockapp library
 dnl ===============

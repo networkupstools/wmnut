@@ -58,6 +58,7 @@ XpmIcon		wmgen;
 Pixmap		pixmask;
 Atom		wm_delete_window;
 Atom		wm_protocols;
+Display		*display;
 
   /*****************/
  /* Mouse Regions */
