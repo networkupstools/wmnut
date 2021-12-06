@@ -2,7 +2,7 @@ dnl ====================================================================
 dnl | WMNut: configure.ac                                              |
 dnl ====================================================================
 
-AC_INIT([wmnut],[0.66])
+AC_INIT([wmnut],[0.67])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR(src/wmnut.c)
