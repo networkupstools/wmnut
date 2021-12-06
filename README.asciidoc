@@ -54,7 +54,9 @@ Requirements
 WMNUT requires the:
 
 - X Window client and Xpm libraries and development files,
-- NUT client library, version 2.2.1 or higher.
+  For example on a Debian GNU/Linux system, you need to install the packages libxext-dev and libxpm-dev
+- NUT client library, version 2.2.1 or higher
+  For example on a Debian GNU/Linux system, you need to install the package libupsclient-dev
 
 In order to compile WMNUT using the Makefile, GNU make must be used.
 For FreeBSD users, the default BSD 'make' does not work, so use 'gmake' instead!
