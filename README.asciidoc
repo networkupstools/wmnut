@@ -26,7 +26,7 @@ WMNut provides multiple UPSs monitoring with:
 - High/Low/Critical battery status (Red/Yellow/Green colored meter and battery).
 
 It is known to run on GNU/Linux and FreeBSD, but should also run on any other
-system supporting X11.
+system supporting X11. Like NUT, it may require C99 or newer compiler support.
 
 Download
 --------
