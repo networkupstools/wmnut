@@ -221,8 +221,11 @@ void ParseCMDLine(int argc, char *argv[])
 				printf("\nThis is wmnut version: %s\n", VERSION);
 				printf("\nCopyright 2001-2003 Arnaud Quette <%s>\n", PACKAGE_BUGREPORT);
 				printf("\nComplete documentation for WMNUT should be found on this system using\n");
-				printf("`man wmnut' or `wmnut -h'.  If you have access to the Internet, point\n");
-				printf("your browser at http://wmnut.mgeops.org, the WMNUT Home Page.\n\n");
+				printf("`man wmnut' or `wmnut -h'.  If you have access to the Internet, point your\n");
+				printf("browser at https://github.com/networkupstools/wmnut - the WMNUT Repository.\n\n");
+				/* Previously http://wmnut.mgeops.org, now defunct; last cached at
+				 * http://web.archive.org/web/20111003175836/http://wmnut.mgeops.org/
+				 */
 				exit(1);
 			case 'w': 
 				WithDrawn = 0; /* not in default withdrawn mode, so in windowed mode */
