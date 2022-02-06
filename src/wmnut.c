@@ -3,6 +3,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
+ *   2022 Jim Klimov <jimklimov+nut@gmail.com>
  *
  * based on wmapm originally written by
  * Chris D. Faulhaber <jedgar@speck.ml.org>. Version 3.0
@@ -26,6 +27,7 @@
  *
  */
 
+#include <stdint.h>	/* For size_t, may require C99+ */
 #include "wmnut.h"
 
 /* defines */
@@ -79,7 +81,7 @@ rckeys	wmnut_keys[13];
 int get_ups_var (char *variable, char *value)
 {
 	int retcode;
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	const	char	*query[4];
 	char	**answer;
 
@@ -267,7 +269,9 @@ int main(int argc, char *argv[]) {
 		AddHost("localhost");
 
 	if(Hosts.hosts_number == 0) {
-		fputs("No UPS available.\n", stderr);
+		fputs("No UPS available.\n"
+			"Please check that your system or user wmnutrc file has UPS=... entries.\n",
+			stderr);
 		exit(EXIT_FAILURE);
 	}
 
@@ -544,7 +548,7 @@ void InitCom()
 {
 	int i, ret;
 	char vars[LARGEBUF];
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	const	char	*query[4];
 	char	**answer;
 
@@ -594,7 +598,7 @@ void InitCom()
 				/* VAR <upsname> <varname> <val> */
 				if (numa < 4) {
 					DEBUGERR("Error: insufficient data "
-							"(got %d args, need at least 4)\n", numa);
+							"(got %zu args, need at least 4)\n", numa);
 					/* return EXIT_FAILURE; */
 				}
 				DEBUGERR("%s: %s\n", answer[2], answer[3]);
@@ -639,7 +643,7 @@ int AddHost(char *hostname)
 {
 	int nbHosts, ret;
 	const	char	*query[4];
-	unsigned int	numq, numa;
+	size_t	numq, numa;
 	char	**answer;
 	char  newhostname[32];
 	UPSCONN_t ups;
@@ -672,7 +676,7 @@ int AddHost(char *hostname)
 				/* UPS <upsname> "<description>" */
 				if (numa < 3) {
 					fprintf(stderr, "Error: insufficient data "
-							"(got %d args, need at least 4)\n", numa);
+							"(got %zu args, need at least 4)\n", numa);
 
 					return 0;
 				}
