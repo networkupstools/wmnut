@@ -100,7 +100,7 @@ Just call the usual:
 NOTE: WMNut now uses pkg-config to determine the location of NUT library
 and headers. Alternatively, you can point to systems-dependent location
 of a custom NUT build area, like this:
-+
+
 	NUT_LIBS="-L${HOME}/nut/clients/.libs -lupsclient" \
 	NUT_CFLAGS="-I${HOME}/nut/include -I${HOME}/nut/clients" \
 	./configure
