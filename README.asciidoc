@@ -42,8 +42,11 @@ Download
 - link:http://packages.debian.org/wmnut[Debian packages]
 - link:http://www.rpmfind.net/linux/rpm2html/search.php?query=wmnut[RPM packages]
 
-Note that you can also access to
-link:https://github.com/networkupstools/wmnut/downloads[old and testing WMNut releases].
+Note that you can also access the
+link:http://web.archive.org/web/20110913170506/http://wmnut.mgeops.org/files/arch/[old]
+and
+link:http://web.archive.org/web/20110913170506/http://wmnut.mgeops.org/files/testing/[testing]
+WMNut releases.
 
 Installation instructions
 -------------------------
