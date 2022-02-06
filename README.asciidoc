@@ -97,9 +97,12 @@ Just call the usual:
 
 	$ ./configure
 
-NOTE: WMNut now uses pkg-config to determine the location of NUT library
-and headers. Alternatively, you can point to systems-dependent location
-of a custom NUT build area, like this:
+[NOTE]
+================================================================================
+WMNut now uses `pkg-config` to determine the location of NUT library and
+headers by default. Alternatively, you can point to systems-dependent
+location of a custom NUT build or installation (`make install DESTDIR=...`)
+area, like this:
 
 	NUT_LIBS="-L${HOME}/nut/clients/.libs -lupsclient" \
 	NUT_CFLAGS="-I${HOME}/nut/include -I${HOME}/nut/clients" \
@@ -108,6 +111,7 @@ of a custom NUT build area, like this:
 	# You would need to install that libdir or pass it with LD_LIBRARY_PATH
 	# to run the built program experimentally, e.g.:
 	LD_LIBRARY_PATH=${HOME}/nut/clients/.libs ./src/wmnut -w
+================================================================================
 
 5) Now compile WMNut
 
