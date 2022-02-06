@@ -219,7 +219,7 @@ void ParseCMDLine(int argc, char *argv[])
 				break;
 			case 'v':   
 				printf("\nThis is wmnut version: %s\n", VERSION);
-				printf("\nCopyright 2001-2003 Arnaud Quette <%s>\n", PACKAGE_BUGREPORT);
+				printf("\nCopyright 2001-2016 Arnaud Quette <%s>\n", PACKAGE_BUGREPORT);
 				printf("\nComplete documentation for WMNUT should be found on this system using\n");
 				printf("`man wmnut' or `wmnut -h'.  If you have access to the Internet, point your\n");
 				printf("browser at https://github.com/networkupstools/wmnut - the WMNUT Repository.\n\n");
