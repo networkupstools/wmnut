@@ -31,19 +31,19 @@ system supporting X11.
 Download
 --------
 
-- link:https://github.com/downloads/aquette/wmnut/wmnut-0.67.tar.gz[wmnut-0.67.tar.gz]
-- link:https://github.com/aquette/wmnut/raw/master/ChangeLog[ChangeLog]
+- link:https://github.com/downloads/networkupstools/wmnut/wmnut-0.67.tar.gz[wmnut-0.67.tar.gz]
+- link:https://github.com/networkupstools/wmnut/raw/master/ChangeLog[ChangeLog]
 
 ////////////////////////////////////////////////////////////////////////////////
-- link:http://github.com/aquette/wmnut/raw/master/HINTS[HINTS]
-- link:http://github.com/aquette/wmnut/raw/master/TODO[TODO]
+- link:http://github.com/networkupstools/wmnut/raw/master/HINTS[HINTS]
+- link:http://github.com/networkupstools/wmnut/raw/master/TODO[TODO]
 ////////////////////////////////////////////////////////////////////////////////
 
 - link:http://packages.debian.org/wmnut[Debian packages]
 - link:http://www.rpmfind.net/linux/rpm2html/search.php?query=wmnut[RPM packages]
 
 Note that you can also access to
-link:https://github.com/aquette/wmnut/downloads[old and testing WMNut releases].
+link:https://github.com/networkupstools/wmnut/downloads[old and testing WMNut releases].
 
 Installation instructions
 -------------------------
@@ -66,10 +66,10 @@ Installation
 
 1) Download WMNut source code (from github) or archive (.tar.gz or .tar.bz2)
 
-Either get file from link:http://github.com/aquette/wmnut/downloads[WMNut downloads]
+Either get file from link:http://github.com/networkupstools/wmnut/downloads[WMNut downloads]
 or clone the git repository using:
 
-	$ git clone git://github.com/aquette/wmnut.git
+	$ git clone git://github.com/networkupstools/wmnut.git
 
 2) Uncompress the archive (not needed for github source code)
 
