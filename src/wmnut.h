@@ -89,7 +89,7 @@ typedef struct ups_info {
   char       *upsname;
   char       *hostname;
   UPSCONN_t  connexion;
-  int        port;
+  uint16_t   port;
   int        ups_status;	/* -1 if not init'ed */
   int        comm_status;	/* -1 if not init'ed, -2 if not available  */
   int        battery_percentage;/* -1 if not init'ed, -2 if not available  */
