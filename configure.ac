@@ -94,9 +94,9 @@ dnl =========
 AC_ARG_ENABLE(debug,
              [  --enable-debug          turn on debugging [default=no]],, enable_debug=no)
 if test "$enable_debug" = yes; then
-  DFLAGS="-Wall -g -ansi -pedantic"
+  DBGFLAGS="-Wall -g -ansi -pedantic"
 fi
-AC_SUBST(DFLAGS)
+AC_SUBST([DBGFLAGS])
 
 
 dnl ===============

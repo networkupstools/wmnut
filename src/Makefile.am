@@ -15,7 +15,7 @@ AM_CFLAGS =  \
 	@HEADER_SEARCH_PATH@ \
 	@NUT_HEADER@ \
 	@XCFLAGS@ \
-	@DFLAGS@ \
+	@DBGFLAGS@ \
 	@CFLAGS@
 
 wmnut_LDADD = \
