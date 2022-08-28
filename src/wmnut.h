@@ -21,6 +21,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+	#include "config.h"
+#endif
+
 /* standard system includes */
 #ifdef FreeBSD
  #include <err.h>
@@ -40,10 +44,6 @@
 /* nut and wmnut includes */
 #include <upsclient.h>
 #include "wmgeneral.h"
-
-#ifdef HAVE_CONFIG_H
-	#include "config.h"
-#endif
 
 /* pixmaps */
 #include "wmnut_master.xpm"

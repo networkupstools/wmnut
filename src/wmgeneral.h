@@ -1,14 +1,14 @@
 #ifndef WMGENERAL_H_INCLUDED
 #define WMGENERAL_H_INCLUDED
 
+#ifdef HAVE_CONFIG_H
+	#include "config.h"
+#endif
+
 /* X11 includes */
 #include <X11/X.h>
 #include <X11/xpm.h>
 #include <string.h>
-
-#ifdef HAVE_CONFIG_H
-	#include "config.h"
-#endif
 
   /***********/
  /* Defines */
