@@ -8,7 +8,7 @@ AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR(src/wmnut.c)
 AM_INIT_AUTOMAKE
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 dnl Checks for programs.
 AC_PROG_INSTALL
@@ -137,14 +137,8 @@ AC_SUBST(NUT_HEADER)
 AC_SUBST(NUT_LIB)
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
 AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
-
-dnl Checks for header files.
-AC_HEADER_STDC
-
 
 dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
