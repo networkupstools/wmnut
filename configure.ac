@@ -118,7 +118,7 @@ dnl ===============================================
 dnl Checks for NUT client library
 dnl ===============================================
 
-PKG_CHECK_MODULES(NUT, libupsclient  >= 2.4.0)
+PKG_CHECK_MODULES(NUT, libupsclient  >= 2.8.0)
 NUT_HEADER="$NUT_CFLAGS"
 NUT_LIB="$NUT_LIBS"
 
