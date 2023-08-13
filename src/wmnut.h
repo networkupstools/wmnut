@@ -21,6 +21,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+	#include "config.h"
+#endif
+
 /* standard system includes */
 #ifdef FreeBSD
  #include <err.h>
@@ -40,10 +44,6 @@
 /* nut and wmnut includes */
 #include <upsclient.h>
 #include "wmgeneral.h"
-
-#ifdef HAVE_CONFIG_H
-	#include "config.h"
-#endif
 
 /* pixmaps */
 #include "wmnut_master.xpm"
@@ -89,7 +89,7 @@ typedef struct ups_info {
   char       *upsname;
   char       *hostname;
   UPSCONN_t  connexion;
-  int        port;
+  uint16_t   port;
   int        ups_status;	/* -1 if not init'ed */
   int        comm_status;	/* -1 if not init'ed, -2 if not available  */
   int        battery_percentage;/* -1 if not init'ed, -2 if not available  */

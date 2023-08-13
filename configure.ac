@@ -2,13 +2,13 @@ dnl ====================================================================
 dnl | WMNut: configure.ac                                              |
 dnl ====================================================================
 
-AC_INIT([wmnut],[0.67])
+AC_INIT([wmnut],[0.68])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR(src/wmnut.c)
 AM_INIT_AUTOMAKE
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 dnl Checks for programs.
 AC_PROG_INSTALL
@@ -94,9 +94,9 @@ dnl =========
 AC_ARG_ENABLE(debug,
              [  --enable-debug          turn on debugging [default=no]],, enable_debug=no)
 if test "$enable_debug" = yes; then
-  DFLAGS="-Wall -g -ansi -pedantic"
+  DBGFLAGS="-Wall -g -ansi -pedantic"
 fi
-AC_SUBST(DFLAGS)
+AC_SUBST([DBGFLAGS])
 
 
 dnl ===============
@@ -118,7 +118,7 @@ dnl ===============================================
 dnl Checks for NUT client library
 dnl ===============================================
 
-PKG_CHECK_MODULES(NUT, libupsclient  >= 2.4.0)
+PKG_CHECK_MODULES(NUT, libupsclient  >= 2.8.0)
 NUT_HEADER="$NUT_CFLAGS"
 NUT_LIB="$NUT_LIBS"
 
@@ -137,14 +137,8 @@ AC_SUBST(NUT_HEADER)
 AC_SUBST(NUT_LIB)
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
 AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
-
-dnl Checks for header files.
-AC_HEADER_STDC
-
 
 dnl Checks for library functions.
 dnl AC_FUNC_MALLOC

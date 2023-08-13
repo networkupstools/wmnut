@@ -1,3 +1,24 @@
+2023-08-13  Jim Klimov <jimklimov@gmail.com>
+	* wmnut-0.68:
+
+	  + Numerous documentation updates (building, spelling...)
+	  + CI: CodeQL workflow for code scanning
+	  + Build recipe updates to match NUT v2.8.0 public API changes
+	    (note: not cleanly compatible with older NUT releases anymore)
+	  + contrib/wmnut.desktop: Add categories and keywords to .desktop file
+	  + configure.ac: Fix obsolete autoconf usages
+
+2021-12-06  Arnaud Quette  <arnaud.quette@free.fr>
+	* wmnut-0.67:
+
+	  + Clear battery load 10's column
+	  + configure.ac: Don't set `LDFLAGS` in configure.ac
+	  + contrib/wmnut.desktop: Add a `Comment` entry
+	  + wmnut assumes that there is a UPS available and
+	    seg-faults if not. Now just exit with an err message
+	    unless there is at least one host.
+	  + Remove duplicate variable definition (wmgeneral, display)
+
 2016-12-23  Arnaud Quette  <arnaud.quette@free.fr>
 	* wmnut-0.66:
 
