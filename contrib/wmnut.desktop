@@ -7,4 +7,6 @@ Name[fr_FR]=WMNut
 Exec=wmnut -w
 Name=WMNut
 Icon=wmnut
+Categories=System;Monitor
+Keywords=dockapp;monitor;UPS;NUT;window maker
 Comment=Monitor multiple UPSs statistics through the Network UPS Tools framework.

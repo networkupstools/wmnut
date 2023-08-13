@@ -200,7 +200,7 @@ Note that I have however taken over NUT leadership since 2005...
 and improvement of WMNut,
 - Martijm Pieterse and Antoine Nulle for a great (and somewhat standardised)
 interface which I used as a template (wmmon.app and wmgeneral),
-- Luca Filipozzi for WMNut Debian package creation, which I now personaly hold,
+- Luca Filipozzi for WMNut Debian package creation, which I now personally hold,
 available at link:http://packages.debian.org/wmnut[Debian website].
 
 

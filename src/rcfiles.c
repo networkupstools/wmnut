@@ -1,5 +1,5 @@
 /*
- * rcfiles.c: usefull functions to deal with parameters from rc files
+ * rcfiles.c: useful functions to deal with parameters from rc files
  * or command line
  *
  * Copyright (C)
