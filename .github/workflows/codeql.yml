@@ -26,6 +26,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Initialize dependencies (Ubuntu)
+        run: |
+            sudo apt-get update
+            sudo apt-get install libxpm-dev libupsclient-dev
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
