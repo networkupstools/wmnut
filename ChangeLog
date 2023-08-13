@@ -38,7 +38,7 @@
 2006-01-13  Arnaud Quette  <arnaud.quette@mgeups.com>
 	* wmnut-0.62:
 	  
-	  + Disable the XBell detection ad calls as these are not much usefull,
+	  + Disable the XBell detection ad calls as these are not much useful,
 	  and cause some problems with the switch to Xorg and X11R7
 	  + Update the missing file
 
