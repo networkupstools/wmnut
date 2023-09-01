@@ -71,11 +71,12 @@ WMNut requires the:
     `configure.ac` script and possibly wmnut codebase itself.
     It may be easier to just take wmnut-0.67 or an older release then.
 
-In order to compile WMNut using the `Makefile`, GNU `make` must be used.
+In order to compile WMNut using the `Makefile`, GNU `make` should be used.
 
-NOTE: For FreeBSD and OpenIndiana users, the default BSD or Sun `make` programs
-respectively do not work for recipes used here, so in case of problems --
-use `gmake` instead!
+NOTE: For FreeBSD and OpenIndiana users, the default BSD `make` or Sun `dmake`
+programs respectively in modern releases (2020's) do also work for the simple
+recipes used here; however in case of `Makefile` syntax problems -- remember
+to try using `gmake` instead!
 
 Installation
 ~~~~~~~~~~~~
@@ -136,7 +137,7 @@ area, like this:
 
 	$ make
 
-Or (for *BSD and illumos based systems):
+Or (may be needed for *BSD and Solaris/illumos based systems):
 
 	$ gmake
 
