@@ -34,7 +34,7 @@ Download
 --------
 
 - link:https://github.com/networkupstools/wmnut/releases[Tagged official releases on GitHub]
-- link:https://github.com/downloads/networkupstools/wmnut/wmnut-0.68.tar.gz[wmnut-0.68.tar.gz]
+- link:https://github.com/networkupstools/wmnut/releases/download/v0.68/wmnut-0.68.tar.gz[wmnut-0.68.tar.gz]
 - link:https://github.com/networkupstools/wmnut/raw/master/ChangeLog[ChangeLog]
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,8 @@ Installation
 
 1) Download WMNut source code (from GitHub) or archive (`.tar.gz` or `.tar.bz2`)
 
-Either get file from link:http://github.com/networkupstools/wmnut/downloads[WMNut downloads]
+Either get an archive file from
+link:https://github.com/networkupstools/wmnut/releases[WMNut releases on GitHub]
 or clone the git repository using:
 
 	$ git clone https://github.com/networkupstools/wmnut.git
