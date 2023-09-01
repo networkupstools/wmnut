@@ -183,9 +183,9 @@ Be sure to read the `HINTS` and `TODO` files too!
 Copyright and license
 ---------------------
 
-WMNut is Copyright (C) 2002 - 2016 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
+WMNut is Copyright (C) 2002 - 2020 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
 
-WMNut is Copyright (C) 2016 - 2023 by the Network UPS Tools project
+WMNut is Copyright (C) 2021 - 2023 by the Network UPS Tools project
 
 wmnut is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
