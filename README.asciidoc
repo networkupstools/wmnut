@@ -33,6 +33,7 @@ Like NUT, it may require C99 or newer compiler support.
 Download
 --------
 
+- link:https://github.com/networkupstools/wmnut/releases[Tagged official releases on GitHub]
 - link:https://github.com/downloads/networkupstools/wmnut/wmnut-0.67.tar.gz[wmnut-0.67.tar.gz]
 - link:https://github.com/networkupstools/wmnut/raw/master/ChangeLog[ChangeLog]
 
