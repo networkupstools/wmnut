@@ -171,6 +171,8 @@ Copyright and license
 
 WMNut is Copyright (C) 2002 - 2016 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
 
+WMNut is Copyright (C) 2016 - 2023 by the Network UPS Tools project
+
 wmnut is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -207,7 +209,7 @@ available at link:http://packages.debian.org/wmnut[Debian website].
 
 Help
 ----
-I'm interested in having feedback about how WMNut runs on other platforms
+We are interested in having feedback about how WMNut runs on other platforms
 (BSD, Solaris, ...) and searching for packagers on those platforms.
 
 If you have nice suggestions, ideas, whatever, that aren't on TODO list, feel free to mail them to me.
