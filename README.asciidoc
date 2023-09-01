@@ -210,15 +210,17 @@ M.G. Henderson.
 
 Huge thanks to:
 
+- link:mailto:aquette.dev@gmail.com[Arnaud Quette] for the majority of
+  initial development and maintenance of the WMNut project.
 - Russell Kroll for having initiated and driven the NUT project
-(link:http://www.networkupstools.org[Network UPS Tools]), until 2004.
-Note that I have however taken over NUT leadership since 2005...
+  (link:http://www.networkupstools.org[Network UPS Tools]), until 2004.
+  Note that Arnaud had however taken over NUT leadership since 2005 to 2020.
 - Bill Richter, Laszlo Hazy and David Butts for their support in beta test
-and improvement of WMNut,
-- Martijm Pieterse and Antoine Nulle for a great (and somewhat standardised)
-interface which I used as a template (wmmon.app and wmgeneral),
-- Luca Filipozzi for WMNut Debian package creation, which I now personally hold,
-available at link:http://packages.debian.org/wmnut[Debian website].
+  and improvement of WMNut,
+- Martijm Pieterse and Antoine Nulle for a great (and somewhat standardized)
+  interface which Arnaud used as a template (`wmmon.app` and `wmgeneral`),
+- Luca Filipozzi for WMNut Debian package creation, later maintained by Arnaud,
+  available at link:http://packages.debian.org/wmnut[Debian website].
 
 
 Help
