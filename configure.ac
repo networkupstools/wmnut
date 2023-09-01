@@ -118,7 +118,12 @@ dnl ===============================================
 dnl Checks for NUT client library
 dnl ===============================================
 
-PKG_CHECK_MODULES(NUT, libupsclient  >= 2.8.0)
+dnl If you really must build against older NUT, tweak the version here
+dnl (perhaps 2.4.0+ may do) -- beware the build warnings and possible
+dnl data type incompatibility however! See project commit history to
+dnl maybe revert the changes (done in 2023) needed for the modern NUT.
+dnl It may be easier to just take wmnut-0.67 or an older release then.
+PKG_CHECK_MODULES(NUT, libupsclient >= 2.8.0)
 NUT_HEADER="$NUT_CFLAGS"
 NUT_LIB="$NUT_LIBS"
 
