@@ -85,7 +85,7 @@ Installation
 Either get file from link:http://github.com/networkupstools/wmnut/downloads[WMNut downloads]
 or clone the git repository using:
 
-	$ git clone git://github.com/networkupstools/wmnut.git
+	$ git clone https://github.com/networkupstools/wmnut.git
 
 2) Uncompress the archive (not needed for github source code)
 
