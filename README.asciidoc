@@ -104,6 +104,9 @@ If you are using the git source code, use:
 when using the git repository, be sure to first call:
 
 	$ autoreconf -i
+
+It is also wrapped into a simple `autogen.sh` script for consistency
+with other NUT source code repositories.
 ================================================================================
 
 Just call the usual:
