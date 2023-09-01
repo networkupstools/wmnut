@@ -25,8 +25,8 @@ WMNut provides multiple UPS's monitoring with:
 - Runtime to empty, i.e. time left to battery depletion (MM:SS),
 - High/Low/Critical battery status (Red/Yellow/Green colored meter and battery).
 
-It is known to run on GNU/Linux, FreeBSD and OpenIndiana, but should
-also run on any other system supporting X11.
+It is known to run on GNU/Linux, FreeBSD, OpenBSD and OpenIndiana (based on
+illumos/Solaris), but should also run on any other system supporting X11.
 
 Like NUT, it may require C99 or newer compiler support.
 
@@ -73,10 +73,10 @@ WMNut requires the:
 
 In order to compile WMNut using the `Makefile`, GNU `make` should be used.
 
-NOTE: For FreeBSD and OpenIndiana users, the default BSD `make` or Sun `dmake`
-programs respectively in modern releases (2020's) do also work for the simple
-recipes used here; however in case of `Makefile` syntax problems -- remember
-to try using `gmake` instead!
+NOTE: For FreeBSD, OpenBSD and OpenIndiana users, the default BSD `make` or
+Sun `dmake` programs respectively in modern releases (2020's) do also work
+for the simple recipes used here; however in case of reported `Makefile`
+syntax problems -- remember to try using `gmake` instead!
 
 Installation
 ~~~~~~~~~~~~
