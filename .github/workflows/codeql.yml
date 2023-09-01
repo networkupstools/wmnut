@@ -31,6 +31,30 @@ jobs:
             sudo apt-get update
             sudo apt-get install libxpm-dev libupsclient-dev
 
+      - name: Initialize dependencies (ensure NUT 2.8.0+)
+        run: |
+            case "`pkg-config --modversion libupsclient | tee -a /dev/stderr`" in
+                [01].*|2.[01234567].*)
+                    echo "WARNING: System-packaged NUT seems to old, will build dev profile from scratch" >&2
+                    set -e    ### abort on any non-zero exit code below
+                    ### Follow nut::docs/config-prereqs.txt chapter for Debian/Ubuntu
+                    ### to be sure, with a minimal set of third-party dependencies for
+                    ### a faster and practically useless build. Most or all of these
+                    ### are pre-installed in the image or by the above init, so there
+                    ### is little run-time impact of the APT operation here normally;
+                    ### these explicit installations help bolt down some auto-deps so
+                    ### they are surely not "apt-get remove"'d with the operation below:
+                    sudo apt-get install build-essential git python3 perl curl make autoconf automake libtool pkg-config gcc ### g++ libltdl-dev python-is-python3 ### TODO: ccache + persistent build area?
+                    git clone -b v2.8.0 -o upstream https://github.com/networkupstools/nut
+                    cd nut
+                    ./autogen.sh
+                    ./configure --prefix=/usr --sysconfdir=/etc --with-user=nut --with-group=nut --with-dev --without-all --without-docs --without-nut-scanner --enable-silent-rules
+                    make -j 8 -s
+                    sudo apt-get remove libupsclient-dev    ### avoid conflicts/confusion just in case
+                    sudo make -s install    ### overwrite system packaged files as too old
+                    ;;
+            esac
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
