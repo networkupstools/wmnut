@@ -16,7 +16,7 @@ AC_PROG_CC
 
 dnl AC_SUBST(VERSION)
 dnl
-dnl ISODATE=`date +%Y-%m-%d`
+dnl ISODATE="`date +%Y-%m-%d`"
 dnl AC_SUBST(ISODATE)
 
 
@@ -24,12 +24,12 @@ dnl
 dnl Specify paths to look for libraries and headers
 dnl ===============================================
 AC_ARG_WITH(libs-from,
-       [  --with-libs-from        pass compiler flags to look for libraries],
-       [lib_search_path="$withval $lib_search_path"])
+	[  --with-libs-from        pass compiler flags to look for libraries],
+	[lib_search_path="$withval $lib_search_path"])
 
 AC_ARG_WITH(incs-from,
-       [  --with-incs-from        pass compiler flags to look for header files],
-       [inc_search_path="$withval $inc_search_path"])
+	[  --with-incs-from        pass compiler flags to look for header files],
+	[inc_search_path="$withval $inc_search_path"])
 
 dnl ===========================
 dnl check for getopt specifics.
@@ -44,7 +44,7 @@ dnl ===========================================
 
 AC_PATH_XTRA
 
-X_LIBRARY_PATH=$x_libraries
+X_LIBRARY_PATH="$x_libraries"
 
 XCFLAGS="$X_CFLAGS"
 
@@ -63,20 +63,20 @@ dnl AC_CHECK_LIB(X11, XBell, [XLIBS="$XLIBS -lX11"],
 dnl     [echo "The XBell extension stuff could not be found in the X client libraries"
 dnl      exit 1],
 dnl     $X_LIBS $X_EXTRA_LIBS -lX11)
-	
+
 dnl Shape extension
 dnl ===============
 AC_CHECK_LIB(Xext, XShapeCombineMask, [XLIBS="$XLIBS -lXext"],
-    [echo "The shape extension stuff could not be found in the X client libraries"
-     exit 1],
-    $X_LIBS $X_EXTRA_LIBS -lX11)
+	[echo "The shape extension stuff could not be found in the X client libraries"
+	 exit 1],
+	$X_LIBS $X_EXTRA_LIBS -lX11)
 
 dnl XPM library
 dnl ===========
 AC_CHECK_LIB(Xpm, XpmCreatePixmapFromData, [XLIBS="$XLIBS -lXpm"],
-    [echo "The libXpm library was not found, but is necessary to build this library"
-     exit 1],
-    $X_LIBS $X_EXTRA_LIBS -lX11)
+	[echo "The libXpm library was not found, but is necessary to build this library"
+	 exit 1],
+	$X_LIBS $X_EXTRA_LIBS -lX11)
 
 AC_SUBST(XCFLAGS)
 AC_SUBST(XLFLAGS)
@@ -87,17 +87,17 @@ AC_SUBST(X_EXTRA_LIBS)
 dnl ===============================================
 dnl             End of stuff that uses X
 dnl ===============================================
-	
+
 dnl =========
 dnl Debugging
 dnl =========
 AC_ARG_ENABLE(debug,
-             [  --enable-debug          turn on debugging [default=no]],, enable_debug=no)
-if test "$enable_debug" = yes; then
-  DBGFLAGS="-Wall -g -ansi -pedantic"
+	[  --enable-debug          turn on debugging [default=no]],, enable_debug=no)
+
+if test x"$enable_debug" = xyes; then
+	DBGFLAGS="-Wall -g -ansi -pedantic"
 fi
 AC_SUBST([DBGFLAGS])
-
 
 dnl ===============
 dnl Dockapp library
@@ -106,7 +106,7 @@ dnl AC_CHECK_LIB(libdockapp, DAInitialize, [DOCKLIBS="$DOCKLIBS -ldockapp"],
 dnl	[echo "The libdockapp library was not found, but is necessary to build this library"
 dnl	exit 1],
 dnl	$DOCKLIBS -ldockapp)
- 
+
 dnl AC_SUBST(DOCKLIBS)
 
 AC_HEADER_MAJOR
@@ -143,12 +143,14 @@ AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X1
 dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
 
-AC_CONFIG_FILES([Makefile
-		src/Makefile
-		doc/Makefile
-		icons/Makefile
-		contrib/Makefile
-		contrib/wmnut-mdk.spec
-		contrib/wmnut.spec
-		contrib/wmnut.ebuild])
+AC_CONFIG_FILES([
+	Makefile
+	src/Makefile
+	doc/Makefile
+	icons/Makefile
+	contrib/Makefile
+	contrib/wmnut-mdk.spec
+	contrib/wmnut.spec
+	contrib/wmnut.ebuild
+	])
 AC_OUTPUT
