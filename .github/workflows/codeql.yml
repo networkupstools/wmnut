@@ -51,7 +51,10 @@ jobs:
                     ./configure --prefix=/usr --sysconfdir=/etc --with-user=nut --with-group=nut --with-dev --without-all --without-docs --without-nut-scanner --enable-silent-rules
                     make -j 8 -s
                     sudo apt-get remove libupsclient-dev    ### avoid conflicts/confusion just in case
+                    sudo apt-get remove libupsclient4 || true
                     sudo make -s install    ### overwrite system packaged files as too old
+                    echo "=== Checking NUT libupsclient version seen by pkg-config:"
+                    pkg-config --modversion libupsclient
                     ;;
             esac
 
