@@ -29,7 +29,7 @@ jobs:
       - name: Initialize dependencies (Ubuntu)
         run: |
             sudo apt-get update
-            sudo apt-get install libxpm-dev libxext-dev libupsclient-dev
+            sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross
 
       - name: Initialize dependencies (ensure NUT 2.8.0+)
         run: |
@@ -66,6 +66,9 @@ jobs:
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
+        env:
+          ### Avoid installing obsolete libupsclient-dev
+          CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
