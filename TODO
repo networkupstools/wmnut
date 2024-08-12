@@ -4,14 +4,14 @@ TODO list for WMNUT
 Note: WMNut is no more evolving, though still maintained. This means that
 the TODO list items below will probably never get implemented.
 
-Planned for 0.70.0
+Planned for 0.80.0
 	* Status overview (9 R/G/B/none LED) between arrows and panel
 
-Planned for 0.80.0
+Planned for 0.90.0
 	* Page 0 dedicated as a "launcher" page (to call wmnut configuration
 		GUI, or external application)
 
-Planned for 0.90.0
+Planned for 0.95.0
 	* wmnut configuration GUI to ease user configuration,
 
 Planned for 1.0.0
