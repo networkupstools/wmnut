@@ -196,10 +196,13 @@ void get_ups_info(void)
 int main(int argc, char *argv[]) {
 
 	int		time_left, hour_left, min_left;
-	int		i, m, mMax, n, nMax, k, retVal, Toggle = OFF;
+	int		i, m, n, nMax, k, Toggle = OFF;
+#if 0
+	int		mMax, retVal;
 	long int	r, rMax, s, sMax;
 	char		*v, *ptr;
- 
+#endif
+
 	/* ignore upsd stop and don't crash (thanks to Russell Kroll) */ 
 	signal(SIGPIPE, SIG_IGN);
 
@@ -260,9 +263,11 @@ int main(int argc, char *argv[]) {
 	UpdateRate = (UpdateRate >= 0.0) ? UpdateRate : -1.0*UpdateRate;
 
 	nMax = (int)( 1.0e6/(2.0*UpdateRate*DELAY)  );
+#if 0
 	mMax = (BlinkRate > 0.0) ? (int)( 1.0e6/(2.0*BlinkRate*DELAY)  ) : nMax;
 	rMax = (int)( LAlertRate*1.0e6/(2.0*DELAY)  );
 	sMax = (int)( CAlertRate*1.0e6/(2.0*DELAY)  );
+#endif
 
 	/* if no UPS after rcfiles and cmd line, try with localhost */
 	if(Hosts.hosts_number == 0)
@@ -291,8 +296,10 @@ int main(int argc, char *argv[]) {
 
 	/* Loop until we die... */
 	n = m = 32000;
+#if 0
 	r = rMax+1;
 	s = sMax+1;
+#endif
 
 	while(1) {
 		/* Only process nut info only every nMax cycles of this
