@@ -155,6 +155,13 @@ AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X1
 dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
 
+AC_MSG_CHECKING([whether we build in C99/GNU99 mode])
+AS_CASE(["${CC}${CFLAGS}"],
+	[*99*], [AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)
+	 AC_MSG_WARN([If your build fails due to standard system header method and type names, or ISO C90 warnings, make sure you build in C99 mode (or newer)])
+	])
+
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
