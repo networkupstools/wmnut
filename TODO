@@ -39,10 +39,8 @@ Abandoned features
 	* dynamically reread rcfiles files on SIGUSR1
 
 
-Your feedback is greatly appreciated! If you have nice
-suggestions, ideas, whatever, that aren't on this list, feel 
-free to mail them to:
+Your feedback is greatly appreciated! If you have nice suggestions, ideas,
+code, patches, whatever, that aren't on this list, feel free to post them
+to https://github.com/networkupstools/wmnut/issues
 
-		arnaud.quette@free.fr
-
-If you don't let me know... how am I suppose to know? ;-)
+If you don't let us know... how are we supposed to know? ;-)
