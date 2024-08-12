@@ -1,3 +1,13 @@
+2024-08-12  Jim Klimov <jimklimov@gmail.com>
+	* wmnut-0.70:
+
+	  + Address compilation warnings exposed by new toolkits during
+	    `configure --enable-debug` builds
+	  + Introduce `configure --enable-Werror` builds
+	  + Address coding style (whitespace, indentation, etc.) to
+	    be more in line with main NUT project codebase guidelines
+	  + `BUGS`: updated the reference for problem reporting
+
 2023-09-01  Jim Klimov <jimklimov@gmail.com>
 	* wmnut-0.69:
 
