@@ -23,13 +23,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-	#include "config.h"
+# include "config.h"
 #endif
 
 /* standard system includes */
 #ifdef FreeBSD
- #include <err.h>
- #include <sys/file.h>
+# include <err.h>
+# include <sys/file.h>
 #endif
 
 #include <stdio.h>

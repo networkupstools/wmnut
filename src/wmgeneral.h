@@ -2,7 +2,7 @@
 #define WMGENERAL_H_INCLUDED
 
 #ifdef HAVE_CONFIG_H
-	#include "config.h"
+# include "config.h"
 #endif
 
 /* X11 includes */

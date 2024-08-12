@@ -30,7 +30,7 @@
 #include "config.h"
 
 #ifdef HAVE_GETOPT_LONG
-#include <getopt.h>
+# include <getopt.h>
 #endif
 
 
