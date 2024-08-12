@@ -27,3 +27,6 @@ wmnut_LDADD = \
 INSTALL_PROGRAM = \
 	@INSTALL_PROGRAM@ \
 	$(AM_INSTALL_PROGRAM_FLAGS)
+
+clean-local:
+	rm -rf .deps
