@@ -578,7 +578,7 @@ void InitCom()
 		query[1] = CurHost->upsname;
 		numq = 2;
 
-		if (ret = upscli_list_start(&CurHost->connexion, numq, query) < 0)
+		if ((ret = upscli_list_start(&CurHost->connexion, numq, query)) < 0)
 		/* if (upscli_getlist(&CurHost->connexion, CurHost->upsname,
 			 UPSCLI_LIST_VARS, vars, sizeof(vars)) < 0) */
 		{
