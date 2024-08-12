@@ -156,8 +156,12 @@ void LoadRCFile(rckeys *keys)
 \*******************************************************************************/
 void ParseCMDLine(int argc, char *argv[])
 {
-	char *cmdline, *p;
-	int  i, c;
+	char *p;
+	int  c;
+#if 0
+	char *cmdline;
+	int  i;
+#endif
 
 #ifdef HAVE_GETOPT_LONG
 		static struct option long_options[] =
