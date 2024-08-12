@@ -97,6 +97,13 @@ AC_ARG_ENABLE(debug,
 if test x"$enable_debug" = xyes; then
 	DBGFLAGS="-Wall -g -ansi -pedantic"
 fi
+
+AC_ARG_ENABLE(Werror,
+	[  --enable-Werror         make compiler warnings fatal [default=no]],, enable_Werror=no)
+
+if test x"$enable_Werror" = xyes; then
+	DBGFLAGS="$DBGFLAGS -Werror"
+fi
 AC_SUBST([DBGFLAGS])
 
 dnl ===============
