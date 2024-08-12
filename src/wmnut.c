@@ -558,6 +558,8 @@ void InitCom(void)
 	const char	*query[4];
 	char	**answer;
 
+	memset(vars, 0, sizeof(vars));
+
 	/*
 	 *  Check NUT daemon availability on host(s)
 	 */
@@ -613,6 +615,8 @@ void InitCom(void)
 			}
 		}
 
+		/* FIXME: With code commented away, we might in fact
+		 * have no vars because we do not fetch any */
 		if (strlen(vars) == 0) {
 			DEBUGERR("%s", "No data available check your configuration (ups.conf)\n");
 		}
