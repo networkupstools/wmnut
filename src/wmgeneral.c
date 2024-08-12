@@ -277,7 +277,9 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 	XTextProperty	name;
 	XGCValues      	gcv;
 	unsigned long	gcm;
+#if 0
 	Status			status;
+#endif
 	int				dummy=0, i;
   
 	wname = PACKAGE;
@@ -400,8 +402,15 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 			     "WM_PROTOCOLS",		/* atom_name */
 			     False);			/* only_if_exists */
 
-  status = XSetWMProtocols(display, win, &wm_delete_window, 1);
-  status = XSetWMProtocols(display, iconwin, &wm_delete_window,	1);
+#if 0
+  status =
+#endif
+  XSetWMProtocols(display, win, &wm_delete_window, 1);
+
+#if 0
+  status =
+#endif
+  XSetWMProtocols(display, iconwin, &wm_delete_window, 1);
 
   XMapWindow(display, win);
 
