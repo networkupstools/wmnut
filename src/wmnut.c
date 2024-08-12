@@ -287,10 +287,10 @@ int main(int argc, char *argv[]) {
 
 	/* Open display */
 	if (UseLowColorPixmap)
-		openXwindow(argc, argv, wmnut_master_LowColor, wmnut_mask_bits,
+		openXwindow(argc, argv, wmnut_master_LowColor, (char*)wmnut_mask_bits,
 			wmnut_mask_width, wmnut_mask_height, WithDrawn);
 	else
-		openXwindow(argc, argv, wmnut_master, wmnut_mask_bits,
+		openXwindow(argc, argv, wmnut_master, (char*)wmnut_mask_bits,
 			wmnut_mask_width, wmnut_mask_height, WithDrawn);
 
 	/* Loop until we die... */
