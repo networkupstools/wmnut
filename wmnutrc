@@ -24,9 +24,9 @@ LAlertRate=300
 
 # send alert every 2 minutes when Critical
 CAlertRate=120
-       
+
 # Blink rate for battery and communication status. (0 for no blinking.)
-BlinkRate=3	 # blinks per second 
+BlinkRate=3	# blinks per second
 
 # Controls beeping when you get to CriticalLevel
 Beep=off
@@ -44,4 +44,4 @@ UseLowColorPixmap=off
 
 
 # NOT USED FOR THE MOMENT
-#UpdateRate    		= 0.8;   /* Number of updates per second */
+#UpdateRate=0.8;	/* Number of updates per second */
