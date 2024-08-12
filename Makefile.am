@@ -10,3 +10,5 @@ EXTRA_DIST += \
 	images/wmnut-0_60kde.jpg
 
 SUBDIRS = src icons contrib doc
+
+MAINTAINERCLEANFILES = wmnut-*.tar*
