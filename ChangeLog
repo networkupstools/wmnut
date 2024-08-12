@@ -6,7 +6,11 @@
 	  + Introduce `configure --enable-Werror` builds
 	  + Address coding style (whitespace, indentation, etc.) to
 	    be more in line with main NUT project codebase guidelines
-	  + `BUGS`: updated the reference for problem reporting
+	  + Various docs: updated the reference for problem reporting
+	    from Arnaud's mail to NUT GitHub repository
+	  + Revised `Makefile.am` recipes to deliver the images needed
+	    for the `README.asciidoc` and to remove more build products
+	    when asked to clean up
 
 2023-09-01  Jim Klimov <jimklimov@gmail.com>
 	* wmnut-0.69:
