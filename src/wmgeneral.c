@@ -13,11 +13,14 @@
 	CHANGES:
 	---
 	02/05/1998 (Martijn Pieterse, pieterse@xs4all.nl)
-		* changed the read_rc_file to parse_rcfile, as suggester by Marcelo E. Magallon
+		* changed the read_rc_file to parse_rcfile,
+		  as suggested by Marcelo E. Magallon
 		* debugged the parse_rc file.
 	30/04/1998 (Martijn Pieterse, pieterse@xs4all.nl)
 		* Ripped similar code from all the wm* programs,
 		  and put them in a single file.
+	12/08/2024 (Jim Klimov, jimklimov+nut@gmail.com)
+		* Addressed modern compiler warnings, coding style
 
 */
 
@@ -91,12 +94,12 @@ void CheckX11Events(void);
 |* SetWindowName                                                               *|
 \*******************************************************************************/
 void SetWindowName(char *name) {
-	
+
 	char *fullname = NULL;
-	
+
 	if (strcmp(name, wname)) {
 		fullname = (char *)malloc(strlen(name) + strlen(wname) + 3);
-	
+
 		if (fullname != NULL) {
 			sprintf(fullname, "%s:%s", wname, name);
 			XStoreName(display, win, fullname);
@@ -129,7 +132,7 @@ static void GetXPM(XpmIcon *wmgen, char *pixmap_bytes[]) {
 
 	err = XpmCreatePixmapFromData(display, Root, pixmap_bytes, &(wmgen->pixmap),
 					&(wmgen->mask), &(wmgen->attributes));
-	
+
 	if (err != XpmSuccess) {
 		fprintf(stderr, "Not enough free colorcells.\n");
 		exit(1);
@@ -143,10 +146,10 @@ static Pixel GetColor(char *name) {
 
   XColor				color;
   XWindowAttributes	attributes;
-  
-  if (name != NULL) {	
+
+  if (name != NULL) {
     XGetWindowAttributes(display, Root, &attributes);
-    
+
     color.pixel = 0;
     if (!XParseColor(display, attributes.colormap, name, &color)) {
       fprintf(stderr, "wm.app: can't parse %s.\n", name);
@@ -159,7 +162,7 @@ static Pixel GetColor(char *name) {
     {
       fprintf(stderr,"GetColor:name is null\n");
       return (-1);
-    }    	
+    }
 }
 
 /*******************************************************************************\
@@ -169,10 +172,10 @@ static int flush_expose(Window w) {
 
   XEvent 		dummy;
   int			i=0;
-  
+
   while (XCheckTypedWindowEvent(display, w, Expose, &dummy))
     i++;
-  
+
   return i;
 }
 
@@ -180,9 +183,9 @@ static int flush_expose(Window w) {
 |* RedrawWindow						       		       *|
 \*******************************************************************************/
 void RedrawWindow(void) {
-	
+
   flush_expose(iconwin);
-  XCopyArea(display, wmgen.pixmap, iconwin, NormalGC, 
+  XCopyArea(display, wmgen.pixmap, iconwin, NormalGC,
 	    0,0, wmgen.attributes.width, wmgen.attributes.height, 0,0);
   flush_expose(win);
   XCopyArea(display, wmgen.pixmap, win, NormalGC,
@@ -193,9 +196,9 @@ void RedrawWindow(void) {
 |* RedrawWindowXY							       *|
 \*******************************************************************************/
 void RedrawWindowXY(int x, int y) {
-	
+
   flush_expose(iconwin);
-  XCopyArea(display, wmgen.pixmap, iconwin, NormalGC, 
+  XCopyArea(display, wmgen.pixmap, iconwin, NormalGC,
 	    x,y, wmgen.attributes.width, wmgen.attributes.height, 0,0);
   flush_expose(win);
   XCopyArea(display, wmgen.pixmap, win, NormalGC,
@@ -223,9 +226,9 @@ int CheckMouseRegion(int x, int y) {
 
   int		i;
   int		found;
-  
+
   found = 0;
-  
+
   for (i=0; i<MAX_MOUSE_REGION && !found; i++) {
     if (mouse_region[i].enable &&
 	x <= mouse_region[i].right &&
@@ -268,7 +271,7 @@ void setMaskXY(int x, int y) {
 /*******************************************************************************\
 |* openXwindow                                                                 *|
 \*******************************************************************************/
-void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bits, 
+void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bits,
 		 int pixmask_width, int pixmask_height, int withdrawn) {
 
 	unsigned int	borderwidth = 0;
@@ -281,16 +284,16 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 	Status			status;
 #endif
 	int				dummy=0, i;
-  
+
 	wname = PACKAGE;
-	
+
 	for (i=1; argv[i]; i++) {
 		if ((!strcmp(argv[i], "-display")) || (!strcmp(argv[i], "-d")))
 			display_name = argv[i+1];
 	}
-  
+
   if (!(display = XOpenDisplay(display_name))) {
-    fprintf(stderr, "%s: can't open display %s\n", 
+    fprintf(stderr, "%s: can't open display %s\n",
 	    wname, XDisplayName(display_name));
     exit(1);
   }
@@ -302,54 +305,54 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
   Root    = RootWindow(display, screen);
   d_depth = DefaultDepth(display, screen);
   x_fd    = XConnectionNumber(display);
-  
+
   /* Convert XPM to XImage */
   GetXPM(&wmgen, pixmap_bytes);
-  
+
   /* Create a window to hold the stuff */
   mysizehints.flags = USSize | USPosition;
   mysizehints.x = 0;
   mysizehints.y = 0;
-  
+
   back_pix = GetColor("white");
   fore_pix = GetColor("black");
-  
+
   XWMGeometry(display, screen, Geometry, NULL, borderwidth, &mysizehints,
 	      &mysizehints.x, &mysizehints.y,&mysizehints.width,&mysizehints.height, &dummy);
-  
-  mysizehints.min_width = 
+
+  mysizehints.min_width =
     mysizehints.max_width =
     mysizehints.width = 64;
-  
+
   mysizehints.min_height =
     mysizehints.max_height =
     mysizehints.height = 64;
   mysizehints.flags |= PMinSize|PMaxSize;
-  
+
   win = XCreateSimpleWindow(display, Root, mysizehints.x, mysizehints.y,
-			    mysizehints.width, mysizehints.height, borderwidth, 
+			    mysizehints.width, mysizehints.height, borderwidth,
 			    fore_pix, back_pix);
-  
+
   iconwin = XCreateSimpleWindow(display, win, mysizehints.x, mysizehints.y,
-				mysizehints.width, mysizehints.height, borderwidth, 
+				mysizehints.width, mysizehints.height, borderwidth,
 				fore_pix, back_pix);
-  
+
   /* Activate hints */
   XSetWMNormalHints(display, win, &mysizehints);
   XSetWMNormalHints(display, iconwin, &mysizehints); /* new AQ */
   classHint.res_name = wname;
   classHint.res_class = wname;
   XSetClassHint(display, win, &classHint);
-  
-  XSelectInput(display, win, 
-	       ButtonPressMask | ExposureMask | 
+
+  XSelectInput(display, win,
+	       ButtonPressMask | ExposureMask |
 	       ButtonReleaseMask | /*PointerMotionMask |*/ StructureNotifyMask);
-  XSelectInput(display, iconwin, 
-	       ButtonPressMask | ExposureMask | 
+  XSelectInput(display, iconwin,
+	       ButtonPressMask | ExposureMask |
 	       ButtonReleaseMask | /*PointerMotionMask |*/ StructureNotifyMask);
 
 
-/*	if (XStringListToTextProperty(&fullname, 1, &name) == 0) { */  
+/*	if (XStringListToTextProperty(&fullname, 1, &name) == 0) { */
 	if (XStringListToTextProperty(&wname, 1, &name) == 0) {
 		fprintf(stderr, "%s: can't allocate window name\n", wname);
 		exit(1);
@@ -362,23 +365,23 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 	}
 
   /* Create GC for drawing */
-  
+
   gcm = GCForeground | GCBackground | GCGraphicsExposures;
   gcv.foreground = fore_pix;
   gcv.background = back_pix;
   gcv.graphics_exposures = 0;
   NormalGC = XCreateGC(display, Root, gcm, &gcv);
-  
+
   /* ONLYSHAPE ON */
 
   if ( withdrawn ) {
-    pixmask = XCreateBitmapFromData(display, win, pixmask_bits, 
+    pixmask = XCreateBitmapFromData(display, win, pixmask_bits,
 				    pixmask_width, pixmask_height);
     XShapeCombineMask(display, win, ShapeBounding, 0, 0, pixmask, ShapeSet);
     XShapeCombineMask(display, iconwin, ShapeBounding, 0, 0, pixmask, ShapeSet);
   }
   /* ONLYSHAPE OFF */
-  
+
   mywmhints.initial_state = withdrawn ? WithdrawnState : NormalState;
   mywmhints.icon_window = iconwin;
   mywmhints.flags = StateHint | IconWindowHint;
@@ -389,12 +392,12 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
     mywmhints.icon_x = mysizehints.x;
     mywmhints.icon_y = mysizehints.y;
   }
-  
+
   XSetWMHints(display, win, &mywmhints);
   XSetCommand(display, win, argv, argc);
-  
+
   /* Set up the event for quitting the window */
-  wm_delete_window = XInternAtom(display, 
+  wm_delete_window = XInternAtom(display,
 				 "WM_DELETE_WINDOW",	/* atom_name */
 				 False);		/* only_if_exists */
 
@@ -474,16 +477,16 @@ void CheckX11Events(void)
  *
  */
 void pressEvent(XButtonEvent *xev){
-  
+
   int x=xev->x;
   int y=xev->y;
-  
+
   if(x>=5 && y>=48 && x<=17 && y<=58){
-    
-    /* 
+
+    /*
      *  look if multiple hosts are monitored
      */
-    
+
     /*
      *  Standby Call.
      *
@@ -498,9 +501,9 @@ void pressEvent(XButtonEvent *xev){
     GetPrevHost();
 
     //	system("nut -S");
-    
+
   } else if (x>=46 && y>=48 && x<=58 && y<=58){
-    
+
     /*
      *  Suspend Call.
      *
@@ -511,14 +514,14 @@ void pressEvent(XButtonEvent *xev){
      */
     copyXPMArea(21, 106, 13, 11, 46, 48);
     RedrawWindow();
-    
+
     GetNextHost();
 
-    //	system("nut -s");    
+    //	system("nut -s");
   }
 
   //usleep(2000000L);
   usleep(500L);
-  
+
   return;
 }

@@ -1,6 +1,8 @@
 /* compat.c - xstrdup compatibility for wmnut
 
-   Copyright (C) 2001  Russell Kroll <rkroll@exploits.org>
+   Copyright (C)
+    2001         Russell Kroll <rkroll@exploits.org>
+    2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +16,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <stdio.h>

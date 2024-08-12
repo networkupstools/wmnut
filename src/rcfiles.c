@@ -4,6 +4,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
+ *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ void AddRcKey(rckeys *key, const char *label, int type, void *var) {
   case TYPE_STRING :
     key->var.str = (char *)var;
     break;
-  case TYPE_BOOL: 
+  case TYPE_BOOL:
   case TYPE_INT:
     key->var.integer = (int *)var;
     break;
@@ -76,7 +77,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 	char	*tokens = " =\t\n#";
 	FILE	*fp;
 	int	key;
-	
+
 	fp = fopen(filename, "r");
 	if (fp) {
 #ifdef DEBUG
@@ -95,7 +96,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 						tmp = strpbrk(p, tokens);
 						*tmp = '\0';
 #ifdef DEBUG
-						printf("Parameter -> %s%s\tValue -> %s\n", keys[key].label, 
+						printf("Parameter -> %s%s\tValue -> %s\n", keys[key].label,
 							((strlen(keys[key].label) <12)?"\t\t":"\t"), p);
 #endif
 						switch(keys[key].type)
@@ -103,13 +104,13 @@ void ParseRCFile(const char *filename, rckeys *keys)
 							case TYPE_STRING:
 								/*			if (keys[key].var.str !=NULL)
 								free(keys[key].var.str);
-								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);				
-								strncpy(keys[key].var.str, p, strlen(p)); 
+								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);
+								strncpy(keys[key].var.str, p, strlen(p));
 								*/
 								if(!strcmp(keys[key].label, "UPS"))
 									AddHost(p);
 								break;
-							case TYPE_BOOL:    
+							case TYPE_BOOL:
 								if (!strncmp(p, "on", 2))
 									*keys[key].var.bool = 1;
 								else
@@ -145,14 +146,14 @@ void LoadRCFile(rckeys *keys)
 #endif
 
 	ParseRCFile(MAINRC_FILE, keys);
-	
+
 	p = getenv("HOME");
 	sprintf(home_file, "%s/%s", p, RC_FILE);
 	ParseRCFile(home_file, keys);
 }
 
 /*******************************************************************************\
-|* ParseCMDLine()  
+|* ParseCMDLine()
 \*******************************************************************************/
 void ParseCMDLine(int argc, char *argv[])
 {
@@ -180,7 +181,7 @@ void ParseCMDLine(int argc, char *argv[])
 			{"windowed",no_argument,NULL,'w'},
 			{0, 0, 0, 0}
 		};
-		
+
 		#define GETOPTFUNC(x,y,z) getopt_long(x,y,"-" z, long_options, NULL)
 		#define GETOPTENDCHAR -1
 #else   /* ! HAVE_GETOPT_LONG */
@@ -195,7 +196,7 @@ void ParseCMDLine(int argc, char *argv[])
 
 		switch (c)
 		{
-			case 'A': 
+			case 'A':
 				Alert = 1;
 				printf ("option A : valeur %s\n", optarg);
 				p = strchr(optarg, ',');
@@ -206,22 +207,22 @@ void ParseCMDLine(int argc, char *argv[])
 				printf ("option A : valeur LAlertRate = %f(%s), CAlertRate = %f(%s)\n",
 					LAlertRate, optarg, CAlertRate, (p+1));
 				break;
-			case 'b': 
+			case 'b':
 				BlinkRate = atof(optarg);
 				break;
-			case 'C': 
+			case 'C':
 				CriticalLevel = atoi(optarg);
 				break;
-			case 'L': 
+			case 'L':
 				LowLevel = atoi(optarg);
 				break;
-			case 'l': 
+			case 'l':
 				UseLowColorPixmap = 1;
 				break;
-			case 'V': 
+			case 'V':
 				Verbose = 1;
 				break;
-			case 'v':   
+			case 'v':
 				printf("\nThis is wmnut version: %s\n", VERSION);
 				printf("\nCopyright 2001-2016 Arnaud Quette <%s>\n", PACKAGE_BUGREPORT);
 				printf("\nComplete documentation for WMNUT should be found on this system using\n");
@@ -231,22 +232,22 @@ void ParseCMDLine(int argc, char *argv[])
 				 * http://web.archive.org/web/20111003175836/http://wmnut.mgeops.org/
 				 */
 				exit(1);
-			case 'w': 
+			case 'w':
 				WithDrawn = 0; /* not in default withdrawn mode, so in windowed mode */
 				break;
-			case 'B': 
+			case 'B':
 				Beep = 1;
 				Volume = atoi(optarg);
 				break;
-			case 'U': 
+			case 'U':
 				AddHost(optarg);
 				break;
 			case 'h':
-			default:  
+			default:
 				printf("\n%s version: %s\n", PACKAGE, VERSION);
 				printf("Usage: %s [arguments]\n\n", PACKAGE_NAME);
 				printf("-A <T1,T2>\tSend messages to users terminals when Low and critical.\n");
-				printf("             \tT1 is seconds between messages when Low.\n"); 
+				printf("             \tT1 is seconds between messages when Low.\n");
 				printf("             \tT2 is seconds between messages when Critical.\n");
 				printf("-b <BlinkRate>\tBlink rate for red LED. (0 for no blinking.)\n");
 				printf("-B <Volume>\tBeep at Critical Level with Volume (between -100%% to 100%%).\n");

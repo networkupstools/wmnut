@@ -94,13 +94,13 @@ extern int     Alert;  	 /* Controls whether alert is sent to
 					    all users via wall: Off by default  */
 /* base parameters */
 extern char    *upshost;
-extern int     Verbose;	/* 1 for verbose mode : displays NUT 
+extern int     Verbose;	/* 1 for verbose mode : displays NUT
 					   available features and base values */
 extern int     CriticalLevel;
 extern int     LowLevel;
 extern float   BlinkRate;	 /* blinks per second */
 extern float   UpdateRate;   /* Number of updates per second */
-extern int     Beep;	 /* Controls beeping when you get to 
+extern int     Beep;	 /* Controls beeping when you get to
 					    CriticalLevel: Off by default */
 extern int     Volume;	 /* ring bell at 50% volume */
 extern int     UseLowColorPixmap; 	 /* Use a lower number of colors for the

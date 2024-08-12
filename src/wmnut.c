@@ -3,11 +3,11 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
  *
  * based on wmapm originally written by
  * Chris D. Faulhaber <jedgar@speck.ml.org>. Version 3.0
- * and extensively modified version of version 2.0 
+ * and extensively modified version of version 2.0
  * by Michael G. Henderson <mghenderson@lanl.gov>.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@ int WithDrawn = 1;			/* start in withdrawn shape (for WindowMaker) */
 int TryCount = 0;
 
 /* UPS currently monitored */
-ups_info *CurHost; 
+ups_info *CurHost;
 
 /* List of all UPSs monitored */
 nut_info Hosts;
@@ -75,7 +75,7 @@ rckeys	wmnut_keys[13];
 #define DEBUGOUT(...) 	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
 #define DEBUGERR(...) 	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
 
-/* 
+/*
  * Get a variable from the UPS
  ********************************************************* */
 int get_ups_var (char *variable, char *value)
@@ -127,7 +127,7 @@ int get_ups_var (char *variable, char *value)
 	return retcode;
 }
 
-void get_ups_info(void) 
+void get_ups_info(void)
 {
 	char value[SMALLBUF];
 	int	retVal;
@@ -181,7 +181,7 @@ void get_ups_info(void)
 
 		if (retVal == OK)
 			CurHost->battery_load = atoi(value);
-		else 
+		else
 			CurHost->battery_load = retVal;
 	}
 
@@ -203,10 +203,10 @@ int main(int argc, char *argv[]) {
 	char		*v, *ptr;
 #endif
 
-	/* ignore upsd stop and don't crash (thanks to Russell Kroll) */ 
+	/* ignore upsd stop and don't crash (thanks to Russell Kroll) */
 	signal(SIGPIPE, SIG_IGN);
 
-	/* Set default values */ 
+	/* Set default values */
 	BlinkRate = 3.0;
 	UpdateRate = 1.0 / 1.25;
 
@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[1], "LAlertRate", TYPE_FLOAT, &LAlertRate);
 	AddRcKey(&wmnut_keys[2], "CAlertRate", TYPE_FLOAT, &CAlertRate);
 	AddRcKey(&wmnut_keys[3], "Alert", TYPE_BOOL, &Alert);
-	AddRcKey(&wmnut_keys[4], "BlinkRate", TYPE_FLOAT, &BlinkRate); 
+	AddRcKey(&wmnut_keys[4], "BlinkRate", TYPE_FLOAT, &BlinkRate);
 	AddRcKey(&wmnut_keys[5], "Beep", TYPE_BOOL, &Beep);
 	AddRcKey(&wmnut_keys[6], "Volume", TYPE_INT, &Volume);
 	AddRcKey(&wmnut_keys[7], "LowLevel", TYPE_INT, &LowLevel);
@@ -232,8 +232,8 @@ int main(int argc, char *argv[]) {
 	InitHosts();
 
 	/* Parse rcfile command arguments.
-	 * First, try with /etc/wmnutrc else 
-	 * (if not exists), try ~/.wmnutrc 
+	 * First, try with /etc/wmnutrc else
+	 * (if not exists), try ~/.wmnutrc
 	 * Note that the 2nd override the 1st */
 	LoadRCFile(wmnut_keys);
 
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
 			case TYPE_STRING :
 				DEBUGOUT("%s = %s\n", wmnut_keys[i].label, wmnut_keys[i].var.str);
 				break;
-			case TYPE_BOOL: 
+			case TYPE_BOOL:
 			case TYPE_INT:
 				DEBUGOUT("%s = %i\n", wmnut_keys[i].label, (int) *wmnut_keys[i].var.integer);
 				break;
@@ -288,10 +288,10 @@ int main(int argc, char *argv[]) {
 
 	/* Open display */
 	if (UseLowColorPixmap)
-		openXwindow(argc, argv, wmnut_master_LowColor, wmnut_mask_bits, 
+		openXwindow(argc, argv, wmnut_master_LowColor, wmnut_mask_bits,
 					wmnut_mask_width, wmnut_mask_height, WithDrawn);
 	else
-		openXwindow(argc, argv, wmnut_master, wmnut_mask_bits, 
+		openXwindow(argc, argv, wmnut_master, wmnut_mask_bits,
 					wmnut_mask_width, wmnut_mask_height, WithDrawn);
 
 	/* Loop until we die... */
@@ -303,14 +303,14 @@ int main(int argc, char *argv[]) {
 
 	while(1) {
 		/* Only process nut info only every nMax cycles of this
-		*  loop. We run it faster to catch the xevents like button 
+		*  loop. We run it faster to catch the xevents like button
 		*  presses and expose events, etc...
-		*  
+		*
 		*  DELAY is set at 0.00625 seconds, so process nut info
 		*  every 1.25 seconds...
 		*/
 		if (n>nMax){
-      
+
 			n = 0;
 
 			/* invert toggle */
@@ -342,7 +342,7 @@ int main(int argc, char *argv[]) {
 				/* Communication Status: COM_OK */
 				copyXPMArea(104,  6, 5, 7,  6,  7);
 			}
-      
+
 			/* Check UPS status */
 			switch (CurHost->ups_status) {
 
@@ -373,7 +373,7 @@ int main(int argc, char *argv[]) {
 						*/
 						if (Toggle||(BlinkRate == 0.0)) {
 
-							/* if (Beep) 
+							/* if (Beep)
 								XBell(display, Volume);
 							*/
 							/* Toggle = OFF; */
@@ -390,19 +390,19 @@ int main(int argc, char *argv[]) {
 						*  Blink the green battery [TODO : and digital %age] on/off...
 						*/
 	      				if (Toggle||(BlinkRate == 0.0)) {
-							
+
 							/* if (Beep)
 								XBell(display, Volume);
 							*/
-							copyXPMArea(99, 20, 12, 7, 30, 50); 
+							copyXPMArea(99, 20, 12, 7, 30, 50);
 						}
 						else
 							copyXPMArea(83, 6, 12, 7, 30, 50);
 					}
 				}
 				break;
-	
-				case UPS_OVERLOAD:  
+
+				case UPS_OVERLOAD:
 				{
 					/*
 					*  UPS is overloaded.
@@ -412,8 +412,8 @@ int main(int argc, char *argv[]) {
 					copyXPMArea(37, 34, 19, 7,37, 34);
 				}
 				break;
-	
-				case UPS_ONLINE:  
+
+				case UPS_ONLINE:
 				{
 					/*
 					*   UPS on-line. I.e. we are "plugged-in".
@@ -421,8 +421,8 @@ int main(int argc, char *argv[]) {
 					copyXPMArea(68, 6, 12, 7, 30, 50);
 				}
 				break;
-	
-				case UPS_DEFAULT:  
+
+				case UPS_DEFAULT:
 				{
 					/*
 					*   used to "erase" UPS status when COM_LOST.
@@ -430,12 +430,12 @@ int main(int argc, char *argv[]) {
 					copyXPMArea(99, 20, 12, 7, 30, 50);
 				}
 				break;
-	
-				default: 
+
+				default:
 					break;
 			}
 
-			/* 
+			/*
 			*    Paste up the default !?! communication !?! status and runtime
 			*/
 			copyXPMArea(83, 93, 41, 9, 15, 7);
@@ -446,24 +446,24 @@ int main(int argc, char *argv[]) {
 			copyXPMArea(42, 106, 13, 11, 5, 48);
 			copyXPMArea(57, 106, 13, 11, 46, 48);
 
-			/* 
+			/*
 			*   Repaint host number.
 			*/
-			copyXPMArea((CurHost->hostnumber) * 7 + 5, 93, 7, 9, 22, 49); 
+			copyXPMArea((CurHost->hostnumber) * 7 + 5, 93, 7, 9, 22, 49);
 
-			/* 
+			/*
 			*  Paste up the "Time Left". This time means (format HH:MM) :
-			*  
+			*
 			*         Time left before battery drains to 0%
 			*         If not supported (RUNTIME feature) --:--
 			*/
 			if(CurHost->battery_runtime >= 0) {
 				/* convert in minutes */
 				time_left = CurHost->battery_runtime / 60;
-				
+
 				hour_left = time_left / 60;
 				min_left  = time_left % 60;
-				
+
 				/* Show 10's (hour) */
 				copyXPMArea( (hour_left / 10) * 7 + 5, 93, 7, 9, 21, 7);
 				/* Show 1's (hour) */
@@ -478,10 +478,10 @@ int main(int argc, char *argv[]) {
 			else /* Show --:-- */
 				copyXPMArea(83, 106, 41, 9, 15, 7);
 
-			/* 
+			/*
 			*   Do Battery Load.
 			*/
-			if (CurHost->battery_load >= 0) {      
+			if (CurHost->battery_load >= 0) {
 
 				if ((CurHost->ups_status != UPS_OVERLOAD)){ /* needed ?? */
 					if (CurHost->battery_load >= 10)
@@ -501,12 +501,12 @@ int main(int argc, char *argv[]) {
 			/*
 			 *   Do Battery Percentage.
 			 */
-			
+
 			/* erase zone */
 			/*        copyXPMArea(76, 81, 19, 7, 7, 34);   */
 			copyXPMArea(76, 81, 20, 7, 7, 34);	/* Show Default % */
 			copyXPMArea(66, 31, 49, 9, 7, 21);	/* Show Default Meter */
-      
+
 			if (CurHost->battery_percentage > 0) {
 				/* displays battery percent bis */
 				if (CurHost->battery_percentage == 100){
@@ -516,7 +516,7 @@ int main(int argc, char *argv[]) {
 					copyXPMArea(64, 81, 6, 7, 21, 34);		/* Show '%' */
 					copyXPMArea(66, 42, 49, 9, 7, 21);		/* Show Meter */
 				}
-				else {	  
+				else {
 					if (CurHost->battery_percentage >= 10)
 						copyXPMArea((CurHost->battery_percentage / 10) * 6 + 4,
 										81, 6, 7,  9, 34);	/* Show 10's */
@@ -531,12 +531,12 @@ int main(int argc, char *argv[]) {
 			 */
 			k = CurHost->battery_percentage * 49 / 100;
 			copyXPMArea(66, 42, k, 9, 7, 21);
-			if (k%2) 
+			if (k%2)
 				copyXPMArea(66+k-1, 52, 1, 9, 7+k-1, 21);
 			else
 				copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
 		}
-		else {      
+		else {
 			/* Update the counter. When it hits nMax, we will
 			*  process nut information again */
 			++n;
@@ -560,7 +560,7 @@ void InitCom(void)
 	char	**answer;
 
 	/*
-	 *  Check NUT daemon availability on host(s) 
+	 *  Check NUT daemon availability on host(s)
 	 */
 	GetFirstHost();
 
@@ -573,7 +573,7 @@ void InitCom(void)
 
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
 						 CurHost->port, UPSCLI_CONN_TRYSSL) < 0) {
-			fprintf(stderr, "Error: %s\n", 
+			fprintf(stderr, "Error: %s\n",
 					upscli_strerror(&CurHost->connexion));
 		}
 		else {
@@ -589,11 +589,11 @@ void InitCom(void)
 		/* if (upscli_getlist(&CurHost->connexion, CurHost->upsname,
 			 UPSCLI_LIST_VARS, vars, sizeof(vars)) < 0) */
 		{
-			DEBUGERR("Unable to get variable list for %s - %s\n", 
+			DEBUGERR("Unable to get variable list for %s - %s\n",
 					CurHost->upsname, upscli_strerror(&CurHost->connexion));
 		}
 		else {
-			DEBUGERR("Got variables list for %s@%s\n", 
+			DEBUGERR("Got variables list for %s@%s\n",
 					CurHost->upsname, CurHost->hostname);
 					CurHost->comm_status = COM_OK;
 
@@ -621,10 +621,10 @@ void InitCom(void)
 }
 
 /* init monitored UPS internal data */
-void InitHosts(void) 
+void InitHosts(void)
 {
 	int i;
-  
+
 	for ( i = 0 ; i >= 9 ; i++ ) {
 		Hosts.Ups_list[i -1]->ups_status = -1;
 		Hosts.Ups_list[i -1] = NULL;
@@ -663,7 +663,7 @@ int AddHost(char *hostname)
 		/* UPS auto discovery mode : */
 		if (strchr(hostname, '@') == NULL) {
 			/* Connect to host... */
-			if (upscli_connect(&ups, hostname, 3493, UPSCLI_CONN_TRYSSL) < 0) 
+			if (upscli_connect(&ups, hostname, 3493, UPSCLI_CONN_TRYSSL) < 0)
 				return 0;
 
 			/* ... and retrieve UPS list */
@@ -712,8 +712,8 @@ int AddHost(char *hostname)
 		if(Hosts.Ups_list[nbHosts -1] == NULL)
 			return 0;
 
-		upscli_splitname(hostname, &Hosts.Ups_list[nbHosts -1]->upsname, 
-						&Hosts.Ups_list[nbHosts -1]->hostname, 
+		upscli_splitname(hostname, &Hosts.Ups_list[nbHosts -1]->upsname,
+						&Hosts.Ups_list[nbHosts -1]->hostname,
 						&Hosts.Ups_list[nbHosts -1]->port);
 
 		Hosts.Ups_list[nbHosts -1]->hostnumber = nbHosts;

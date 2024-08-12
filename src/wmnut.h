@@ -3,7 +3,8 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- * 
+ *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
@@ -29,7 +30,7 @@
 #ifdef FreeBSD
  #include <err.h>
  #include <sys/file.h>
-#endif 
+#endif
 
 #include <stdio.h>
 #include <unistd.h>
@@ -81,7 +82,7 @@
 #define UPS_ONBATT	2
 #define UPS_ONLINE	3
 #define UPS_OVERLOAD	4
- 
+
 /* structure to monitor an UPS unit */
 
 typedef struct ups_info {
@@ -102,7 +103,7 @@ typedef struct ups_info {
  */
 
 typedef struct nut_info {
-  int hosts_number;  		/* total number of hosts */ 
-  int curhosts_number; 		/* number of the currently displayed host */ 
+  int hosts_number;  		/* total number of hosts */
+  int curhosts_number; 		/* number of the currently displayed host */
   ups_info *Ups_list[9];	/* list of monitored UPSs (from 1 to 9) */
 } nut_info;
