@@ -15,8 +15,8 @@
 /***********/
 
 /* Configuration files */
-#define MAINRC_FILE "/etc/wmnutrc"
-#define RC_FILE     ".wmnutrc"
+#define MAINRC_FILE	"/etc/wmnutrc"
+#define RC_FILE  	".wmnutrc"
 
 
 #define MAX_MOUSE_REGION (8)
@@ -32,22 +32,22 @@
 /************/
 
 union var {
-  int   *integer;
-  float *floater;
-  char  *str;
-  int   *bool;
+	int	*integer;
+	float	*floater;
+	char	*str;
+	int	*bool;
 };
 
 typedef struct {
-  /*const*/ char *label;
-  int        type;
-  union var  var;
+	/*const*/ char *label;
+	int	type;
+	union var	var;
 }rckeys;
 
 typedef struct {
-  Pixmap	pixmap;
-  Pixmap	mask;
-  XpmAttributes	attributes;
+	Pixmap	pixmap;
+	Pixmap	mask;
+	XpmAttributes	attributes;
 } XpmIcon;
 
   /*******************/
@@ -90,23 +90,23 @@ void ReloadRCFile(void);
   /************/
  /* Datadefs */
 /************/
-extern int     Alert;  	 /* Controls whether alert is sent to
-					    all users via wall: Off by default  */
+extern int	Alert;	/* Controls whether alert is sent to
+			 * all users via wall: Off by default  */
 /* base parameters */
-extern char    *upshost;
-extern int     Verbose;	/* 1 for verbose mode : displays NUT
-					   available features and base values */
-extern int     CriticalLevel;
-extern int     LowLevel;
-extern float   BlinkRate;	 /* blinks per second */
-extern float   UpdateRate;   /* Number of updates per second */
-extern int     Beep;	 /* Controls beeping when you get to
-					    CriticalLevel: Off by default */
-extern int     Volume;	 /* ring bell at 50% volume */
-extern int     UseLowColorPixmap; 	 /* Use a lower number of colors for the
-					    poor saps on 8-bit displays */
-extern float   LAlertRate; /* send alert every 5 minutes when Low */
-extern float   CAlertRate; /* send alert every 2 minutes when Critical */
-extern int     WithDrawn;	 /* start in withdrawn shape (for WindowMaker) */
+extern char	*upshost;
+extern int	Verbose;	/* 1 for verbose mode : displays NUT
+				 * available features and base values */
+extern int	CriticalLevel;
+extern int	LowLevel;
+extern float	BlinkRate;	/* blinks per second */
+extern float	UpdateRate;	/* Number of updates per second */
+extern int	Beep;	/* Controls beeping when you get to
+			 * CriticalLevel: Off by default */
+extern int	Volume;	/* ring bell at 50% volume */
+extern int	UseLowColorPixmap;	/* Use a lower number of colors for the
+					 * poor saps on 8-bit displays */
+extern float	LAlertRate;	/* send alert every 5 minutes when Low */
+extern float	CAlertRate;	/* send alert every 2 minutes when Critical */
+extern int	WithDrawn;	/* start in withdrawn shape (for WindowMaker) */
 
-#endif
+#endif	/* WMGENERAL_H_INCLUDED */

@@ -31,56 +31,56 @@
 #include "wmnut.h"
 
 /* defines */
-#define LARGEBUF      1024
+#define LARGEBUF	1024
 
-void 	ParseCMDLine(int argc, char *argv[]);
-void 	InitHosts(void);
-int  	AddHost(char *hostname);
-void 	GetFirstHost(void);
-int 	GetNextHost(void);
-int 	GetPrevHost(void);
-void 	InitCom(void);
+void	ParseCMDLine(int argc, char *argv[]);
+void	InitHosts(void);
+int	AddHost(char *hostname);
+void	GetFirstHost(void);
+int	GetNextHost(void);
+int	GetPrevHost(void);
+void	InitCom(void);
 
 /* base parameters */
 /* Controls whether alert is sent to all users via wall: Off by default */
-int Alert = 0;
-char *upshost = NULL;
+int	Alert = 0;
+char	*upshost = NULL;
 /* 1 for verbose mode : displays NUT available features and base values */
-int Verbose = 0;
+int	Verbose = 0;
 int	CriticalLevel = 10;
 int	LowLevel = 40;
-float BlinkRate = 3.0;		/* blinks per second */
-float UpdateRate = 0.8; 	/* Number of updates per second */
+float	BlinkRate = 3.0;	/* blinks per second */
+float	UpdateRate = 0.8;	/* Number of updates per second */
 /* Controls beeping when you get to CriticalLevel: Off by default */
 int	Beep = 0;
-int	Volume = 50;	 		/* ring bell at 50% volume */
+int	Volume = 50;		/* ring bell at 50% volume */
 /* Use a lower number of colors for the poor saps on 8-bit displays */
 int	UseLowColorPixmap = 0;
-float LAlertRate = 300.0;	/* send alert every 5 minutes when Low */
-float CAlertRate = 120.0;	/* send alert every 2 minutes when Critical */
-int WithDrawn = 1;			/* start in withdrawn shape (for WindowMaker) */
+float	LAlertRate = 300.0;	/* send alert every 5 minutes when Low */
+float	CAlertRate = 120.0;	/* send alert every 2 minutes when Critical */
+int	WithDrawn = 1;		/* start in withdrawn shape (for WindowMaker) */
 
 #define RETRY_COUNT	10
-int TryCount = 0;
+int	TryCount = 0;
 
 /* UPS currently monitored */
-ups_info *CurHost;
+ups_info	*CurHost;
 
 /* List of all UPSs monitored */
-nut_info Hosts;
+nut_info	Hosts;
 
 rckeys	wmnut_keys[13];
 
 /* Debug macros */
-#define DEBUGOUT(...) 	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
-#define DEBUGERR(...) 	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
+#define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
+#define DEBUGERR(...)	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
 
 /*
  * Get a variable from the UPS
  ********************************************************* */
 int get_ups_var (char *variable, char *value)
 {
-	int retcode;
+	int	retcode;
 	size_t	numq, numa;
 	const	char	*query[4];
 	char	**answer;
@@ -129,7 +129,7 @@ int get_ups_var (char *variable, char *value)
 
 void get_ups_info(void)
 {
-	char value[SMALLBUF];
+	char	value[SMALLBUF];
 	int	retVal;
 
 	/* Get UPS status */
@@ -151,8 +151,8 @@ void get_ups_info(void)
 
 	/* Get battery charge level */
 	if ((CurHost->battery_runtime != VARNOTSUPP)
-		|| (TryCount >= RETRY_COUNT)) {
-
+	 || (TryCount >= RETRY_COUNT)
+	) {
 		retVal = get_ups_var ("battery.charge", value);
 
 		if (retVal == OK)
@@ -163,8 +163,8 @@ void get_ups_info(void)
 
 	/* Get runtime to empty */
 	if ((CurHost->battery_runtime != VARNOTSUPP)
-		|| (TryCount >= RETRY_COUNT)) {
-
+	 || (TryCount >= RETRY_COUNT)
+	) {
 		retVal = get_ups_var ("battery.runtime", value);
 
 		if (retVal == OK)
@@ -175,8 +175,8 @@ void get_ups_info(void)
 
 	/* Get Battery load level */
 	if ((CurHost->battery_load != VARNOTSUPP)
-		|| (TryCount >= RETRY_COUNT)) {
-
+	 || (TryCount >= RETRY_COUNT)
+	) {
 		retVal = get_ups_var ("ups.load", value);
 
 		if (retVal == OK)
@@ -194,7 +194,6 @@ void get_ups_info(void)
 }
 
 int main(int argc, char *argv[]) {
-
 	int		time_left, hour_left, min_left;
 	int		i, m, n, nMax, k, Toggle = OFF;
 #if 0
@@ -270,10 +269,10 @@ int main(int argc, char *argv[]) {
 #endif
 
 	/* if no UPS after rcfiles and cmd line, try with localhost */
-	if(Hosts.hosts_number == 0)
+	if (Hosts.hosts_number == 0)
 		AddHost("localhost");
 
-	if(Hosts.hosts_number == 0) {
+	if (Hosts.hosts_number == 0) {
 		fputs("No UPS available.\n"
 			"Please check that your system or user wmnutrc file has UPS=... entries.\n",
 			stderr);
@@ -289,10 +288,10 @@ int main(int argc, char *argv[]) {
 	/* Open display */
 	if (UseLowColorPixmap)
 		openXwindow(argc, argv, wmnut_master_LowColor, wmnut_mask_bits,
-					wmnut_mask_width, wmnut_mask_height, WithDrawn);
+			wmnut_mask_width, wmnut_mask_height, WithDrawn);
 	else
 		openXwindow(argc, argv, wmnut_master, wmnut_mask_bits,
-					wmnut_mask_width, wmnut_mask_height, WithDrawn);
+			wmnut_mask_width, wmnut_mask_height, WithDrawn);
 
 	/* Loop until we die... */
 	n = m = 32000;
@@ -309,8 +308,7 @@ int main(int argc, char *argv[]) {
 		*  DELAY is set at 0.00625 seconds, so process nut info
 		*  every 1.25 seconds...
 		*/
-		if (n>nMax){
-
+		if (n > nMax){
 			n = 0;
 
 			/* invert toggle */
@@ -320,7 +318,6 @@ int main(int argc, char *argv[]) {
 
 			/* Check communication status */
 			if ((int)(CurHost->comm_status) == COM_LOST) {
-
 				DEBUGERR("Communication lost with UPS %s\n", CurHost->hostname);
 
 				/*
@@ -328,7 +325,8 @@ int main(int argc, char *argv[]) {
 				*  Blink red "C" on/off ...
 				*/
 				if (Toggle||(BlinkRate == 0.0)) {
-				/*	if (Beep)
+				/*
+					if (Beep)
 						XBell(display, Volume);
 				*/
 					copyXPMArea(110,  6, 5, 7,  6,  7);
@@ -346,16 +344,17 @@ int main(int argc, char *argv[]) {
 			/* Check UPS status */
 			switch (CurHost->ups_status) {
 
-			/* case UPS_LOWBATT: */
+				/* case UPS_LOWBATT: */
 				case UPS_ONBATT:
 				{
-					if(CurHost->battery_percentage <= CriticalLevel)
+					if (CurHost->battery_percentage <= CriticalLevel)
 					{
 						/* Battery Status: Critical.
 						*  Blink red battery [TODO : and digital %age] on/off...
 						*/
 						if (Toggle||(BlinkRate == 0.0)) {
-							/* if (Beep)
+							/*
+							if (Beep)
 								XBell(display, Volume);
 							*/
 							/* Toggle = OFF; */
@@ -366,14 +365,14 @@ int main(int argc, char *argv[]) {
 							copyXPMArea(83, 20, 12, 7, 30, 50);
 						}
 					}
-					else if(CurHost->battery_percentage <= LowLevel) {
+					else if (CurHost->battery_percentage <= LowLevel) {
 						/*
 						*  Battery Status: Low.
 						*  Blink the yellow battery [TODO : and digital %age] on/off...
 						*/
 						if (Toggle||(BlinkRate == 0.0)) {
-
-							/* if (Beep)
+							/*
+							if (Beep)
 								XBell(display, Volume);
 							*/
 							/* Toggle = OFF; */
@@ -384,14 +383,14 @@ int main(int argc, char *argv[]) {
 							copyXPMArea(69, 20, 12, 7, 30, 50);
 						}
 					}
-					else{
+					else {
 						/*
 						*  Battery Status: High but charging.
 						*  Blink the green battery [TODO : and digital %age] on/off...
 						*/
-	      				if (Toggle||(BlinkRate == 0.0)) {
-
-							/* if (Beep)
+						if (Toggle||(BlinkRate == 0.0)) {
+							/*
+							if (Beep)
 								XBell(display, Volume);
 							*/
 							copyXPMArea(99, 20, 12, 7, 30, 50);
@@ -457,7 +456,7 @@ int main(int argc, char *argv[]) {
 			*         Time left before battery drains to 0%
 			*         If not supported (RUNTIME feature) --:--
 			*/
-			if(CurHost->battery_runtime >= 0) {
+			if (CurHost->battery_runtime >= 0) {
 				/* convert in minutes */
 				time_left = CurHost->battery_runtime / 60;
 
@@ -483,15 +482,15 @@ int main(int argc, char *argv[]) {
 			*/
 			if (CurHost->battery_load >= 0) {
 
-				if ((CurHost->ups_status != UPS_OVERLOAD)){ /* needed ?? */
+				if ((CurHost->ups_status != UPS_OVERLOAD)) {	/* needed ?? */
 					if (CurHost->battery_load >= 10)
 						copyXPMArea((CurHost->battery_load / 10) * 6 + 4,
-										81, 6, 7, 37, 34); /* Show 10's */
+							81, 6, 7, 37, 34);	/* Show 10's */
 					else
-						copyXPMArea(76, 81, 6, 7, 37, 34); /* Erase 10's */
+						copyXPMArea(76, 81, 6, 7, 37, 34);	/* Erase 10's */
 					copyXPMArea((CurHost->battery_load % 10) * 6 + 4,
-									81, 6, 7, 43, 34);    	/* Show 1's */
-					copyXPMArea(64, 81, 7, 7, 50, 34);		/* Show '%' */
+						81, 6, 7, 43, 34);	/* Show 1's */
+					copyXPMArea(64, 81, 7, 7, 50, 34);	/* Show '%' */
 				}
 			}
 			else { /* erase zone */
@@ -510,18 +509,18 @@ int main(int argc, char *argv[]) {
 			if (CurHost->battery_percentage > 0) {
 				/* displays battery percent bis */
 				if (CurHost->battery_percentage == 100){
-					copyXPMArea(15, 81, 1, 7,  7, 34);		/* If 100%, show 100% */
+					copyXPMArea(15, 81, 1, 7,  7, 34);	/* If 100%, show 100% */
 					copyXPMArea( 5, 81, 6, 7,  9, 34);
 					copyXPMArea( 5, 81, 6, 7, 15, 34);
-					copyXPMArea(64, 81, 6, 7, 21, 34);		/* Show '%' */
-					copyXPMArea(66, 42, 49, 9, 7, 21);		/* Show Meter */
+					copyXPMArea(64, 81, 6, 7, 21, 34);	/* Show '%' */
+					copyXPMArea(66, 42, 49, 9, 7, 21);	/* Show Meter */
 				}
 				else {
 					if (CurHost->battery_percentage >= 10)
 						copyXPMArea((CurHost->battery_percentage / 10) * 6 + 4,
-										81, 6, 7,  9, 34);	/* Show 10's */
+							81, 6, 7,  9, 34);	/* Show 10's */
 					copyXPMArea((CurHost->battery_percentage % 10) * 6 + 4,
-									81, 6, 7, 15, 34);	/* Show 1's */
+						81, 6, 7, 15, 34);	/* Show 1's */
 					copyXPMArea(64, 81, 7, 7, 21, 34);	/* Show '%' */
 				}
 			}
@@ -553,10 +552,10 @@ int main(int argc, char *argv[]) {
 
 void InitCom(void)
 {
-	int i, ret;
-	char vars[LARGEBUF];
+	int	i, ret;
+	char	vars[LARGEBUF];
 	size_t	numq, numa;
-	const	char	*query[4];
+	const char	*query[4];
 	char	**answer;
 
 	/*
@@ -567,14 +566,15 @@ void InitCom(void)
 	for (i = 0; i <= (Hosts.hosts_number - 1) ; i++)
 	{
 		/* Close existing com
-		if( &CurHost->connexion)
+		if ( &CurHost->connexion)
 			upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
 		*/
 
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
-						 CurHost->port, UPSCLI_CONN_TRYSSL) < 0) {
+			CurHost->port, UPSCLI_CONN_TRYSSL) < 0
+		) {
 			fprintf(stderr, "Error: %s\n",
-					upscli_strerror(&CurHost->connexion));
+				upscli_strerror(&CurHost->connexion));
 		}
 		else {
 			DEBUGERR("Communication established with UPS %s\n", CurHost->hostname);
@@ -590,12 +590,12 @@ void InitCom(void)
 			 UPSCLI_LIST_VARS, vars, sizeof(vars)) < 0) */
 		{
 			DEBUGERR("Unable to get variable list for %s - %s\n",
-					CurHost->upsname, upscli_strerror(&CurHost->connexion));
+				CurHost->upsname, upscli_strerror(&CurHost->connexion));
 		}
 		else {
 			DEBUGERR("Got variables list for %s@%s\n",
-					CurHost->upsname, CurHost->hostname);
-					CurHost->comm_status = COM_OK;
+				CurHost->upsname, CurHost->hostname);
+				CurHost->comm_status = COM_OK;
 
 			/* FIXME: LIST VAR seems to be necessary here (otherwise,
 			 * we got an "Error: Protocol error" => check why */
@@ -605,7 +605,7 @@ void InitCom(void)
 				/* VAR <upsname> <varname> <val> */
 				if (numa < 4) {
 					DEBUGERR("Error: insufficient data "
-							"(got %zu args, need at least 4)\n", numa);
+						"(got %zu args, need at least 4)\n", numa);
 					/* return EXIT_FAILURE; */
 				}
 				DEBUGERR("%s: %s\n", answer[2], answer[3]);
@@ -623,7 +623,7 @@ void InitCom(void)
 /* init monitored UPS internal data */
 void InitHosts(void)
 {
-	int i;
+	int	i;
 
 	for ( i = 0 ; i >= 9 ; i++ ) {
 		Hosts.Ups_list[i -1]->ups_status = -1;
@@ -634,7 +634,7 @@ void InitHosts(void)
 /* Clean all monitored UPS internal data */
 void CleanHosts(void)
 {
-	int i;
+	int	i;
 
 	for ( i = 1 ; i <= Hosts.hosts_number ; i++ ) {
 		upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
@@ -648,16 +648,16 @@ void CleanHosts(void)
  * return 1 on success, 0 on failure (hostname already exist, ...) */
 int AddHost(char *hostname)
 {
-	int nbHosts, ret;
-	const	char	*query[4];
+	int	nbHosts, ret;
+	const char	*query[4];
 	size_t	numq, numa;
 	char	**answer;
-	char  newhostname[32];
-	UPSCONN_t ups;
+	char	newhostname[32];
+	UPSCONN_t	ups;
 
 	DEBUGOUT("AddHost(%s)\n", hostname);
 
-	if(Hosts.hosts_number < 9) {
+	if (Hosts.hosts_number < 9) {
 		/* CurHost = Hosts.Ups_list[nbHosts -1]; */
 
 		/* UPS auto discovery mode : */
@@ -683,7 +683,7 @@ int AddHost(char *hostname)
 				/* UPS <upsname> "<description>" */
 				if (numa < 3) {
 					fprintf(stderr, "Error: insufficient data "
-							"(got %zu args, need at least 4)\n", numa);
+						"(got %zu args, need at least 4)\n", numa);
 
 					return 0;
 				}
@@ -697,10 +697,10 @@ int AddHost(char *hostname)
 				}
 				ret = upscli_list_next(&ups, numq, query, &numa, &answer);
 			}
-			/* if(&ups) */
-			/* 	    { */
+			/* if (&ups) */
+			/* { */
 			upscli_disconnect ( &ups );
-			/* 	    } */
+			/* } */
 			return 1;
 		}
 
@@ -709,19 +709,20 @@ int AddHost(char *hostname)
 		/*		Hosts.Ups_list[nbHosts -1] = (ups_info *)xmalloc(sizeof(ups_info)); */
 		Hosts.Ups_list[nbHosts -1] = (ups_info *)malloc(sizeof(ups_info));
 
-		if(Hosts.Ups_list[nbHosts -1] == NULL)
+		if (Hosts.Ups_list[nbHosts -1] == NULL)
 			return 0;
 
-		upscli_splitname(hostname, &Hosts.Ups_list[nbHosts -1]->upsname,
-						&Hosts.Ups_list[nbHosts -1]->hostname,
-						&Hosts.Ups_list[nbHosts -1]->port);
+		upscli_splitname(hostname,
+			&Hosts.Ups_list[nbHosts -1]->upsname,
+			&Hosts.Ups_list[nbHosts -1]->hostname,
+			&Hosts.Ups_list[nbHosts -1]->port);
 
-		Hosts.Ups_list[nbHosts -1]->hostnumber = nbHosts;
-		Hosts.Ups_list[nbHosts -1]->ups_status = -1;
-		Hosts.Ups_list[nbHosts -1]->comm_status = COM_LOST;
-		Hosts.Ups_list[nbHosts -1]->battery_percentage = -1;
-		Hosts.Ups_list[nbHosts -1]->battery_load = -1;
-		Hosts.Ups_list[nbHosts -1]->battery_runtime = -1;
+		Hosts.Ups_list[nbHosts - 1]->hostnumber = nbHosts;
+		Hosts.Ups_list[nbHosts - 1]->ups_status = -1;
+		Hosts.Ups_list[nbHosts - 1]->comm_status = COM_LOST;
+		Hosts.Ups_list[nbHosts - 1]->battery_percentage = -1;
+		Hosts.Ups_list[nbHosts - 1]->battery_load = -1;
+		Hosts.Ups_list[nbHosts - 1]->battery_runtime = -1;
 
 		return 1;
 	}
@@ -744,9 +745,9 @@ void GetFirstHost(void)
 
 int GetNextHost(void)
 {
-	if(Hosts.curhosts_number < Hosts.hosts_number)
+	if (Hosts.curhosts_number < Hosts.hosts_number)
 		Hosts.curhosts_number++;
-	else /* loop from last to first */
+	else	/* loop from last to first */
 		Hosts.curhosts_number = 1;
 
 	/* align to tab */
@@ -760,9 +761,9 @@ int GetNextHost(void)
 
 int GetPrevHost(void)
 {
-	if(Hosts.curhosts_number > 1)
+	if (Hosts.curhosts_number > 1)
 		Hosts.curhosts_number--;
-	else /* loop from first to last */
+	else	/* loop from first to last */
 		Hosts.curhosts_number = Hosts.hosts_number;
 
 	/* align to tab */

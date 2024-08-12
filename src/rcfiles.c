@@ -39,36 +39,36 @@
 \*******************************************************************************/
 void AddRcKey(rckeys *key, const char *label, int type, void *var) {
 
-  if(label != NULL) {
-/*    key->label = (char *)xmalloc(strlen(label) + 1); */
-    key->label = (char *)malloc(strlen(label) + 1);
-    strcpy(key->label, label);
-  }
-  else
-    key->label = NULL;
+	if (label != NULL) {
+/*		key->label = (char *)xmalloc(strlen(label) + 1); */
+		key->label = (char *)malloc(strlen(label) + 1);
+		strcpy(key->label, label);
+	}
+	else
+		key->label = NULL;
 
-  key->type = type;
+	key->type = type;
 
-  switch(type) {
-  case TYPE_STRING :
-    key->var.str = (char *)var;
-    break;
-  case TYPE_BOOL:
-  case TYPE_INT:
-    key->var.integer = (int *)var;
-    break;
-  case TYPE_FLOAT:
-    key->var.floater = (float *)var;
-    break;
-  case TYPE_NULL:
-    break;
-  }
+	switch(type) {
+	case TYPE_STRING :
+		key->var.str = (char *)var;
+		break;
+	case TYPE_BOOL:
+	case TYPE_INT:
+		key->var.integer = (int *)var;
+		break;
+	case TYPE_FLOAT:
+		key->var.floater = (float *)var;
+		break;
+	case TYPE_NULL:
+		break;
+	}
 }
 
 /* TODO : void FreeRcKeys(rckeys *key)*/
 
 /*******************************************************************************\
-|* ParseRCFile		  						        |
+|* ParseRCFile                                                                  |
 \*******************************************************************************/
 void ParseRCFile(const char *filename, rckeys *keys)
 {
@@ -102,12 +102,13 @@ void ParseRCFile(const char *filename, rckeys *keys)
 						switch(keys[key].type)
 						{
 							case TYPE_STRING:
-								/*			if (keys[key].var.str !=NULL)
-								free(keys[key].var.str);
+								/*
+								if (keys[key].var.str !=NULL)
+									free(keys[key].var.str);
 								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);
 								strncpy(keys[key].var.str, p, strlen(p));
 								*/
-								if(!strcmp(keys[key].label, "UPS"))
+								if (!strcmp(keys[key].label, "UPS"))
 									AddHost(p);
 								break;
 							case TYPE_BOOL:
@@ -134,7 +135,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 }
 
 /*******************************************************************************\
-|* LoadRCFile		  						        |
+|* LoadRCFile                                                                   |
 \*******************************************************************************/
 void LoadRCFile(rckeys *keys)
 {
@@ -142,7 +143,7 @@ void LoadRCFile(rckeys *keys)
 	char	*p;
 
 #ifdef DEBUG
-    printf("Loading rc files\n");
+	printf("Loading rc files\n");
 #endif
 
 	ParseRCFile(MAINRC_FILE, keys);
@@ -157,11 +158,11 @@ void LoadRCFile(rckeys *keys)
 \*******************************************************************************/
 void ParseCMDLine(int argc, char *argv[])
 {
-	char *p;
-	int  c;
+	char	*p;
+	int	c;
 #if 0
-	char *cmdline;
-	int  i;
+	char	*cmdline;
+	int	i;
 #endif
 
 #ifdef HAVE_GETOPT_LONG
@@ -184,14 +185,14 @@ void ParseCMDLine(int argc, char *argv[])
 
 		#define GETOPTFUNC(x,y,z) getopt_long(x,y,"-" z, long_options, NULL)
 		#define GETOPTENDCHAR -1
-#else   /* ! HAVE_GETOPT_LONG */
+#else	/* ! HAVE_GETOPT_LONG */
 		#define GETOPTFUNC(x,y,z) getopt(x,y,z)
 		#define GETOPTENDCHAR EOF
-#endif
+#endif	/* ! HAVE_GETOPT_LONG */
 
 	while(1)
 	{
-	  if ((c=GETOPTFUNC (argc, argv, "A:b:B:C:d:hlL:U:vVw")) == GETOPTENDCHAR)
+		if ((c=GETOPTFUNC (argc, argv, "A:b:B:C:d:hlL:U:vVw")) == GETOPTENDCHAR)
 			break;
 
 		switch (c)

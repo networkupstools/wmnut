@@ -53,8 +53,8 @@
 
 #define DELAY 10000L		/* Delay between refreshes (in microseconds) */
 
-#define SMALLBUF  256
-#define LARGEBUF  1024
+#define SMALLBUF	256
+#define LARGEBUF	1024
 
 /* Communication status definition */
 
@@ -86,16 +86,16 @@
 /* structure to monitor an UPS unit */
 
 typedef struct ups_info {
-  int        hostnumber;
-  char       *upsname;
-  char       *hostname;
-  UPSCONN_t  connexion;
-  uint16_t   port;
-  int        ups_status;	/* -1 if not init'ed */
-  int        comm_status;	/* -1 if not init'ed, -2 if not available  */
-  int        battery_percentage;/* -1 if not init'ed, -2 if not available  */
-  int        battery_load;	/* -1 if not init'ed, -2 if not available  */
-  int        battery_runtime;	/* -1 if not init'ed, -2 if not available  */
+	int	hostnumber;
+	char	*upsname;
+	char	*hostname;
+	UPSCONN_t	connexion;
+	uint16_t	port;
+	int	ups_status;	/* -1 if not init'ed */
+	int	comm_status;	/* -1 if not init'ed, -2 if not available */
+	int	battery_percentage;	/* -1 if not init'ed, -2 if not available */
+	int	battery_load;	/* -1 if not init'ed, -2 if not available */
+	int	battery_runtime;	/* -1 if not init'ed, -2 if not available */
 } ups_info;
 
 /*
@@ -103,7 +103,7 @@ typedef struct ups_info {
  */
 
 typedef struct nut_info {
-  int hosts_number;  		/* total number of hosts */
-  int curhosts_number; 		/* number of the currently displayed host */
-  ups_info *Ups_list[9];	/* list of monitored UPSs (from 1 to 9) */
+	int	hosts_number;		/* total number of hosts */
+	int	curhosts_number;	/* number of the currently displayed host */
+	ups_info	*Ups_list[9];	/* list of monitored UPSs (from 1 to 9) */
 } nut_info;
