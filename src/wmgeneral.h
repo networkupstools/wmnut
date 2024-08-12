@@ -61,11 +61,11 @@ extern Display	*display;
 /***********************/
 
 
-extern void CleanHosts();
+extern void CleanHosts(void);
 extern int AddHost(char *hostname);
-extern void GetFirstHost();
-extern int GetNextHost();
-extern int GetPrevHost();
+extern void GetFirstHost(void);
+extern int GetNextHost(void);
+extern int GetPrevHost(void);
 
 void AddMouseRegion(int index, int left, int top, int right, int bottom);
 int  CheckMouseRegion(int x, int y);
@@ -74,7 +74,7 @@ void SetWindowName(char *name);
 void openXwindow(int argc, char *argv[], char **, char *, int, int, int withdrawn);
 void RedrawWindow(void);
 void RedrawWindowXY(int x, int y);
-void CheckX11Events();
+void CheckX11Events(void);
 void pressEvent(XButtonEvent *xev);
 
 void copyXPMArea(int, int, int, int, int, int);
@@ -85,7 +85,7 @@ void AddRcKey(rckeys *key, const char *label, int type, void *var);
 void ParseRCFile(const char *filename, rckeys *keys);
 void ParseCMDLine(int argc, char *argv[]);
 void LoadRCFile(rckeys *keys);
-void ReloadRCFile();
+void ReloadRCFile(void);
 
   /************/
  /* Datadefs */

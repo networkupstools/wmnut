@@ -85,7 +85,7 @@ static Pixel GetColor(char *);
 void RedrawWindow(void);
 void AddMouseRegion(int, int, int, int, int);
 int CheckMouseRegion(int, int);
-void CheckX11Events();
+void CheckX11Events(void);
 
 /*******************************************************************************\
 |* SetWindowName                                                               *|
@@ -412,7 +412,7 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
  * stuff and exits. It is called in case
  * of emergencies too.
  */
-void Cleanup()
+void Cleanup(void)
 {
   /* do not clean on FreeBSD ! */
 #ifndef FreeBSD
@@ -434,7 +434,7 @@ void Cleanup()
  * - request to quit (Close button)
  * - mouse request (click)
  */
-void CheckX11Events()
+void CheckX11Events(void)
 {
   XEvent Event;
 

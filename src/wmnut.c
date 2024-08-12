@@ -34,12 +34,12 @@
 #define LARGEBUF      1024
 
 void 	ParseCMDLine(int argc, char *argv[]);
-void 	InitHosts();
+void 	InitHosts(void);
 int  	AddHost(char *hostname);
-void 	GetFirstHost();
-int 	GetNextHost();
-int 	GetPrevHost();
-void 	InitCom();
+void 	GetFirstHost(void);
+int 	GetNextHost(void);
+int 	GetPrevHost(void);
+void 	InitCom(void);
 
 /* base parameters */
 /* Controls whether alert is sent to all users via wall: Off by default */
@@ -544,7 +544,7 @@ int main(int argc, char *argv[]) {
 	}
 }
 
-void InitCom()
+void InitCom(void)
 {
 	int i, ret;
 	char vars[LARGEBUF];
@@ -614,7 +614,7 @@ void InitCom()
 }
 
 /* init monitored UPS internal data */
-void InitHosts() 
+void InitHosts(void) 
 {
 	int i;
   
@@ -625,7 +625,7 @@ void InitHosts()
 }
 
 /* Clean all monitored UPS internal data */
-void CleanHosts()
+void CleanHosts(void)
 {
 	int i;
 
@@ -724,7 +724,7 @@ int AddHost(char *hostname)
 	return 0;
 }
 
-void GetFirstHost()
+void GetFirstHost(void)
 {
 	Hosts.curhosts_number = 1;
 
@@ -735,7 +735,7 @@ void GetFirstHost()
 		Hosts.curhosts_number, CurHost->upsname);
 }
 
-int GetNextHost()
+int GetNextHost(void)
 {
 	if(Hosts.curhosts_number < Hosts.hosts_number)
 		Hosts.curhosts_number++;
@@ -751,7 +751,7 @@ int GetNextHost()
 	return Hosts.curhosts_number;
 }
 
-int GetPrevHost()
+int GetPrevHost(void)
 {
 	if(Hosts.curhosts_number > 1)
 		Hosts.curhosts_number--;
