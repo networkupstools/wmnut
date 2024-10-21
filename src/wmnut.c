@@ -159,13 +159,10 @@ void get_ups_info(void)
 			clearflag(&CurHost->ups_status, ST_ONLINE);
 		}
 		for (numa = 0; numa < sizeof(ups_status_flags) / sizeof(ups_status_flags[0]); numa++) {
-			if (strstr(value, ups_status_flags[numa].status)) {
-				if(!flag_isset(CurHost->ups_status, ups_status_flags[numa].flag)) {
-					setflag(&CurHost->ups_status, ups_status_flags[numa].flag);
-				}
-			} else {
+			if (strstr(value, ups_status_flags[numa].status))
+				setflag(&CurHost->ups_status, ups_status_flags[numa].flag);
+			else
 				clearflag(&CurHost->ups_status, ups_status_flags[numa].flag);
-			}
 		}
 	} else {
 		CurHost->ups_status = 0;
