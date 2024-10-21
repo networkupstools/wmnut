@@ -598,11 +598,10 @@ int main(int argc, char *argv[]) {
 						copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
 				} else {
 					/* Show colorful battery charge meter when not OL */
-					copyXPMArea(66, 31, 49, 9, 7, 21);
 					if (k%2)
-						copyXPMArea(66, 52, k-1, 9, 7, 21);
-					else
 						copyXPMArea(66, 52, k, 9, 7, 21);
+					else
+						copyXPMArea(66, 52, k-1, 9, 7, 21);
 				}
 			}
 		}
