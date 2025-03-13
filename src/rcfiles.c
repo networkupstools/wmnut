@@ -112,10 +112,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 									AddHost(p);
 								break;
 							case TYPE_BOOL:
-								if (!strncmp(p, "on", 2))
-									*keys[key].var.bool = 1;
-								else
-									*keys[key].var.bool = 0;
+								*keys[key].var.boolean = strncmp(p, "on", 2) == 0;
 								break;
 							case TYPE_INT:
 								*keys[key].var.integer = atoi(p);
