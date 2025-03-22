@@ -273,6 +273,9 @@ and WMNut, and the problem should disappear -- it was solved in the past.
 Screenshots
 -----------
 
+For a larger collection of screenshots from WMNut v0.71 (with added support
+for many more NUT `ups.status` values) please see link:images/wmnut-pr.pdf[]
+
 Withdrawn mode
 ~~~~~~~~~~~~~~
 
