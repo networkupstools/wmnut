@@ -322,53 +322,53 @@ int main(int argc, char *argv[]) {
 
 	while(1) {
 		/* Only process nut info only every nMax cycles of this
-		*  loop. We run it faster to catch the xevents like button
-		*  presses and expose events, etc...
-		*
-		*  DELAY is set at 0.00625 seconds, so process nut info
-		*  every 1.25 seconds...
-		*/
+		 *  loop. We run it faster to catch the xevents like button
+		 *  presses and expose events, etc...
+		 *
+		 *  DELAY is set at 0.00625 seconds, so process nut info
+		 *  every 1.25 seconds...
+		 */
 		if (n > nMax){
 			n = 0;
 
 			/*
-			*   Invert toggle (for blinking).
-			*/
+			 *   Invert toggle (for blinking).
+			 */
 			Toggle = (Toggle == OFF) ? ON : OFF;
 
 			get_ups_info();
 
 			/*
-			*   Reset any previous offsets.
-			*/
+			 *   Reset any previous offsets.
+			 */
 			yoffset = 0;
 
 			/*
-			*   Assign internal variables (for display elements)
-			*/
+			 *   Assign internal variables (for display elements)
+			 */
 			batt_load = CurHost->battery_load;
 			batt_perc = CurHost->battery_percentage;
 
 			/*
-			*   Repaint buttons.
-			*/
+			 *   Repaint buttons.
+			 */
 			copyXPMArea(42, 106, 13, 11, 5, 48);
 			copyXPMArea(57, 106, 13, 11, 46, 48);
 
 			/*
-			*   Repaint host number.
-			*/
+			 *   Repaint host number.
+			 */
 			copyXPMArea((CurHost->hostnumber) * 7 + 5, 93, 7, 9, 22, 49);
 
 			/*
-			*   Check communication status.
-			*/
+			 *   Check communication status.
+			 */
 			copyXPMArea(110,  6, 5, 7,  6,  7);	/* erase zone */
 
 			if ((int)(CurHost->comm_status) == COM_LOST) {
 				/*
-				*   Communication Status: COM_LOST.
-				*/
+				 *   Communication Status: COM_LOST.
+				 */
 				DEBUGERR("Communication lost with UPS %s\n", CurHost->hostname);
 
 				if (Toggle||(BlinkRate == 0.0))
@@ -378,17 +378,17 @@ int main(int argc, char *argv[]) {
 			}
 			else {
 				/*
-				*   Communication Status: COM_OK.
-				*/
+				 *   Communication Status: COM_OK.
+				 */
 				copyXPMArea(104,  6, 5, 7,  6,  7);
 			}
 
 			/*
-			*   Paste up the "Time Left". This time means (format HH:MM) :
-			*
-			*   Time left before battery drains to 0%
-			*   If not supported (RUNTIME feature) --:--
-			*/
+			 *   Paste up the "Time Left". This time means (format HH:MM) :
+			 *
+			 *   Time left before battery drains to 0%
+			 *   If not supported (RUNTIME feature) --:--
+			 */
 			copyXPMArea(83, 93, 41, 9, 15, 7);	/* erase zone */
 
 			if (CurHost->battery_runtime >= 0) {
@@ -415,8 +415,8 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*   Do Battery Load.
-			*/
+			 *   Do Battery Load.
+			 */
 			copyXPMArea(75, 81, 21, 7, 36, 34);	/* erase zone */
 			yoffset = 0;	/* Reset offset to be safe */
 
@@ -452,8 +452,8 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*   Do AVR Status (TRIM and BOOST)
-			*/
+			 *   Do AVR Status (TRIM and BOOST)
+			 */
 			copyXPMArea(77, 74, 12, 4, 7, 16);	/* erase zone */
 
 			if(flag_isset(CurHost->ups_status, ST_TRIM)
@@ -463,8 +463,8 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*   Do Alarm Status
-			*/
+			 *   Do Alarm Status
+			 */
 			copyXPMArea(45, 133, 7, 7, 28, 34);	/* erase zone */
 
 			if(flag_isset(CurHost->ups_status, ST_ALARM)) {
@@ -473,38 +473,38 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*   Do Battery Status
-			*/
+			 *   Do Battery Status
+			 */
 			copyXPMArea(99, 20, 12, 7, 30, 50);	/* erase zone */
 			yoffset = 0;	/* Reset offset to be safe */
 
 
 			if (flag_isset(CurHost->ups_status, ST_FSD)) {
 				/*
-				*   UPS is shutting down, I.e. has become critical
-				*/
+				 *   UPS is shutting down, I.e. has become critical
+				 */
 				if(Toggle||(BlinkRate == 0.0))
 					copyXPMArea(6, 132, 12, 7, 30, 50);	/* blink FSD */
 			} else if (flag_isset(CurHost->ups_status, ST_CAL)) {
 				/*
-				*   UPS in calibration, I.e. testing the batteries
-				*/
+				 *   UPS in calibration, I.e. testing the batteries
+				 */
 				if(Toggle||(BlinkRate == 0.0))
 					copyXPMArea(108, 64, 12, 7, 30, 50);	/* blink gray battery for CAL */
 			} else if (flag_isset(CurHost->ups_status, ST_OFF)) {
 				/*
-				*   UPS is offline. I.e. we are not protected.
-				*/
+				 *   UPS is offline. I.e. we are not protected.
+				 */
 				copyXPMArea(21, 132, 12, 7, 30, 50);	/* show OFF */
 			} else if (flag_isset(CurHost->ups_status, ST_BYPASS)) {
 				/*
-				*   UPS on bypass. I.e. we are not protected.
-				*/
+				 *   UPS on bypass. I.e. we are not protected.
+				 */
 				copyXPMArea(92, 64, 12, 7, 30, 50);	/* red plug for BYPASS */
 			} else if(flag_isset(CurHost->ups_status, ST_ONLINE)) {
 				/*
-				*   UPS on-line. I.e. we are "plugged-in".
-				*/
+				 *   UPS on-line. I.e. we are "plugged-in".
+				 */
 				if (flag_isset(CurHost->ups_status, ST_REPLBATT)) {
 					if(Toggle||(BlinkRate == 0.0))
 						copyXPMArea(114, 20, 12, 7, 30, 50);	/* blink dead battery for OL+RB */
@@ -516,29 +516,29 @@ int main(int argc, char *argv[]) {
 					copyXPMArea(68, 6, 12, 7, 30, 50);	/* green plug for OL */
 			} else {
 				/*
-				*   UPS not on-line. I.e. we are "on battery".
-				*/
+				 *   UPS not on-line. I.e. we are "on battery".
+				 */
 				if (CurHost->battery_percentage <= CriticalLevel
 				|| flag_isset(CurHost->ups_status, ST_LOWBATT)) {
 					/*
-					*   Battery Status: Critical and discharging.
-					*/
+					 *   Battery Status: Critical and discharging.
+					 */
 					yoffset = -11;	/* Set offset for red text */
 					if (Toggle||(BlinkRate == 0.0))
 						copyXPMArea(83, 20, 12, 7, 30, 50);	/* blink red battery */
 				}
 				else if (CurHost->battery_percentage <= LowLevel) {
 					/*
-					*   Battery Status: Low and discharging.
-					*/
+					 *   Battery Status: Low and discharging.
+					 */
 					yoffset = 41;	/* Set offset for yellow text */
 					if (Toggle||(BlinkRate == 0.0))
 						copyXPMArea(69, 20, 12, 7, 30, 50);	/* blink yellow battery */
 				}
 				else {
 					/*
-					*   Battery Status: Good and discharging.
-					*/
+					 *   Battery Status: Good and discharging.
+					 */
 					yoffset = 0;	/* No offset for regular text */
 					if (Toggle||(BlinkRate == 0.0))
 						copyXPMArea(83, 6, 12, 7, 30, 50);	/* blink green battery */
@@ -546,15 +546,15 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*   If overcharged, normalize displays to 100%.
-			*/
+			 *   If overcharged, normalize displays to 100%.
+			 */
 			if(CurHost->battery_percentage > 100) {
 				batt_perc = 100;
 			}
 
 			/*
-			*   Do Battery Percentage
-			*/
+			 *   Do Battery Percentage
+			 */
 			copyXPMArea(75, 81, 21, 7, 6, 34);	/* erase zone */
 
 			/* blink battery perc red if critical or status LB and not OL/CAL */
@@ -582,8 +582,8 @@ int main(int argc, char *argv[]) {
 			}
 
 			/*
-			*   Do Show Battery Charge Meter
-			*/
+			 *   Do Show Battery Charge Meter
+			 */
 			copyXPMArea(66, 31, 49, 9, 7, 21);	/* erase zone */
 
 			if (CurHost->battery_percentage >= 0) {
@@ -607,7 +607,7 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			/* Update the counter. When it hits nMax, we will
-			*  process nut information again */
+			 *  process nut information again */
 			++n;
 		}
 
