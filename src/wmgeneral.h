@@ -35,7 +35,7 @@ union var {
 	int	*integer;
 	float	*floater;
 	char	*str;
-	int	*bool;
+	int	*boolean;
 };
 
 typedef struct {
