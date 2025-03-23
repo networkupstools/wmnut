@@ -4,6 +4,7 @@
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
  *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
+ *          2024  desertwitch <dezertwitsh@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,13 +76,40 @@
 #define OFF            0
 #define ON             1
 
-/* UPS status definition */
+/* UPS status flags definition */
 
-#define UPS_DEFAULT	0
-#define UPS_LOWBATT	1
-#define UPS_ONBATT	2
-#define UPS_ONLINE	3
-#define UPS_OVERLOAD	4
+#define ST_ONLINE      (1 << 0)	/* UPS is on line */
+#define ST_ONBATT      (1 << 1)	/* UPS is on battery */
+#define ST_LOWBATT     (1 << 2)	/* UPS is on low battery */
+#define ST_FSD         (1 << 3)	/* UPS is shutting down */
+#define ST_REPLBATT    (1 << 4)	/* UPS battery needs replacement */
+#define ST_CAL         (1 << 5)	/* UPS is calibrating */
+#define ST_OFF         (1 << 6)	/* UPS is (administratively) offline */
+#define ST_BYPASS      (1 << 7)	/* UPS is on bypass */
+#define ST_OVERLOAD    (1 << 8)	/* UPS is overloaded */
+#define ST_TRIM        (1 << 9)	/* UPS is trimming */
+#define ST_BOOST       (1 << 10)	/* UPS is boosting */
+#define ST_ALARM       (1 << 11)	/* UPS has active alarm(s) */
+
+/* structure to map UPS status to UPS status flags */
+
+struct {
+	const char *status;
+	int flag;
+} ups_status_flags[] = {
+	{"OL", ST_ONLINE},
+	{"OB", ST_ONBATT},
+	{"LB", ST_LOWBATT},
+	{"FSD", ST_FSD},
+	{"RB", ST_REPLBATT},
+	{"CAL", ST_CAL},
+	{"OFF", ST_OFF},
+	{"BYPASS", ST_BYPASS},
+	{"OVER", ST_OVERLOAD},
+	{"TRIM", ST_TRIM},
+	{"BOOST", ST_BOOST},
+	{"ALARM", ST_ALARM},
+};
 
 /* structure to monitor an UPS unit */
 

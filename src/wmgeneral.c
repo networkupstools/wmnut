@@ -466,7 +466,7 @@ void CheckX11Events(void)
 				break;
 			case ClientMessage:
 				if ((Event.xclient.message_type == wm_protocols)
-				 && (Event.xclient.data.l[0] == wm_delete_window)
+				 && ((Atom)Event.xclient.data.l[0] == wm_delete_window)
 				)
 					Cleanup();
 				break;

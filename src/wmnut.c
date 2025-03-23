@@ -4,6 +4,7 @@
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
  *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
+ *          2024  desertwitch <dezertwitsh@gmail.com>
  *
  * based on wmapm originally written by
  * Chris D. Faulhaber <jedgar@speck.ml.org>. Version 3.0
@@ -75,6 +76,22 @@ rckeys	wmnut_keys[13];
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
 #define DEBUGERR(...)	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
 
+/* Set and clear UPS status flags */
+void setflag(int *val, int flag)
+{
+	*val |= flag;
+}
+
+void clearflag(int *val, int flag)
+{
+	*val ^= (*val & flag);
+}
+
+int flag_isset(int num, int flag)
+{
+	return ((num & flag) == flag);
+}
+
 /*
  * Get a variable from the UPS
  ********************************************************* */
@@ -131,23 +148,25 @@ void get_ups_info(void)
 {
 	char	value[SMALLBUF];
 	int	retVal;
+	size_t	numa;
 
 	/* Get UPS status */
 	if (get_ups_var ("ups.status", value) > NOK) {
-
-		if (!strncmp(value, "OL", 2))
-			CurHost->ups_status = UPS_ONLINE;
-		else if (!strncmp(value, "OB", 2))
-			CurHost->ups_status = UPS_ONBATT;
-		else if (!strstr(value, "LB"))
-			CurHost->ups_status = UPS_LOWBATT;
-		else if (!strncmp(value, "OVER", 4))
-			CurHost->ups_status = UPS_OVERLOAD;
-		else
-		CurHost->ups_status = UPS_DEFAULT;
+		if (strstr(value, "OL")) {
+			clearflag(&CurHost->ups_status, ST_ONBATT);
+		}
+		if (strstr(value, "OB")) {
+			clearflag(&CurHost->ups_status, ST_ONLINE);
+		}
+		for (numa = 0; numa < sizeof(ups_status_flags) / sizeof(ups_status_flags[0]); numa++) {
+			if (strstr(value, ups_status_flags[numa].status))
+				setflag(&CurHost->ups_status, ups_status_flags[numa].flag);
+			else
+				clearflag(&CurHost->ups_status, ups_status_flags[numa].flag);
+		}
+	} else {
+		CurHost->ups_status = 0;
 	}
-	else
-		CurHost->ups_status = UPS_DEFAULT;
 
 	/* Get battery charge level */
 	if ((CurHost->battery_runtime != VARNOTSUPP)
@@ -196,6 +215,7 @@ void get_ups_info(void)
 int main(int argc, char *argv[]) {
 	int		time_left, hour_left, min_left;
 	int		i, m, n, nMax, k, Toggle = OFF;
+	int		batt_load, batt_perc, yoffset;
 #if 0
 	int		mMax, retVal;
 	long int	r, rMax, s, sMax;
@@ -302,160 +322,75 @@ int main(int argc, char *argv[]) {
 
 	while(1) {
 		/* Only process nut info only every nMax cycles of this
-		*  loop. We run it faster to catch the xevents like button
-		*  presses and expose events, etc...
-		*
-		*  DELAY is set at 0.00625 seconds, so process nut info
-		*  every 1.25 seconds...
-		*/
+		 *  loop. We run it faster to catch the xevents like button
+		 *  presses and expose events, etc...
+		 *
+		 *  DELAY is set at 0.00625 seconds, so process nut info
+		 *  every 1.25 seconds...
+		 */
 		if (n > nMax){
 			n = 0;
 
-			/* invert toggle */
+			/*
+			 *   Invert toggle (for blinking).
+			 */
 			Toggle = (Toggle == OFF) ? ON : OFF;
 
 			get_ups_info();
 
-			/* Check communication status */
-			if ((int)(CurHost->comm_status) == COM_LOST) {
-				DEBUGERR("Communication lost with UPS %s\n", CurHost->hostname);
-
-				/*
-				*  Communication Status: COM_LOST.
-				*  Blink red "C" on/off ...
-				*/
-				if (Toggle||(BlinkRate == 0.0)) {
-				/*
-					if (Beep)
-						XBell(display, Volume);
-				*/
-					copyXPMArea(110,  6, 5, 7,  6,  7);
-				} else
-					copyXPMArea(98,  6, 5, 7,  6,  7);
-
-				/* ... and "stale" status */
-				CurHost->ups_status = UPS_DEFAULT;
-			}
-			else {
-				/* Communication Status: COM_OK */
-				copyXPMArea(104,  6, 5, 7,  6,  7);
-			}
-
-			/* Check UPS status */
-			switch (CurHost->ups_status) {
-
-				/* case UPS_LOWBATT: */
-				case UPS_ONBATT:
-				{
-					if (CurHost->battery_percentage <= CriticalLevel)
-					{
-						/* Battery Status: Critical.
-						*  Blink red battery [TODO : and digital %age] on/off...
-						*/
-						if (Toggle||(BlinkRate == 0.0)) {
-							/*
-							if (Beep)
-								XBell(display, Volume);
-							*/
-							/* Toggle = OFF; */
-							copyXPMArea(99, 20, 12, 7, 30, 50);
-						}
-						else{
-							/* Toggle = ON; */
-							copyXPMArea(83, 20, 12, 7, 30, 50);
-						}
-					}
-					else if (CurHost->battery_percentage <= LowLevel) {
-						/*
-						*  Battery Status: Low.
-						*  Blink the yellow battery [TODO : and digital %age] on/off...
-						*/
-						if (Toggle||(BlinkRate == 0.0)) {
-							/*
-							if (Beep)
-								XBell(display, Volume);
-							*/
-							/* Toggle = OFF; */
-							copyXPMArea(99, 20, 12, 7, 30, 50);
-						}
-						else{
-							/* Toggle = ON; */
-							copyXPMArea(69, 20, 12, 7, 30, 50);
-						}
-					}
-					else {
-						/*
-						*  Battery Status: High but charging.
-						*  Blink the green battery [TODO : and digital %age] on/off...
-						*/
-						if (Toggle||(BlinkRate == 0.0)) {
-							/*
-							if (Beep)
-								XBell(display, Volume);
-							*/
-							copyXPMArea(99, 20, 12, 7, 30, 50);
-						}
-						else
-							copyXPMArea(83, 6, 12, 7, 30, 50);
-					}
-				}
-				break;
-
-				case UPS_OVERLOAD:
-				{
-					/*
-					*  UPS is overloaded.
-					*  [TODO : Blink the battery load %age on/off...]
-					*/
-					/* Hide digits and '%' */
-					copyXPMArea(37, 34, 19, 7,37, 34);
-				}
-				break;
-
-				case UPS_ONLINE:
-				{
-					/*
-					*   UPS on-line. I.e. we are "plugged-in".
-					*/
-					copyXPMArea(68, 6, 12, 7, 30, 50);
-				}
-				break;
-
-				case UPS_DEFAULT:
-				{
-					/*
-					*   used to "erase" UPS status when COM_LOST.
-					*/
-					copyXPMArea(99, 20, 12, 7, 30, 50);
-				}
-				break;
-
-				default:
-					break;
-			}
+			/*
+			 *   Reset any previous offsets.
+			 */
+			yoffset = 0;
 
 			/*
-			*    Paste up the default !?! communication !?! status and runtime
-			*/
-			copyXPMArea(83, 93, 41, 9, 15, 7);
+			 *   Assign internal variables (for display elements)
+			 */
+			batt_load = CurHost->battery_load;
+			batt_perc = CurHost->battery_percentage;
 
 			/*
-			*   Repaint buttons.
-			*/
+			 *   Repaint buttons.
+			 */
 			copyXPMArea(42, 106, 13, 11, 5, 48);
 			copyXPMArea(57, 106, 13, 11, 46, 48);
 
 			/*
-			*   Repaint host number.
-			*/
+			 *   Repaint host number.
+			 */
 			copyXPMArea((CurHost->hostnumber) * 7 + 5, 93, 7, 9, 22, 49);
 
 			/*
-			*  Paste up the "Time Left". This time means (format HH:MM) :
-			*
-			*         Time left before battery drains to 0%
-			*         If not supported (RUNTIME feature) --:--
-			*/
+			 *   Check communication status.
+			 */
+			copyXPMArea(110,  6, 5, 7,  6,  7);	/* erase zone */
+
+			if ((int)(CurHost->comm_status) == COM_LOST) {
+				/*
+				 *   Communication Status: COM_LOST.
+				 */
+				DEBUGERR("Communication lost with UPS %s\n", CurHost->hostname);
+
+				if (Toggle||(BlinkRate == 0.0))
+					copyXPMArea(98,  6, 5, 7,  6,  7);	/* blink red C */
+
+				CurHost->ups_status = 0;	/* clear flags */
+			}
+			else {
+				/*
+				 *   Communication Status: COM_OK.
+				 */
+				copyXPMArea(104,  6, 5, 7,  6,  7);
+			}
+
+			/*
+			 *   Paste up the "Time Left". This time means (format HH:MM) :
+			 *
+			 *   Time left before battery drains to 0%
+			 *   If not supported (RUNTIME feature) --:--
+			 */
+			copyXPMArea(83, 93, 41, 9, 15, 7);	/* erase zone */
+
 			if (CurHost->battery_runtime >= 0) {
 				/* convert in minutes */
 				time_left = CurHost->battery_runtime / 60;
@@ -474,70 +409,208 @@ int main(int argc, char *argv[]) {
 				/* Show 1's (min) */
 				copyXPMArea((min_left % 10) * 7 + 5, 93, 7, 9, 50, 7);
 			}
-			else /* Show --:-- */
+			else {
+				/* Show --:-- */
 				copyXPMArea(83, 106, 41, 9, 15, 7);
+			}
 
 			/*
-			*   Do Battery Load.
-			*/
-			if (CurHost->battery_load >= 0) {
+			 *   Do Battery Load.
+			 */
+			copyXPMArea(75, 81, 21, 7, 36, 34);	/* erase zone */
+			yoffset = 0;	/* Reset offset to be safe */
 
-				if ((CurHost->ups_status != UPS_OVERLOAD)) {	/* needed ?? */
-					if (CurHost->battery_load >= 10)
-						copyXPMArea((CurHost->battery_load / 10) * 6 + 4,
-							81, 6, 7, 37, 34);	/* Show 10's */
-					else
-						copyXPMArea(76, 81, 6, 7, 37, 34);	/* Erase 10's */
-					copyXPMArea((CurHost->battery_load % 10) * 6 + 4,
-						81, 6, 7, 43, 34);	/* Show 1's */
-					copyXPMArea(64, 81, 7, 7, 50, 34);	/* Show '%' */
+			if (flag_isset(CurHost->ups_status, ST_OVERLOAD)) {
+				yoffset = -11;	/* Set offset for red text */
+			} else {
+				yoffset = 0;	/* No offset for regular text */
+			}
+
+			if (CurHost->battery_load >= 0) {
+				/* If overloaded, normalize display to 100% */
+				if (batt_load > 100) {
+					batt_load = 100;
+				}
+
+				/* blink load if UPS is overloaded (red) */
+				if (!flag_isset(CurHost->ups_status, ST_OVERLOAD)
+				|| Toggle || (BlinkRate == 0.0)) {
+					if (batt_load == 100) {
+						copyXPMArea(15, 81 + yoffset, 1, 7,  37, 34);	/* Show 100's */
+						copyXPMArea( 5, 81 + yoffset, 5, 7,  39, 34);	/* Show 10's */
+						copyXPMArea( 5, 81 + yoffset, 5, 7, 45, 34);	/* Show 1's */
+						copyXPMArea(64, 81 + yoffset, 5, 7, 51, 34);	/* Show '%' */
+					} else {
+						if (batt_load >= 10)
+							copyXPMArea((batt_load / 10) * 6 + 5,
+								81 + yoffset, 5, 7, 39, 34);	/* Show 10's */
+						copyXPMArea((batt_load % 10) * 6 + 5,
+							81 + yoffset, 5, 7, 45, 34);	/* Show 1's */
+						copyXPMArea(64, 81 + yoffset, 5, 7, 51, 34);	/* Show '%' */
+					}
 				}
 			}
-			else { /* erase zone */
-				copyXPMArea(76, 81, 19, 7, 37, 34);
+
+			/*
+			 *   Do AVR Status (TRIM and BOOST)
+			 */
+			copyXPMArea(77, 74, 12, 4, 7, 16);	/* erase zone */
+
+			if (flag_isset(CurHost->ups_status, ST_TRIM)
+			|| flag_isset(CurHost->ups_status, ST_BOOST)) {
+				if (Toggle || (BlinkRate == 0.0))
+					copyXPMArea(92, 74, 12, 4, 7, 16);	/* blink avr */
 			}
 
 			/*
-			 *   Do Battery Percentage.
+			 *   Do Alarm Status
 			 */
+			copyXPMArea(45, 133, 7, 7, 28, 34);	/* erase zone */
 
-			/* erase zone */
-			/*        copyXPMArea(76, 81, 19, 7, 7, 34);   */
-			copyXPMArea(76, 81, 20, 7, 7, 34);	/* Show Default % */
-			copyXPMArea(66, 31, 49, 9, 7, 21);	/* Show Default Meter */
+			if (flag_isset(CurHost->ups_status, ST_ALARM)) {
+				if (Toggle || (BlinkRate == 0.0))
+					copyXPMArea(35, 133, 7, 7, 28, 34);	/* blink alarm */
+			}
 
-			if (CurHost->battery_percentage > 0) {
-				/* displays battery percent bis */
-				if (CurHost->battery_percentage == 100){
-					copyXPMArea(15, 81, 1, 7,  7, 34);	/* If 100%, show 100% */
-					copyXPMArea( 5, 81, 6, 7,  9, 34);
-					copyXPMArea( 5, 81, 6, 7, 15, 34);
-					copyXPMArea(64, 81, 6, 7, 21, 34);	/* Show '%' */
-					copyXPMArea(66, 42, 49, 9, 7, 21);	/* Show Meter */
+			/*
+			 *   Do Battery Status
+			 */
+			copyXPMArea(99, 20, 12, 7, 30, 50);	/* erase zone */
+			yoffset = 0;	/* Reset offset to be safe */
+
+
+			if (flag_isset(CurHost->ups_status, ST_FSD)) {
+				/*
+				 *   UPS is shutting down, I.e. has become critical
+				 */
+				if (Toggle||(BlinkRate == 0.0))
+					copyXPMArea(6, 132, 12, 7, 30, 50);	/* blink FSD */
+			} else if (flag_isset(CurHost->ups_status, ST_CAL)) {
+				/*
+				 *   UPS in calibration, I.e. testing the batteries
+				 */
+				if (Toggle||(BlinkRate == 0.0))
+					copyXPMArea(108, 64, 12, 7, 30, 50);	/* blink gray battery for CAL */
+			} else if (flag_isset(CurHost->ups_status, ST_OFF)) {
+				/*
+				 *   UPS is offline. I.e. we are not protected.
+				 */
+				copyXPMArea(21, 132, 12, 7, 30, 50);	/* show OFF */
+			} else if (flag_isset(CurHost->ups_status, ST_BYPASS)) {
+				/*
+				 *   UPS on bypass. I.e. we are not protected.
+				 */
+				copyXPMArea(92, 64, 12, 7, 30, 50);	/* red plug for BYPASS */
+			} else if (flag_isset(CurHost->ups_status, ST_ONLINE)) {
+				/*
+				 *   UPS on-line. I.e. we are "plugged-in".
+				 */
+				if (flag_isset(CurHost->ups_status, ST_REPLBATT)) {
+					if (Toggle||(BlinkRate == 0.0))
+						copyXPMArea(114, 20, 12, 7, 30, 50);	/* blink dead battery for OL+RB */
+				}
+				else if (flag_isset(CurHost->ups_status, ST_TRIM)
+				|| flag_isset(CurHost->ups_status, ST_BOOST))
+					copyXPMArea(77, 64, 12, 7, 30, 50);	/* yellow plug for OL+AVR */
+				else
+					copyXPMArea(68, 6, 12, 7, 30, 50);	/* green plug for OL */
+			} else {
+				/*
+				 *   UPS not on-line. I.e. we are "on battery".
+				 */
+				if (CurHost->battery_percentage <= CriticalLevel
+				|| flag_isset(CurHost->ups_status, ST_LOWBATT)) {
+					/*
+					 *   Battery Status: Critical and discharging.
+					 */
+					yoffset = -11;	/* Set offset for red text */
+					if (Toggle||(BlinkRate == 0.0))
+						copyXPMArea(83, 20, 12, 7, 30, 50);	/* blink red battery */
+				}
+				else if (CurHost->battery_percentage <= LowLevel) {
+					/*
+					 *   Battery Status: Low and discharging.
+					 */
+					yoffset = 41;	/* Set offset for yellow text */
+					if (Toggle||(BlinkRate == 0.0))
+						copyXPMArea(69, 20, 12, 7, 30, 50);	/* blink yellow battery */
 				}
 				else {
-					if (CurHost->battery_percentage >= 10)
-						copyXPMArea((CurHost->battery_percentage / 10) * 6 + 4,
-							81, 6, 7,  9, 34);	/* Show 10's */
-					copyXPMArea((CurHost->battery_percentage % 10) * 6 + 4,
-						81, 6, 7, 15, 34);	/* Show 1's */
-					copyXPMArea(64, 81, 7, 7, 21, 34);	/* Show '%' */
+					/*
+					 *   Battery Status: Good and discharging.
+					 */
+					yoffset = 0;	/* No offset for regular text */
+					if (Toggle||(BlinkRate == 0.0))
+						copyXPMArea(83, 6, 12, 7, 30, 50);	/* blink green battery */
 				}
 			}
 
 			/*
-			 *  Show Meter
+			 *   If overcharged, normalize displays to 100%.
 			 */
-			k = CurHost->battery_percentage * 49 / 100;
-			copyXPMArea(66, 42, k, 9, 7, 21);
-			if (k%2)
-				copyXPMArea(66+k-1, 52, 1, 9, 7+k-1, 21);
-			else
-				copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
+			if (CurHost->battery_percentage > 100) {
+				batt_perc = 100;
+			}
+
+			/*
+			 *   Do Battery Percentage
+			 */
+			copyXPMArea(75, 81, 21, 7, 6, 34);	/* erase zone */
+
+			/* blink battery perc red if critical or status LB and not OL/CAL */
+			if (CurHost->battery_percentage >= 0 &&
+			   (!(
+			         (CurHost->battery_percentage <= CriticalLevel
+			          || flag_isset(CurHost->ups_status, ST_LOWBATT))
+			      && !flag_isset(CurHost->ups_status, ST_ONLINE)
+			      && !flag_isset(CurHost->ups_status, ST_CAL))
+			    || Toggle
+			    || (BlinkRate == 0.0))
+			) {
+				/* displays battery percent bis */
+				if (batt_perc == 100){
+					copyXPMArea(15, 81 + yoffset, 1, 7,  7, 34);	/* Show 100's */
+					copyXPMArea( 5, 81 + yoffset, 5, 7,  9, 34);	/* Show 10's */
+					copyXPMArea( 5, 81 + yoffset, 5, 7, 15, 34);	/* Show 1's */
+					copyXPMArea(64, 81 + yoffset, 5, 7, 21, 34);	/* Show '%' */
+				}
+				else {
+					if (batt_perc >= 10)
+						copyXPMArea((batt_perc / 10) * 6 + 5,
+							81 + yoffset, 5, 7,  9, 34);	/* Show 10's */
+					copyXPMArea((batt_perc % 10) * 6 + 5,
+						81 + yoffset, 5, 7, 15, 34);	/* Show 1's */
+					copyXPMArea(64, 81 + yoffset, 5, 7, 21, 34);	/* Show '%' */
+				}
+			}
+
+			/*
+			 *   Do Show Battery Charge Meter
+			 */
+			copyXPMArea(66, 31, 49, 9, 7, 21);	/* erase zone */
+
+			if (CurHost->battery_percentage >= 0) {
+				k = batt_perc * 49 / 100;
+
+				if (flag_isset(CurHost->ups_status, ST_ONLINE)) {
+					/* Show standard battery charge meter when OL */
+					copyXPMArea(66, 42, k, 9, 7, 21);
+					if (k%2)
+						copyXPMArea(66+k-1, 52, 1, 9, 7+k-1, 21);
+					else
+						copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
+				} else {
+					/* Show colorful battery charge meter when not OL */
+					if (k%2)
+						copyXPMArea(66, 52, k, 9, 7, 21);
+					else
+						copyXPMArea(66, 52, k-1, 9, 7, 21);
+				}
+			}
 		}
 		else {
 			/* Update the counter. When it hits nMax, we will
-			*  process nut information again */
+			 *  process nut information again */
 			++n;
 		}
 
@@ -597,7 +670,9 @@ void InitCom(void)
 		else {
 			DEBUGERR("Got variables list for %s@%s\n",
 				CurHost->upsname, CurHost->hostname);
-				CurHost->comm_status = COM_OK;
+
+			CurHost->comm_status = COM_OK;
+			CurHost->ups_status = 0;
 
 			/* FIXME: LIST VAR seems to be necessary here (otherwise,
 			 * we got an "Error: Protocol error" => check why */
