@@ -152,10 +152,10 @@ void get_ups_info(void)
 
 	/* Get UPS status */
 	if (get_ups_var ("ups.status", value) > NOK) {
-		if(strstr(value, "OL")) {
+		if (strstr(value, "OL")) {
 			clearflag(&CurHost->ups_status, ST_ONBATT);
 		}
-		if(strstr(value, "OB")) {
+		if (strstr(value, "OB")) {
 			clearflag(&CurHost->ups_status, ST_ONLINE);
 		}
 		for (numa = 0; numa < sizeof(ups_status_flags) / sizeof(ups_status_flags[0]); numa++) {
@@ -435,7 +435,7 @@ int main(int argc, char *argv[]) {
 				/* blink load if UPS is overloaded (red) */
 				if (!flag_isset(CurHost->ups_status, ST_OVERLOAD)
 				|| Toggle || (BlinkRate == 0.0)) {
-					if(batt_load == 100) {
+					if (batt_load == 100) {
 						copyXPMArea(15, 81 + yoffset, 1, 7,  37, 34);	/* Show 100's */
 						copyXPMArea( 5, 81 + yoffset, 5, 7,  39, 34);	/* Show 10's */
 						copyXPMArea( 5, 81 + yoffset, 5, 7, 45, 34);	/* Show 1's */
@@ -456,9 +456,9 @@ int main(int argc, char *argv[]) {
 			 */
 			copyXPMArea(77, 74, 12, 4, 7, 16);	/* erase zone */
 
-			if(flag_isset(CurHost->ups_status, ST_TRIM)
+			if (flag_isset(CurHost->ups_status, ST_TRIM)
 			|| flag_isset(CurHost->ups_status, ST_BOOST)) {
-				if(Toggle || (BlinkRate == 0.0))
+				if (Toggle || (BlinkRate == 0.0))
 					copyXPMArea(92, 74, 12, 4, 7, 16);	/* blink avr */
 			}
 
@@ -467,8 +467,8 @@ int main(int argc, char *argv[]) {
 			 */
 			copyXPMArea(45, 133, 7, 7, 28, 34);	/* erase zone */
 
-			if(flag_isset(CurHost->ups_status, ST_ALARM)) {
-				if(Toggle || (BlinkRate == 0.0))
+			if (flag_isset(CurHost->ups_status, ST_ALARM)) {
+				if (Toggle || (BlinkRate == 0.0))
 					copyXPMArea(35, 133, 7, 7, 28, 34);	/* blink alarm */
 			}
 
@@ -483,13 +483,13 @@ int main(int argc, char *argv[]) {
 				/*
 				 *   UPS is shutting down, I.e. has become critical
 				 */
-				if(Toggle||(BlinkRate == 0.0))
+				if (Toggle||(BlinkRate == 0.0))
 					copyXPMArea(6, 132, 12, 7, 30, 50);	/* blink FSD */
 			} else if (flag_isset(CurHost->ups_status, ST_CAL)) {
 				/*
 				 *   UPS in calibration, I.e. testing the batteries
 				 */
-				if(Toggle||(BlinkRate == 0.0))
+				if (Toggle||(BlinkRate == 0.0))
 					copyXPMArea(108, 64, 12, 7, 30, 50);	/* blink gray battery for CAL */
 			} else if (flag_isset(CurHost->ups_status, ST_OFF)) {
 				/*
@@ -501,12 +501,12 @@ int main(int argc, char *argv[]) {
 				 *   UPS on bypass. I.e. we are not protected.
 				 */
 				copyXPMArea(92, 64, 12, 7, 30, 50);	/* red plug for BYPASS */
-			} else if(flag_isset(CurHost->ups_status, ST_ONLINE)) {
+			} else if (flag_isset(CurHost->ups_status, ST_ONLINE)) {
 				/*
 				 *   UPS on-line. I.e. we are "plugged-in".
 				 */
 				if (flag_isset(CurHost->ups_status, ST_REPLBATT)) {
-					if(Toggle||(BlinkRate == 0.0))
+					if (Toggle||(BlinkRate == 0.0))
 						copyXPMArea(114, 20, 12, 7, 30, 50);	/* blink dead battery for OL+RB */
 				}
 				else if (flag_isset(CurHost->ups_status, ST_TRIM)
@@ -548,7 +548,7 @@ int main(int argc, char *argv[]) {
 			/*
 			 *   If overcharged, normalize displays to 100%.
 			 */
-			if(CurHost->battery_percentage > 100) {
+			if (CurHost->battery_percentage > 100) {
 				batt_perc = 100;
 			}
 
@@ -559,11 +559,14 @@ int main(int argc, char *argv[]) {
 
 			/* blink battery perc red if critical or status LB and not OL/CAL */
 			if (CurHost->battery_percentage >= 0 &&
-			(!((CurHost->battery_percentage <= CriticalLevel
-			|| flag_isset(CurHost->ups_status, ST_LOWBATT))
-			&& !flag_isset(CurHost->ups_status, ST_ONLINE)
-			&& !flag_isset(CurHost->ups_status, ST_CAL))
-			|| Toggle || (BlinkRate == 0.0))) {
+			   (!(
+			         (CurHost->battery_percentage <= CriticalLevel
+			          || flag_isset(CurHost->ups_status, ST_LOWBATT))
+			      && !flag_isset(CurHost->ups_status, ST_ONLINE)
+			      && !flag_isset(CurHost->ups_status, ST_CAL))
+			    || Toggle
+			    || (BlinkRate == 0.0))
+			) {
 				/* displays battery percent bis */
 				if (batt_perc == 100){
 					copyXPMArea(15, 81 + yoffset, 1, 7,  7, 34);	/* Show 100's */
@@ -589,7 +592,7 @@ int main(int argc, char *argv[]) {
 			if (CurHost->battery_percentage >= 0) {
 				k = batt_perc * 49 / 100;
 
-				if(flag_isset(CurHost->ups_status, ST_ONLINE)) {
+				if (flag_isset(CurHost->ups_status, ST_ONLINE)) {
 					/* Show standard battery charge meter when OL */
 					copyXPMArea(66, 42, k, 9, 7, 21);
 					if (k%2)
