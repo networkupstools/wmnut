@@ -150,7 +150,7 @@ AC_SUBST(NUT_LIB)
 
 dnl Checks for header files.
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
+AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
 
 dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
