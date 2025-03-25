@@ -3,7 +3,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2025  Jim Klimov <jimklimov+nut@gmail.com>
  *          2024  desertwitch <dezertwitsh@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,12 @@
 
 /* nut and wmnut includes */
 #include <upsclient.h>
+#if defined HAVE_UPSCLI_STR_CONTAINS_TOKEN && HAVE_UPSCLI_STR_CONTAINS_TOKEN
+# define	STR_CONTAINS_TOKEN(haystack, needle)	upscli_str_contains_token(haystack, needle)
+#else
+# define	STR_CONTAINS_TOKEN(haystack, needle)	strstr(haystack, needle)
+#endif
+
 #include "wmgeneral.h"
 
 /* pixmaps */
