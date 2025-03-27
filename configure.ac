@@ -134,6 +134,15 @@ PKG_CHECK_MODULES(NUT, libupsclient >= 2.8.0)
 NUT_HEADER="$NUT_CFLAGS"
 NUT_LIB="$NUT_LIBS"
 
+dnl NOTE: `upscli_str_contains_token()` is expected since NUT v2.8.3
+myCFLAGS="$CFLAGS"
+myLIBS="$LIBS"
+CFLAGS="$NUT_CFLAGS"
+LIBS="$NUT_LIBS"
+AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token)
+CFLAGS="$CFLAGS"
+LIBS="$LIBS"
+
 dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl =============================

@@ -3,7 +3,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 - 2024  Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2025  Jim Klimov <jimklimov+nut@gmail.com>
  *          2024  desertwitch <dezertwitsh@gmail.com>
  *
  * based on wmapm originally written by
@@ -152,14 +152,14 @@ void get_ups_info(void)
 
 	/* Get UPS status */
 	if (get_ups_var ("ups.status", value) > NOK) {
-		if (strstr(value, "OL")) {
+		if (STR_CONTAINS_TOKEN(value, "OL")) {
 			clearflag(&CurHost->ups_status, ST_ONBATT);
 		}
-		if (strstr(value, "OB")) {
+		if (STR_CONTAINS_TOKEN(value, "OB")) {
 			clearflag(&CurHost->ups_status, ST_ONLINE);
 		}
 		for (numa = 0; numa < sizeof(ups_status_flags) / sizeof(ups_status_flags[0]); numa++) {
-			if (strstr(value, ups_status_flags[numa].status))
+			if (STR_CONTAINS_TOKEN(value, ups_status_flags[numa].status))
 				setflag(&CurHost->ups_status, ups_status_flags[numa].flag);
 			else
 				clearflag(&CurHost->ups_status, ups_status_flags[numa].flag);

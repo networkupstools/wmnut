@@ -25,6 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [ cpp ]
+        nutsrc: [pkg280, trunk]
 
     steps:
     - name: Checkout repository
@@ -37,9 +38,18 @@ jobs:
 
     - name: Initialize dependencies (ensure NUT 2.8.0+)
       run: |
-        case "`pkg-config --modversion libupsclient | tee -a /dev/stderr`" in
-            [01].*|2.[01234567].*)
-                echo "WARNING: System-packaged NUT seems too old, will build dev profile from scratch" >&2
+        GITVER=''
+        case "${{matrix.nutsrc}}" in
+            "pkg280")
+                case "`pkg-config --modversion libupsclient | tee -a /dev/stderr`" in
+                    [01].*|2.[01234567].*)
+                        echo "WARNING: System-packaged NUT seems too old, will build dev profile from scratch" >&2
+                        GITVER='v2.8.0'
+                        ;;
+                esac ;;
+            "trunk") GITVER="master" ;;
+        esac
+        if [ x"$GITVER" != x ] ; then
                 set -e    ### abort on any non-zero exit code below
                 ### Follow nut::docs/config-prereqs.txt chapter for Debian/Ubuntu
                 ### to be sure, with a minimal set of third-party dependencies for
@@ -49,7 +59,7 @@ jobs:
                 ### these explicit installations help bolt down some auto-deps so
                 ### they are surely not "apt-get remove"'d with the operation below:
                 sudo apt-get install build-essential git python3 perl curl make autoconf automake libtool pkg-config gcc ### g++ libltdl-dev python-is-python3 ### TODO: ccache + persistent build area?
-                git clone -b v2.8.0 -o upstream https://github.com/networkupstools/nut
+                git clone -b "$GITVER" -o upstream https://github.com/networkupstools/nut
                 cd nut
                 ./autogen.sh
                 ./configure --prefix=/usr --sysconfdir=/etc --with-user=nut --with-group=nut --with-dev --without-all --without-docs --without-nut-scanner --enable-silent-rules
@@ -59,8 +69,7 @@ jobs:
                 sudo make -s install    ### overwrite system packaged files as too old
                 echo "=== Checking NUT libupsclient version seen by pkg-config:"
                 pkg-config --modversion libupsclient
-                ;;
-        esac
+        fi
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
