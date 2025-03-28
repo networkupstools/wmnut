@@ -1,3 +1,17 @@
+2025-03-28  Jim Klimov <jimklimov@gmail.com>
+	* wmnut-0.71:
+
+	  + Welcome at least 3 contributors enhancing this release! :)
+	  + Address compilation against C23 (using what became keywords) [#11]
+	  + Handle more device states [#10]
+	  + Track and report NUT version we built against [#14]
+	  + Detect tokens in `ups.status` using the smarter method from
+	    libupsclient, if available; only match with `strstr()` if not [#13]
+	  + Extend CI checks to validate against packaged AND upstream NUT
+	    [#12, #13]
+	  + Make sure `X11/X.h` is also available, it may be packaged separately
+	  + Streamline the release process with a `make dist-files` goal
+
 2024-08-12  Jim Klimov <jimklimov@gmail.com>
 	* wmnut-0.70:
 
