@@ -225,7 +225,11 @@ void ParseCMDLine(int argc, char *argv[])
 #if (defined HAVE_NUT_VERSION) && (HAVE_NUT_VERSION)
 				printf("Built against NUT version: %s\n", NUT_VERSION);
 #endif
-				printf("\nCopyright 2001-2016 Arnaud Quette <%s>\n", PACKAGE_BUGREPORT);
+
+				printf("\nCopyright 2001-2016 Arnaud Quette\n");
+				printf("Copyright 2021- by the Network UPS Tools project community\n");
+				printf("Support at: %s\n", PACKAGE_BUGREPORT);
+
 				printf("\nComplete documentation for WMNUT should be found on this system using\n");
 				printf("`man wmnut' or `wmnut -h'.  If you have access to the Internet, point your\n");
 				printf("browser at https://github.com/networkupstools/wmnut - the WMNUT Repository.\n\n");
