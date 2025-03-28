@@ -193,7 +193,7 @@ Copyright and license
 WMNut is Copyright (C) 2002 - 2020 by
 link:http://arnaud.quette.free.fr/contact.html[Arnaud Quette]
 
-WMNut is Copyright (C) 2021 - 2024 by the
+WMNut is Copyright (C) 2021 - 2025 by the
 link:https://networkupstools.org[Network UPS Tools project]
 and hosted at https://github.com/networkupstools/wmnut repository
 
