@@ -7,7 +7,8 @@ EXTRA_DIST += \
 	images/WMnut_desc.png \
 	images/wmnut-0_09w.jpg \
 	images/wmnut-0_09win.jpg \
-	images/wmnut-0_60kde.jpg
+	images/wmnut-0_60kde.jpg \
+	images/wmnut-pr.pdf
 
 SUBDIRS = src icons contrib doc
 
