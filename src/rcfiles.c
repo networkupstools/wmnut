@@ -222,6 +222,9 @@ void ParseCMDLine(int argc, char *argv[])
 				break;
 			case 'v':
 				printf("\nThis is wmnut version: %s\n", VERSION);
+#if (defined HAVE_NUT_VERSION) && (HAVE_NUT_VERSION)
+				printf("Built against NUT version: %s\n", NUT_VERSION);
+#endif
 				printf("\nCopyright 2001-2016 Arnaud Quette <%s>\n", PACKAGE_BUGREPORT);
 				printf("\nComplete documentation for WMNUT should be found on this system using\n");
 				printf("`man wmnut' or `wmnut -h'.  If you have access to the Internet, point your\n");
@@ -243,7 +246,10 @@ void ParseCMDLine(int argc, char *argv[])
 			case 'h':
 			default:
 				printf("\n%s version: %s\n", PACKAGE, VERSION);
-				printf("Usage: %s [arguments]\n\n", PACKAGE_NAME);
+#if (defined HAVE_NUT_VERSION) && (HAVE_NUT_VERSION)
+				printf("Built against NUT version: %s\n", NUT_VERSION);
+#endif
+				printf("\nUsage: %s [arguments]\n\n", PACKAGE_NAME);
 				printf("-A <T1,T2>\tSend messages to users terminals when Low and critical.\n");
 				printf("             \tT1 is seconds between messages when Low.\n");
 				printf("             \tT2 is seconds between messages when Critical.\n");

@@ -134,6 +134,21 @@ PKG_CHECK_MODULES(NUT, libupsclient >= 2.8.0)
 NUT_HEADER="$NUT_CFLAGS"
 NUT_LIB="$NUT_LIBS"
 
+NUT_VERSION=""
+AC_MSG_CHECKING([for precise NUT version we are building against])
+AS_IF([test x"$PKG_CONFIG" != x], [
+	NUT_VERSION="`$PKG_CONFIG --modversion libupsclient`" || NUT_VERSION=""
+])
+AS_IF([test x"$NUT_VERSION" = x],
+	[AC_MSG_RESULT([could not determine])
+	 AC_DEFINE_UNQUOTED([HAVE_NUT_VERSION], [0], [Do we know the precise NUT version WMNut was built against?])
+	],
+	[AC_MSG_RESULT([${NUT_VERSION}])
+	 AC_DEFINE_UNQUOTED([NUT_VERSION], ["${NUT_VERSION}"], [Precise NUT version WMNut was built against])
+	 AC_DEFINE_UNQUOTED([HAVE_NUT_VERSION], [1], [Do we know the precise NUT version WMNut was built against?])
+	]
+)
+
 dnl NOTE: `upscli_str_contains_token()` is expected since NUT v2.8.3
 myCFLAGS="$CFLAGS"
 myLIBS="$LIBS"
@@ -156,6 +171,7 @@ AC_SUBST(LIBRARY_SEARCH_PATH)
 AC_SUBST(HEADER_SEARCH_PATH)
 AC_SUBST(NUT_HEADER)
 AC_SUBST(NUT_LIB)
+AC_SUBST(NUT_VERSION)
 
 dnl Checks for header files.
 AC_HEADER_SYS_WAIT
