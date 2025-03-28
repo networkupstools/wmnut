@@ -63,7 +63,7 @@ WMNut requires the:
   * For example on a Debian GNU/Linux system, you need to install the packages
     `libxext-dev` and `libxpm-dev`; other systems may have this without `-dev`
     suffix, or other suffixes like `-devel`.
-  * If `X11/X.h` is not fount, see if you have `xorgproto` package.
+  * If `X11/X.h` is not found, see if you have `xorgproto` package.
 - NUT client library, version 2.8.0 or higher.
   * For example on a Debian GNU/Linux system, you need to install the package
     `libupsclient-dev` (note that some stable distributions still ship older
