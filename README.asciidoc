@@ -72,6 +72,10 @@ WMNut requires the:
     of build warnings with data type mismatches and some needed tweaks of the
     `configure.ac` script and possibly wmnut codebase itself.
     It may be easier to just take wmnut-0.67 or an older release then.
+- Prerequisite libraries equipped with `pkg-config` metadata (the `*.pc` files),
+  but installed into uncommon locations (such as a custom build of NUT),
+  can be suggested to the WMNut `configure` script by providing e.g.
+  `PKG_CONFIG_PATH=/usr/local/ups/lib/pkgconfig` environment variable.
 
 In order to compile WMNut using the `Makefile`, GNU `make` should be used.
 
