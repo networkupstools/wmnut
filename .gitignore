@@ -17,3 +17,6 @@ config.status
 config.sub
 stamp-h1
 *.tar.gz
+*.tar.gz.sig
+*.tar.gz.md5
+*.tar.gz.sha256
