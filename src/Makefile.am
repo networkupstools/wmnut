@@ -2,6 +2,7 @@ bin_PROGRAMS = wmnut
 
 wmnut_SOURCES = \
 	wmnut.c \
+	wmnut-common.h \
 	wmnut.h \
 	wmgeneral.c \
 	wmgeneral.h \

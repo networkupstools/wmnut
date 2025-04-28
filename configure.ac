@@ -19,6 +19,13 @@ dnl
 dnl ISODATE="`date +%Y-%m-%d`"
 dnl AC_SUBST(ISODATE)
 
+dnl FIXME: ...or check if a newer C standard is enabled
+AC_MSG_CHECKING([whether we build in C99/GNU99 mode])
+AS_CASE(["${CC}${CFLAGS}"],
+	[*99*], [AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)
+	 AC_MSG_WARN([If your build fails due to standard system header method and type names, or ISO C90 warnings, make sure you build in C99 mode (or newer) e.g. by passing '-std=gnu99' to GCC/CLANG])
+	])
 
 dnl
 dnl Specify paths to look for libraries and headers
@@ -30,6 +37,37 @@ AC_ARG_WITH(libs-from,
 AC_ARG_WITH(incs-from,
 	[  --with-incs-from        pass compiler flags to look for header files],
 	[inc_search_path="$withval $inc_search_path"])
+
+dnl ===========================
+dnl Checks for standard header files.
+dnl ===========================
+AC_HEADER_SYS_WAIT
+
+AC_CHECK_HEADER([limits.h],
+	[AC_DEFINE([HAVE_LIMITS_H], [1],
+		[Define to 1 if you have <limits.h>.])])
+
+AC_CHECK_HEADER([stdlib.h],
+	[AC_DEFINE([HAVE_STDLIB_H], [1],
+		[Define to 1 if you have <stdlib.h>.])])
+
+AC_CHECK_DECLS(realpath, [], [],
+[#ifdef HAVE_LIMITS_H
+# include <limits.h>
+#endif
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
+])
+
+AC_CHECK_HEADERS(unistd.h stdio.h string.h signal.h ctype.h stdarg.h sys/time.h time.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
+
+dnl ===========================
+dnl Checks for standard library functions.
+dnl ===========================
+dnl AC_FUNC_MALLOC
+
+AC_CHECK_FUNCS(usleep snprintf strdup)
 
 dnl ===========================
 dnl check for getopt specifics.
@@ -95,7 +133,11 @@ AC_ARG_ENABLE(debug,
 	[  --enable-debug          turn on debugging [default=no]],, enable_debug=no)
 
 if test x"$enable_debug" = xyes; then
-	DBGFLAGS="-Wall -g -ansi -pedantic"
+	DBGFLAGS="-Wall -g -pedantic"
+
+	dnl Avoid "-ansi": it requires C89 which the modern system
+	dnl headers are not compatible with generally
+	dnl DBGFLAGS="$DBGFLAGS -ansi"
 fi
 
 AC_ARG_ENABLE(Werror,
@@ -155,8 +197,8 @@ myLIBS="$LIBS"
 CFLAGS="$NUT_CFLAGS"
 LIBS="$NUT_LIBS"
 AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token)
-CFLAGS="$CFLAGS"
-LIBS="$LIBS"
+CFLAGS="$myCFLAGS"
+LIBS="$myLIBS"
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
@@ -172,38 +214,6 @@ AC_SUBST(HEADER_SEARCH_PATH)
 AC_SUBST(NUT_HEADER)
 AC_SUBST(NUT_LIB)
 AC_SUBST(NUT_VERSION)
-
-dnl Checks for header files.
-AC_HEADER_SYS_WAIT
-
-AC_CHECK_HEADER([limits.h],
-    [AC_DEFINE([HAVE_LIMITS_H], [1],
-        [Define to 1 if you have <limits.h>.])])
-
-AC_CHECK_HEADER([stdlib.h],
-    [AC_DEFINE([HAVE_STDLIB_H], [1],
-        [Define to 1 if you have <stdlib.h>.])])
-
-AC_CHECK_DECLS(realpath, [], [],
-[#ifdef HAVE_LIMITS_H
-# include <limits.h>
-#endif
-#ifdef HAVE_STDLIB_H
-# include <stdlib.h>
-#endif
-])
-
-AC_CHECK_HEADERS(unistd.h stdio.h string.h signal.h ctype.h stdarg.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
-
-dnl Checks for library functions.
-dnl AC_FUNC_MALLOC
-
-AC_MSG_CHECKING([whether we build in C99/GNU99 mode])
-AS_CASE(["${CC}${CFLAGS}"],
-	[*99*], [AC_MSG_RESULT(yes)],
-	[AC_MSG_RESULT(no)
-	 AC_MSG_WARN([If your build fails due to standard system header method and type names, or ISO C90 warnings, make sure you build in C99 mode (or newer)])
-	])
 
 AC_CONFIG_FILES([
 	Makefile

@@ -28,11 +28,9 @@
  *
  */
 
-#include <stdint.h>	/* For size_t, may require C99+ */
-#include "wmnut.h"
+#include "wmnut.h"	/* includes wmnut-common.h and config.h */
 
-/* defines */
-#define LARGEBUF	1024
+#include <stdint.h>	/* For size_t, may require C99+ */
 
 void	ParseCMDLine(int argc, char *argv[]);
 void	InitHosts(void);
@@ -70,7 +68,7 @@ ups_info	*CurHost;
 /* List of all UPSs monitored */
 nut_info	Hosts;
 
-rckeys	wmnut_keys[13];
+rckeys	wmnut_keys[13];	/* This many fields are populated in main() below */
 
 /* Debug macros */
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
@@ -738,7 +736,7 @@ int AddHost(char *hostname)
 	const char	*query[4];
 	size_t	numq, numa;
 	char	**answer;
-	char	newhostname[32];
+	char	newhostname[LARGEBUF];
 	UPSCONN_t	ups;
 
 	DEBUGOUT("AddHost(%s)\n", hostname);

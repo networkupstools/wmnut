@@ -23,35 +23,15 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#ifndef WMNUT_H_INCLUDED
+#define WMNUT_H_INCLUDED
 
-/* standard system includes */
-#ifdef FreeBSD
-# include <err.h>
-# include <sys/file.h>
-#endif
-
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#include "wmnut-common.h"
+#include "wmgeneral.h"
 
 /* X11 includes */
 #include <X11/X.h>
 #include <X11/xpm.h>
-
-/* nut and wmnut includes */
-#include <upsclient.h>
-#if defined HAVE_UPSCLI_STR_CONTAINS_TOKEN && HAVE_UPSCLI_STR_CONTAINS_TOKEN
-# define	STR_CONTAINS_TOKEN(haystack, needle)	upscli_str_contains_token(haystack, needle)
-#else
-# define	STR_CONTAINS_TOKEN(haystack, needle)	strstr(haystack, needle)
-#endif
-
-#include "wmgeneral.h"
 
 /* pixmaps */
 #include "wmnut_master.xpm"
@@ -59,9 +39,6 @@
 #include "wmnut_mask.xbm"
 
 #define DELAY 10000L		/* Delay between refreshes (in microseconds) */
-
-#define SMALLBUF	256
-#define LARGEBUF	1024
 
 /* Communication status definition */
 
@@ -142,3 +119,5 @@ typedef struct nut_info {
 	int	curhosts_number;	/* number of the currently displayed host */
 	ups_info	*Ups_list[MAX_HOSTS_NUMBER];	/* list of monitored UPSs (from 1 to 9) */
 } nut_info;
+
+#endif	/* WMNUT_H_INCLUDED */
