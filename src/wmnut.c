@@ -210,6 +210,10 @@ void get_ups_info(void)
 	return;
 }
 
+static void exit_cleanup(void) {
+	FreeRcKeys(wmnut_keys);
+}
+
 int main(int argc, char *argv[]) {
 	int		time_left, hour_left, min_left;
 	int		i, m, n, nMax, k, Toggle = OFF;
@@ -244,6 +248,8 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[10], "Verbose", TYPE_BOOL, &Verbose);
 	AddRcKey(&wmnut_keys[11], "WithDrawn", TYPE_BOOL, &WithDrawn);
 	AddRcKey(&wmnut_keys[12], NULL, TYPE_NULL, NULL);
+
+	atexit(exit_cleanup);
 
 	/* Initialise host structure */
 	InitHosts();
