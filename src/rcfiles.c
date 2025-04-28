@@ -23,11 +23,12 @@
  *
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "wmgeneral.h"
-#include "config.h"
 
 #ifdef HAVE_GETOPT_LONG
 # include <getopt.h>
