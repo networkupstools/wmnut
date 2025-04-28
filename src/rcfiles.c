@@ -92,7 +92,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 #ifdef DEBUG
 		printf("Opening rc file %s\n", filename);
 #endif
-		while (fgets(temp, 128, fp)) {
+		while (fgets(temp, sizeof(temp), fp)) {
 			if (temp[0] != '#') {
 				key = 0;
 				while (key >= 0 && keys[key].label) {
