@@ -33,6 +33,14 @@
 # include <getopt.h>
 #endif
 
+#ifdef HAVE_REALPATH && HAVE_REALPATH
+# ifdef HAVE_LIMITS_H
+#  include <limits.h>
+# endif
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
 
 /*******************************************************************************\
 |* AddRcKey                                                                     |
@@ -136,7 +144,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 \*******************************************************************************/
 void LoadRCFile(rckeys *keys)
 {
-	char	home_file[128];
+	char	home_file[128];	/* FIXME with PATH_MAX or equivalents, portably */
 	char	*p;
 
 #ifdef DEBUG
@@ -146,8 +154,28 @@ void LoadRCFile(rckeys *keys)
 	ParseRCFile(MAINRC_FILE, keys);
 
 	p = getenv("HOME");
-	sprintf(home_file, "%s/%s", p, RC_FILE);
-	ParseRCFile(home_file, keys);
+	home_file[0] = '\0';
+	if (p) {
+#ifdef HAVE_REALPATH && HAVE_REALPATH
+		char	resolved_path[PATH_MAX];
+		if (realpath(p, resolved_path)) {
+			p = resolved_path;
+		} else {
+			fprintf(stderr, "Invalid or unsafe HOME directory: %s\n", p);
+			p = NULL;
+		}
+
+		if (p)
+#endif
+		/* Sanity-check that HOME dir is absolute, does not have
+  		 * any escape chars and/or dot-dot upstaging */
+		if (p[0] == '/' && (strcmp(p, "/../") || strcmp(p, "\\"))) {
+			snprintf(home_file, sizeof(home_file), "%s/%s", p, RC_FILE);
+			ParseRCFile(home_file, keys);
+		} else {
+			fprintf(stderr, "Invalid or unsafe HOME directory: %s\n", p);
+		}
+	}
 }
 
 /*******************************************************************************\
