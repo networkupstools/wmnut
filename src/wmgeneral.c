@@ -55,7 +55,7 @@ XSizeHints	mysizehints;
 XWMHints	mywmhints;
 Pixel		back_pix, fore_pix;
 char		*Geometry = "";
-Window		iconwin, win;
+Window		iconwin, rootwin;
 GC		NormalGC;
 XpmIcon		wmgen;
 Pixmap		pixmask;
@@ -91,9 +91,9 @@ int CheckMouseRegion(int, int);
 void CheckX11Events(void);
 
 /*******************************************************************************\
-|* SetWindowName                                                               *|
+|* SetRootWindowName                                                           *|
 \*******************************************************************************/
-void SetWindowName(char *name) {
+void SetRootWindowName(char *name) {
 	char *fullname = NULL;
 
 	if (strcmp(name, wname)) {
@@ -101,20 +101,20 @@ void SetWindowName(char *name) {
 
 		if (fullname != NULL) {
 			sprintf(fullname, "%s:%s", wname, name);
-			XStoreName(display, win, fullname);
-			XSetIconName(display, win, fullname);
+			XStoreName(display, rootwin, fullname);
+			XSetIconName(display, rootwin, fullname);
 			free(fullname);
 		}
 		else {
-			XStoreName(display, win, wname);
-			XSetIconName(display, win, wname);
+			XStoreName(display, rootwin, wname);
+			XSetIconName(display, rootwin, wname);
 		}
 	}
-	XMapWindow(display, win);
+	XMapWindow(display, rootwin);
 
 /*
-	XStoreName(display, win, wname);
-	XSetIconName(display, win, wname);
+	XStoreName(display, rootwin, wname);
+	XSetIconName(display, rootwin, wname);
 */
 }
 
@@ -184,8 +184,8 @@ void RedrawWindow(void) {
 	flush_expose(iconwin);
 	XCopyArea(display, wmgen.pixmap, iconwin, NormalGC,
 		0,0, wmgen.attributes.width, wmgen.attributes.height, 0,0);
-	flush_expose(win);
-	XCopyArea(display, wmgen.pixmap, win, NormalGC,
+	flush_expose(rootwin);
+	XCopyArea(display, wmgen.pixmap, rootwin, NormalGC,
 		0,0, wmgen.attributes.width, wmgen.attributes.height, 0,0);
 }
 
@@ -196,8 +196,8 @@ void RedrawWindowXY(int x, int y) {
 	flush_expose(iconwin);
 	XCopyArea(display, wmgen.pixmap, iconwin, NormalGC,
 		x,y, wmgen.attributes.width, wmgen.attributes.height, 0,0);
-	flush_expose(win);
-	XCopyArea(display, wmgen.pixmap, win, NormalGC,
+	flush_expose(rootwin);
+	XCopyArea(display, wmgen.pixmap, rootwin, NormalGC,
 		x,y, wmgen.attributes.width, wmgen.attributes.height, 0,0);
 }
 
@@ -255,7 +255,7 @@ void copyXBMArea(int x, int y, int sx, int sy, int dx, int dy) {
 |* setMaskXY                                                                   *|
 \*******************************************************************************/
 void setMaskXY(int x, int y) {
-	 XShapeCombineMask(display, win, ShapeBounding, x, y, pixmask, ShapeSet);
+	 XShapeCombineMask(display, rootwin, ShapeBounding, x, y, pixmask, ShapeSet);
 	 XShapeCombineMask(display, iconwin, ShapeBounding, x, y, pixmask, ShapeSet);
 }
 
@@ -323,25 +323,25 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 		mysizehints.height = 64;
 	mysizehints.flags |= PMinSize|PMaxSize;
 
-	win = XCreateSimpleWindow(
+	rootwin = XCreateSimpleWindow(
 		display, Root, mysizehints.x, mysizehints.y,
 		mysizehints.width, mysizehints.height, borderwidth,
 		fore_pix, back_pix);
 
 	iconwin = XCreateSimpleWindow(
-		display, win, mysizehints.x, mysizehints.y,
+		display, rootwin, mysizehints.x, mysizehints.y,
 		mysizehints.width, mysizehints.height, borderwidth,
 		fore_pix, back_pix);
 
 	/* Activate hints */
-	XSetWMNormalHints(display, win, &mysizehints);
+	XSetWMNormalHints(display, rootwin, &mysizehints);
 	XSetWMNormalHints(display, iconwin, &mysizehints); /* new AQ */
 	classHint.res_name = wname;
 	classHint.res_class = wname;
-	XSetClassHint(display, win, &classHint);
+	XSetClassHint(display, rootwin, &classHint);
 
 	XSelectInput(
-		display, win,
+		display, rootwin,
 		ButtonPressMask | ExposureMask |
 		ButtonReleaseMask | /*PointerMotionMask |*/ StructureNotifyMask);
 	XSelectInput(
@@ -356,10 +356,10 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 		exit(1);
 	}
 
-	XSetWMName(display, win, &name);
+	XSetWMName(display, rootwin, &name);
 	if ( !withdrawn ) {
-		XSetWMIconName(display, win, &name);
-		SetWindowName(wname);
+		XSetWMIconName(display, rootwin, &name);
+		SetRootWindowName(wname);
 	}
 
 	/* Create GC for drawing */
@@ -374,9 +374,9 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 
 	if ( withdrawn ) {
 		pixmask = XCreateBitmapFromData(
-			display, win, pixmask_bits,
+			display, rootwin, pixmask_bits,
 			pixmask_width, pixmask_height);
-		XShapeCombineMask(display, win, ShapeBounding, 0, 0, pixmask, ShapeSet);
+		XShapeCombineMask(display, rootwin, ShapeBounding, 0, 0, pixmask, ShapeSet);
 		XShapeCombineMask(display, iconwin, ShapeBounding, 0, 0, pixmask, ShapeSet);
 	}
 
@@ -387,14 +387,14 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 	mywmhints.flags = StateHint | IconWindowHint;
 
 	if ( withdrawn ) {
-		mywmhints.window_group = win;
+		mywmhints.window_group = rootwin;
 		mywmhints.flags |= WindowGroupHint | IconPositionHint;
 		mywmhints.icon_x = mysizehints.x;
 		mywmhints.icon_y = mysizehints.y;
 	}
 
-	XSetWMHints(display, win, &mywmhints);
-	XSetCommand(display, win, argv, argc);
+	XSetWMHints(display, rootwin, &mywmhints);
+	XSetCommand(display, rootwin, argv, argc);
 
 	/* Set up the event for quitting the window */
 	wm_delete_window = XInternAtom(
@@ -412,14 +412,14 @@ void openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bit
 #if 0
 	status =
 #endif
-	XSetWMProtocols(display, win, &wm_delete_window, 1);
+	XSetWMProtocols(display, rootwin, &wm_delete_window, 1);
 
 #if 0
 	status =
 #endif
 	XSetWMProtocols(display, iconwin, &wm_delete_window, 1);
 
-	XMapWindow(display, win);
+	XMapWindow(display, rootwin);
 }
 
 /*
