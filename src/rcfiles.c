@@ -157,17 +157,23 @@ void LoadRCFile(rckeys *keys)
 	home_file[0] = '\0';
 	if (p) {
 #ifdef HAVE_REALPATH && HAVE_REALPATH
-		char resolved_path[PATH_MAX];
-		if (realpath(p, resolved_path))
+		char	resolved_path[PATH_MAX];
+		if (realpath(p, resolved_path)) {
 			p = resolved_path;
-		else
+		} else {
+			fprintf(stderr, "Invalid or unsafe HOME directory: %s\n", p);
 			p = NULL;
+		}
+
+		if (p)
 #endif
-		if (p && p[0] == '\\' && (strcmp(p, "/../") || strcmp(p, "\\"))) {
+		/* Sanity-check that HOME dir is absolute, does not have
+  		 * any escape chars and/or dot-dot upstaging */
+		if (p[0] == '/' && (strcmp(p, "/../") || strcmp(p, "\\"))) {
 			snprintf(home_file, sizeof(home_file), "%s/%s", p, RC_FILE);
 			ParseRCFile(home_file, keys);
 		} else {
-			fprintf(stderr, "Invalid HOME directory: %s\n", p);
+			fprintf(stderr, "Invalid or unsafe HOME directory: %s\n", p);
 		}
 	}
 }
