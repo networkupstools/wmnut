@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef WMNUT_H_INCLUDED
+#define WMNUT_H_INCLUDED
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -168,3 +171,5 @@ typedef struct nut_info {
 	int	curhosts_number;	/* number of the currently displayed host */
 	ups_info	*Ups_list[MAX_HOSTS_NUMBER];	/* list of monitored UPSs (from 1 to 9) */
 } nut_info;
+
+#endif	/* WMNUT_H_INCLUDED */
