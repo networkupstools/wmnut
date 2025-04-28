@@ -136,7 +136,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 \*******************************************************************************/
 void LoadRCFile(rckeys *keys)
 {
-	char	home_file[128];
+	char	home_file[128];	/* FIXME with PATH_MAX or equivalents, portably */
 	char	*p;
 
 #ifdef DEBUG
@@ -146,11 +146,21 @@ void LoadRCFile(rckeys *keys)
 	ParseRCFile(MAINRC_FILE, keys);
 
 	p = getenv("HOME");
+	home_file[0] = '\0';
 	if (p) {
-		snprintf(home_file, sizeof(home_file), "%s/%s", p, RC_FILE);
-		ParseRCFile(home_file, keys);
-	} else {
-		home_file[0] = '\0'; // Ensure home_file is empty if HOME is not set
+#ifdef HAVE_REALPATH && HAVE_REALPATH
+		char resolved_path[PATH_MAX];
+		if (realpath(p, resolved_path))
+			p = resolved_path;
+		else
+			p = NULL;
+#endif
+		if (p && p[0] == '\\' && (strcmp(p, "/../") || strcmp(p, "\\"))) {
+			snprintf(home_file, sizeof(home_file), "%s/%s", p, RC_FILE);
+			ParseRCFile(home_file, keys);
+		} else {
+			fprintf(stderr, "Invalid HOME directory: %s\n", p);
+		}
 	}
 }
 
