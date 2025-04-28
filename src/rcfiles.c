@@ -146,7 +146,11 @@ void LoadRCFile(rckeys *keys)
 	ParseRCFile(MAINRC_FILE, keys);
 
 	p = getenv("HOME");
-	sprintf(home_file, "%s/%s", p, RC_FILE);
+	if (p) {
+		snprintf(home_file, sizeof(home_file), "%s/%s", p, RC_FILE);
+	} else {
+		home_file[0] = '\0'; // Ensure home_file is empty if HOME is not set
+	}
 	ParseRCFile(home_file, keys);
 }
 
