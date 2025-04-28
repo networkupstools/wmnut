@@ -70,7 +70,7 @@ ups_info	*CurHost;
 /* List of all UPSs monitored */
 nut_info	Hosts;
 
-rckeys	wmnut_keys[13];
+rckeys	wmnut_keys[13];	/* This many fields are populated in main() below */
 
 /* Debug macros */
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
