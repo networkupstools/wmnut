@@ -215,6 +215,12 @@ AC_SUBST(NUT_HEADER)
 AC_SUBST(NUT_LIB)
 AC_SUBST(NUT_VERSION)
 
+dnl ===========================
+dnl Checks for non-standard library functions (might come from libs/headers found above).
+dnl ===========================
+
+AC_CHECK_FUNCS(xcalloc xmalloc)
+
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile

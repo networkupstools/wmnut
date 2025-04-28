@@ -45,8 +45,11 @@
 void AddRcKey(rckeys *key, const char *label, int type, void *var) {
 
 	if (label != NULL) {
-/*		key->label = (char *)xmalloc(strlen(label) + 1); */
+#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
+		key->label = (char *)xmalloc(strlen(label) + 1);
+#else
 		key->label = (char *)malloc(strlen(label) + 1);
+#endif	/* HAVE_XMALLOC */
 		strcpy(key->label, label);
 	}
 	else
@@ -107,12 +110,12 @@ void ParseRCFile(const char *filename, rckeys *keys)
 						switch(keys[key].type)
 						{
 							case TYPE_STRING:
-								/*
-								if (keys[key].var.str !=NULL)
+#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
+								if (keys[key].var.str != NULL)
 									free(keys[key].var.str);
 								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);
 								strncpy(keys[key].var.str, p, strlen(p));
-								*/
+#endif	/* HAVE_XMALLOC */
 								if (!strcmp(keys[key].label, "UPS"))
 									AddHost(p);
 								break;
