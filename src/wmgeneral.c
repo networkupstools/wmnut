@@ -121,17 +121,17 @@ void SetRootWindowName(char *name) {
 /*******************************************************************************\
 |* GetXPM                                                                      *|
 \*******************************************************************************/
-static void GetXPM(XpmIcon *wmgen, char *pixmap_bytes[]) {
+static void GetXPM(XpmIcon *icon, char *pixmap_bytes[]) {
 	XWindowAttributes	attributes;
 	int	err;
 
 	/* For the colormap */
 	XGetWindowAttributes(display, Root, &attributes);
 
-	wmgen->attributes.valuemask |= (XpmReturnPixels | XpmReturnExtensions);
+	icon->attributes.valuemask |= (XpmReturnPixels | XpmReturnExtensions);
 
-	err = XpmCreatePixmapFromData(display, Root, pixmap_bytes, &(wmgen->pixmap),
-					&(wmgen->mask), &(wmgen->attributes));
+	err = XpmCreatePixmapFromData(display, Root, pixmap_bytes, &(icon->pixmap),
+					&(icon->mask), &(icon->attributes));
 
 	if (err != XpmSuccess) {
 		fprintf(stderr, "Not enough free colorcells.\n");
