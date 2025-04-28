@@ -175,7 +175,25 @@ AC_SUBST(NUT_VERSION)
 
 dnl Checks for header files.
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(unistd.h stdlib.h stdio.h string.h signal.h ctype.h stdarg.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
+
+AC_CHECK_HEADER([limits.h],
+    [AC_DEFINE([HAVE_LIMITS_H], [1],
+        [Define to 1 if you have <limits.h>.])])
+
+AC_CHECK_HEADER([stdlib.h],
+    [AC_DEFINE([HAVE_STDLIB_H], [1],
+        [Define to 1 if you have <stdlib.h>.])])
+
+AC_CHECK_DECLS(realpath, [], [],
+[#ifdef HAVE_LIMITS_H
+# include <limits.h>
+#endif
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
+])
+
+AC_CHECK_HEADERS(unistd.h stdio.h string.h signal.h ctype.h stdarg.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
 
 dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
