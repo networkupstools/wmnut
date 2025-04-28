@@ -769,7 +769,7 @@ int AddHost(char *hostname)
 
 				DEBUGOUT("%s: %s\n", hostname, answer[1]);
 
-				sprintf(newhostname, "%s@%s", answer[1], hostname);
+				snprintf(newhostname, sizeof(newhostname), "%s@%s", answer[1], hostname);
 				if (AddHost(newhostname)) {
 					/* break; */
 					newhostname[0] = '\0';
