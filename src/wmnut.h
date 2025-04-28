@@ -39,6 +39,10 @@
 #include <string.h>
 #include <signal.h>
 
+#if HAVE_LIMITS_H
+# include <limits.h>
+#endif
+
 /* X11 includes */
 #include <X11/X.h>
 #include <X11/xpm.h>
@@ -62,6 +66,28 @@
 
 #define SMALLBUF	256
 #define LARGEBUF	1024
+
+/* Portable max path length, may be or not be defined in NUT headers too */
+#ifndef NUT_PATH_MAX
+# define NUT_PATH_MAX	SMALLBUF
+# if (defined(PATH_MAX)) && PATH_MAX > NUT_PATH_MAX
+#  undef NUT_PATH_MAX
+#  define NUT_PATH_MAX	PATH_MAX
+# endif
+# if (defined(MAX_PATH)) && MAX_PATH > NUT_PATH_MAX
+/* PATH_MAX is the POSIX equivalent for Microsoft's MAX_PATH */
+#  undef NUT_PATH_MAX
+#  define NUT_PATH_MAX	MAX_PATH
+# endif
+# if (defined(UNIX_PATH_MAX)) && UNIX_PATH_MAX > NUT_PATH_MAX
+#  undef NUT_PATH_MAX
+#  define NUT_PATH_MAX	UNIX_PATH_MAX
+# endif
+# if (defined(MAXPATHLEN)) && MAXPATHLEN > NUT_PATH_MAX
+#  undef NUT_PATH_MAX
+#  define NUT_PATH_MAX	MAXPATHLEN
+# endif
+#endif	/* !NUT_PATH_MAX */
 
 /* Communication status definition */
 
