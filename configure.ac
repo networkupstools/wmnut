@@ -60,7 +60,7 @@ AC_CHECK_DECLS(realpath, [], [],
 #endif
 ])
 
-AC_CHECK_HEADERS(unistd.h stdio.h string.h signal.h ctype.h stdarg.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
+AC_CHECK_HEADERS(unistd.h stdio.h string.h signal.h ctype.h stdarg.h sys/time.h time.h X11/X.h X11/Xlib.h X11/xpm.h X11/extensions/shape.h X11/Xatom.h)
 
 dnl ===========================
 dnl Checks for standard library functions.
