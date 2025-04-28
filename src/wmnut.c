@@ -28,6 +28,8 @@
  *
  */
 
+#include "config.h"
+
 #include <stdint.h>	/* For size_t, may require C99+ */
 #include "wmnut.h"
 
