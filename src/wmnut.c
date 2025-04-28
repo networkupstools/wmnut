@@ -68,7 +68,8 @@ ups_info	*CurHost;
 /* List of all UPSs monitored */
 nut_info	Hosts;
 
-rckeys	wmnut_keys[13];	/* This many fields are populated in main() below */
+#define WMNUT_KEYS_AMOUNT	13	/* This many fields are populated in main() below */
+rckeys	wmnut_keys[WMNUT_KEYS_AMOUNT];
 
 /* Debug macros */
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
@@ -210,6 +211,10 @@ void get_ups_info(void)
 	return;
 }
 
+static void exit_cleanup(void) {
+	FreeRcKeys(wmnut_keys);
+}
+
 int main(int argc, char *argv[]) {
 	int		time_left, hour_left, min_left;
 	int		i, m, n, nMax, k, Toggle = OFF;
@@ -245,6 +250,8 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[11], "WithDrawn", TYPE_BOOL, &WithDrawn);
 	AddRcKey(&wmnut_keys[12], NULL, TYPE_NULL, NULL);
 
+	atexit(exit_cleanup);
+
 	/* Initialise host structure */
 	InitHosts();
 
@@ -258,8 +265,8 @@ int main(int argc, char *argv[]) {
 	 * Note that it overrides RCFiles params */
 	ParseCMDLine(argc, argv);
 
-	for (i = 0; i < 12; i++ ) {
-		switch(wmnut_keys[i].type) {
+	for (i = 0; i < (WMNUT_KEYS_AMOUNT - 1); i++ ) {
+		switch (wmnut_keys[i].type) {
 			case TYPE_STRING :
 				DEBUGOUT("%s = %s\n", wmnut_keys[i].label, wmnut_keys[i].var.str);
 				break;
@@ -271,6 +278,7 @@ int main(int argc, char *argv[]) {
 				DEBUGOUT("%s = %f\n", wmnut_keys[i].label, (float) *wmnut_keys[i].var.floater);
 				break;
 			case TYPE_NULL:
+				DEBUGOUT("wmnut_keys[%d] is a sentinel entry (TYPE_NULL)", i);
 				break;
 		}
 	}
@@ -719,6 +727,11 @@ void CleanHosts(void)
 		upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 
 		if ( Hosts.Ups_list[i - 1] != NULL ) {
+			if ( Hosts.Ups_list[i - 1]->upsname )
+				free ( Hosts.Ups_list[i - 1]->upsname );
+			if ( Hosts.Ups_list[i - 1]->hostname )
+				free ( Hosts.Ups_list[i - 1]->hostname );
+
 			free ( Hosts.Ups_list[i - 1] );
 			Hosts.Ups_list[i - 1] = NULL;
 		}
