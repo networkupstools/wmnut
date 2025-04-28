@@ -88,6 +88,8 @@ void copyXBMArea(int, int, int, int, int, int);
 void setMaskXY(int, int);
 
 void AddRcKey(rckeys *key, const char *label, int type, void *var);
+void FreeRcKeyData(rckeys *key);
+void FreeRcKeys(rckeys *key);	/* Free an array starting from given element and up to TYPE_NULL entry */
 void ParseRCFile(const char *filename, rckeys *keys);
 void ParseCMDLine(int argc, char *argv[]);
 void LoadRCFile(rckeys *keys);

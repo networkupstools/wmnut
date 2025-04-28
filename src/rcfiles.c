@@ -73,7 +73,39 @@ void AddRcKey(rckeys *key, const char *label, int type, void *var) {
 	}
 }
 
-/* TODO : void FreeRcKeys(rckeys *key)*/
+/*******************************************************************************\
+|* FreeRcKeyData                                                                |
+\*******************************************************************************/
+void FreeRcKeyData(rckeys *key) {
+	if (!key)
+		return;
+
+	if (key->label) {
+		free(key->label);
+		key->label = NULL;
+	}
+
+	if (key->type == TYPE_STRING && key->var.str) {
+		free(key->var.str);
+		key->var.str = NULL;
+	}
+}
+
+/*******************************************************************************\
+|* FreeRcKeys                                                                   |
+\*******************************************************************************/
+void FreeRcKeys(rckeys *keys) {
+	/* NOTE: Assumes it accepts an array to free() its elements;
+	 * if this array itself is dynamic, caller should free() it */
+	int	keynum;
+
+	if (!keys)
+		return;
+
+	for (keynum = 0; keys[keynum].type != TYPE_NULL; keynum++) {
+		FreeRcKeyData(&keys[keynum]);
+	}
+}
 
 /*******************************************************************************\
 |* ParseRCFile                                                                  |
