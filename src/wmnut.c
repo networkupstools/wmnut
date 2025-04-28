@@ -29,9 +29,14 @@
  */
 
 #include "config.h"
+/* May be generated without include header guards */
+#ifndef CONFIG_H_INCLUDED
+# define CONFIG_H_INCLUDED
+#endif	/* CONFIG_H_INCLUDED */
+
+#include "wmnut.h"
 
 #include <stdint.h>	/* For size_t, may require C99+ */
-#include "wmnut.h"
 
 void	ParseCMDLine(int argc, char *argv[]);
 void	InitHosts(void);

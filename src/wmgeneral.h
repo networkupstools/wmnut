@@ -2,8 +2,14 @@
 #define WMGENERAL_H_INCLUDED
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+/* Generated without include header guards */
+# ifndef CONFIG_H_INCLUDED
+#  include "config.h"
+#  ifndef CONFIG_H_INCLUDED
+#   define CONFIG_H_INCLUDED
+#  endif	/* CONFIG_H_INCLUDED */
+# endif	/* CONFIG_H_INCLUDED */
+#endif	/* HAVE_CONFIG_H */
 
 /* X11 includes */
 #include <X11/X.h>
