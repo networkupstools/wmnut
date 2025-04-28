@@ -23,18 +23,8 @@
  *
  */
 
-#include "config.h"
-/* May be generated without include header guards */
-#ifndef CONFIG_H_INCLUDED
-# define CONFIG_H_INCLUDED
-#endif	/* CONFIG_H_INCLUDED */
-
+#include "wmnut-common.h"	/* includes config.h */
 #include "wmgeneral.h"
-#include "wmnut.h"
-
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 
 #ifdef HAVE_GETOPT_LONG
 # include <getopt.h>

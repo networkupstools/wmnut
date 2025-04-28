@@ -26,45 +26,12 @@
 #ifndef WMNUT_H_INCLUDED
 #define WMNUT_H_INCLUDED
 
-#ifdef HAVE_CONFIG_H
-/* Generated without include header guards */
-# ifndef CONFIG_H_INCLUDED
-#  include "config.h"
-#  ifndef CONFIG_H_INCLUDED
-#   define CONFIG_H_INCLUDED
-#  endif	/* CONFIG_H_INCLUDED */
-# endif	/* CONFIG_H_INCLUDED */
-#endif	/* HAVE_CONFIG_H */
-
-/* standard system includes */
-#ifdef FreeBSD
-# include <err.h>
-# include <sys/file.h>
-#endif
-
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-
-#if HAVE_LIMITS_H
-# include <limits.h>
-#endif
+#include "wmnut-common.h"
+#include "wmgeneral.h"
 
 /* X11 includes */
 #include <X11/X.h>
 #include <X11/xpm.h>
-
-/* nut and wmnut includes */
-#include <upsclient.h>
-#if defined HAVE_UPSCLI_STR_CONTAINS_TOKEN && HAVE_UPSCLI_STR_CONTAINS_TOKEN
-# define	STR_CONTAINS_TOKEN(haystack, needle)	upscli_str_contains_token(haystack, needle)
-#else
-# define	STR_CONTAINS_TOKEN(haystack, needle)	strstr(haystack, needle)
-#endif
-
-#include "wmgeneral.h"
 
 /* pixmaps */
 #include "wmnut_master.xpm"
@@ -72,31 +39,6 @@
 #include "wmnut_mask.xbm"
 
 #define DELAY 10000L		/* Delay between refreshes (in microseconds) */
-
-#define SMALLBUF	256
-#define LARGEBUF	1024
-
-/* Portable max path length, may be or not be defined in NUT headers too */
-#ifndef NUT_PATH_MAX
-# define NUT_PATH_MAX	SMALLBUF
-# if (defined(PATH_MAX)) && PATH_MAX > NUT_PATH_MAX
-#  undef NUT_PATH_MAX
-#  define NUT_PATH_MAX	PATH_MAX
-# endif
-# if (defined(MAX_PATH)) && MAX_PATH > NUT_PATH_MAX
-/* PATH_MAX is the POSIX equivalent for Microsoft's MAX_PATH */
-#  undef NUT_PATH_MAX
-#  define NUT_PATH_MAX	MAX_PATH
-# endif
-# if (defined(UNIX_PATH_MAX)) && UNIX_PATH_MAX > NUT_PATH_MAX
-#  undef NUT_PATH_MAX
-#  define NUT_PATH_MAX	UNIX_PATH_MAX
-# endif
-# if (defined(MAXPATHLEN)) && MAXPATHLEN > NUT_PATH_MAX
-#  undef NUT_PATH_MAX
-#  define NUT_PATH_MAX	MAXPATHLEN
-# endif
-#endif	/* !NUT_PATH_MAX */
 
 /* Communication status definition */
 

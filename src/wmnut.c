@@ -28,13 +28,7 @@
  *
  */
 
-#include "config.h"
-/* May be generated without include header guards */
-#ifndef CONFIG_H_INCLUDED
-# define CONFIG_H_INCLUDED
-#endif	/* CONFIG_H_INCLUDED */
-
-#include "wmnut.h"
+#include "wmnut.h"	/* includes wmnut-common.h and config.h */
 
 #include <stdint.h>	/* For size_t, may require C99+ */
 
