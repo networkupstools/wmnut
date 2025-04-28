@@ -625,9 +625,9 @@ int main(int argc, char *argv[]) {
 
 void InitCom(void)
 {
-	int	i, ret;
+	int	ret;
 	char	vars[LARGEBUF];
-	size_t	numq, numa;
+	size_t	i, numq, numa;
 	const char	*query[4];
 	char	**answer;
 
@@ -638,11 +638,11 @@ void InitCom(void)
 	 */
 	GetFirstHost();
 
-	for (i = 0; i <= (Hosts.hosts_number - 1) ; i++)
+	for ( i = 1; i <= Hosts.hosts_number ; i++ )
 	{
-		/* Close existing com
+		/* Close existing com, to re-connect below?
 		if ( &CurHost->connexion)
-			upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
+			upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 		*/
 
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
@@ -699,28 +699,35 @@ void InitCom(void)
 	}
 }
 
-/* init monitored UPS internal data */
+/* init monitored UPS internal data, assume struct memory contains stack garbage */
 void InitHosts(void)
 {
-	int	i;
+	size_t	i;
 
-	for ( i = 0 ; i >= 9 ; i++ ) {
-		Hosts.Ups_list[i -1]->ups_status = -1;
-		Hosts.Ups_list[i -1] = NULL;
+	for ( i = 1 ; i <= MAX_HOSTS_NUMBER ; i++ ) {
+		Hosts.Ups_list[i - 1] = NULL;
 	}
+
+	Hosts.hosts_number = 0;
+	Hosts.curhosts_number = 0;
 }
 
 /* Clean all monitored UPS internal data */
 void CleanHosts(void)
 {
-	int	i;
+	size_t	i;
 
 	for ( i = 1 ; i <= Hosts.hosts_number ; i++ ) {
-		upscli_disconnect ( &Hosts.Ups_list[i -1]->connexion );
+		upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 
-		if ( Hosts.Ups_list[i -1] != NULL )
-			free ( Hosts.Ups_list[i -1] );
+		if ( Hosts.Ups_list[i - 1] != NULL ) {
+			free ( Hosts.Ups_list[i - 1] );
+			Hosts.Ups_list[i - 1] = NULL;
+		}
 	}
+
+	Hosts.hosts_number = 0;
+	Hosts.curhosts_number = 0;
 }
 
 /* Add an UPS to be monitored
@@ -736,12 +743,12 @@ int AddHost(char *hostname)
 
 	DEBUGOUT("AddHost(%s)\n", hostname);
 
-	if (Hosts.hosts_number < 9) {
-		/* CurHost = Hosts.Ups_list[nbHosts -1]; */
+	if (Hosts.hosts_number < MAX_HOSTS_NUMBER) {
+		/* CurHost = Hosts.Ups_list[nbHosts - 1]; */
 
 		/* UPS auto discovery mode : */
 		if (strchr(hostname, '@') == NULL) {
-			/* Connect to host... */
+			/* Connect to host at default port... */
 			if (upscli_connect(&ups, hostname, 3493, UPSCLI_CONN_TRYSSL) < 0)
 				return 0;
 
@@ -785,16 +792,16 @@ int AddHost(char *hostname)
 
 		Hosts.hosts_number++;
 		nbHosts = Hosts.hosts_number;
-		/*		Hosts.Ups_list[nbHosts -1] = (ups_info *)xmalloc(sizeof(ups_info)); */
-		Hosts.Ups_list[nbHosts -1] = (ups_info *)malloc(sizeof(ups_info));
+		/*		Hosts.Ups_list[nbHosts - 1] = (ups_info *)xmalloc(sizeof(ups_info)); */
+		Hosts.Ups_list[nbHosts - 1] = (ups_info *)malloc(sizeof(ups_info));
 
-		if (Hosts.Ups_list[nbHosts -1] == NULL)
+		if (Hosts.Ups_list[nbHosts - 1] == NULL)
 			return 0;
 
 		upscli_splitname(hostname,
-			&Hosts.Ups_list[nbHosts -1]->upsname,
-			&Hosts.Ups_list[nbHosts -1]->hostname,
-			&Hosts.Ups_list[nbHosts -1]->port);
+			&Hosts.Ups_list[nbHosts - 1]->upsname,
+			&Hosts.Ups_list[nbHosts - 1]->hostname,
+			&Hosts.Ups_list[nbHosts - 1]->port);
 
 		Hosts.Ups_list[nbHosts - 1]->hostnumber = nbHosts;
 		Hosts.Ups_list[nbHosts - 1]->ups_status = -1;
@@ -806,7 +813,7 @@ int AddHost(char *hostname)
 		return 1;
 	}
 	else
-		fprintf(stderr, "Error: Maximum number (9) of monitored hosts reached");
+		fprintf(stderr, "Error: Maximum number (%d) of monitored hosts reached", MAX_HOSTS_NUMBER);
 
 	return 0;
 }

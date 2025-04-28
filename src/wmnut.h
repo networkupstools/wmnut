@@ -136,8 +136,9 @@ typedef struct ups_info {
  * struct to monitor multiple hosts
  */
 
+#define MAX_HOSTS_NUMBER	9	/* For 1-based end-user widget count, single non-zero digit */
 typedef struct nut_info {
 	int	hosts_number;		/* total number of hosts */
 	int	curhosts_number;	/* number of the currently displayed host */
-	ups_info	*Ups_list[9];	/* list of monitored UPSs (from 1 to 9) */
+	ups_info	*Ups_list[MAX_HOSTS_NUMBER];	/* list of monitored UPSs (from 1 to 9) */
 } nut_info;
