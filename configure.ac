@@ -193,8 +193,8 @@ myLIBS="$LIBS"
 CFLAGS="$NUT_CFLAGS"
 LIBS="$NUT_LIBS"
 AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token)
-CFLAGS="$CFLAGS"
-LIBS="$LIBS"
+CFLAGS="$myCFLAGS"
+LIBS="$myLIBS"
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
