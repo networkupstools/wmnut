@@ -35,7 +35,7 @@
 # include <getopt.h>
 #endif
 
-#ifdef HAVE_REALPATH && HAVE_REALPATH
+#if (defined HAVE_REALPATH) && HAVE_REALPATH
 # ifdef HAVE_LIMITS_H
 #  include <limits.h>
 # endif
@@ -158,7 +158,7 @@ void LoadRCFile(rckeys *keys)
 	p = getenv("HOME");
 	home_file[0] = '\0';
 	if (p) {
-#ifdef HAVE_REALPATH && HAVE_REALPATH
+#if (defined HAVE_REALPATH) && HAVE_REALPATH
 		char	resolved_path[NUT_PATH_MAX];
 		if (realpath(p, resolved_path)) {
 			p = resolved_path;
@@ -170,7 +170,7 @@ void LoadRCFile(rckeys *keys)
 		if (p)
 #endif
 		/* Sanity-check that HOME dir is absolute, does not have
-  		 * any escape chars and/or dot-dot upstaging */
+		 * any escape chars and/or dot-dot upstaging */
 		if (p[0] == '/' && (strcmp(p, "/../") || strcmp(p, "\\"))) {
 			snprintf(home_file, sizeof(home_file), "%s/%s", p, RC_FILE);
 			ParseRCFile(home_file, keys);
