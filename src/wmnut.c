@@ -790,8 +790,11 @@ int AddHost(char *hostname)
 
 		Hosts.hosts_number++;
 		nbHosts = Hosts.hosts_number;
-		/*		Hosts.Ups_list[nbHosts - 1] = (ups_info *)xmalloc(sizeof(ups_info)); */
+#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
+		Hosts.Ups_list[nbHosts - 1] = (ups_info *)xmalloc(sizeof(ups_info));
+#else
 		Hosts.Ups_list[nbHosts - 1] = (ups_info *)malloc(sizeof(ups_info));
+#endif	/* HAVE_XMALLOC */
 
 		if (Hosts.Ups_list[nbHosts - 1] == NULL)
 			return 0;
