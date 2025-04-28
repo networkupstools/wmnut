@@ -33,6 +33,14 @@
 # include <getopt.h>
 #endif
 
+#ifdef HAVE_REALPATH && HAVE_REALPATH
+# ifdef HAVE_LIMITS_H
+#  include <limits.h>
+# endif
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
 
 /*******************************************************************************\
 |* AddRcKey                                                                     |
