@@ -719,6 +719,11 @@ void CleanHosts(void)
 		upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 
 		if ( Hosts.Ups_list[i - 1] != NULL ) {
+			if ( Hosts.Ups_list[i - 1]->upsname )
+				free ( Hosts.Ups_list[i - 1]->upsname );
+			if ( Hosts.Ups_list[i - 1]->hostname )
+				free ( Hosts.Ups_list[i - 1]->hostname );
+
 			free ( Hosts.Ups_list[i - 1] );
 			Hosts.Ups_list[i - 1] = NULL;
 		}
