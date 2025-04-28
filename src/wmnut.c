@@ -738,7 +738,7 @@ int AddHost(char *hostname)
 	const char	*query[4];
 	size_t	numq, numa;
 	char	**answer;
-	char	newhostname[32];
+	char	newhostname[LARGEBUF];
 	UPSCONN_t	ups;
 
 	DEBUGOUT("AddHost(%s)\n", hostname);
