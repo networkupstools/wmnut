@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "wmgeneral.h"
+#include "wmnut.h"
 
 #ifdef HAVE_GETOPT_LONG
 # include <getopt.h>
@@ -145,7 +146,7 @@ void ParseRCFile(const char *filename, rckeys *keys)
 \*******************************************************************************/
 void LoadRCFile(rckeys *keys)
 {
-	char	home_file[128];	/* FIXME with PATH_MAX or equivalents, portably */
+	char	home_file[NUT_PATH_MAX];
 	char	*p;
 
 #ifdef DEBUG
@@ -158,7 +159,7 @@ void LoadRCFile(rckeys *keys)
 	home_file[0] = '\0';
 	if (p) {
 #ifdef HAVE_REALPATH && HAVE_REALPATH
-		char	resolved_path[PATH_MAX];
+		char	resolved_path[NUT_PATH_MAX];
 		if (realpath(p, resolved_path)) {
 			p = resolved_path;
 		} else {
