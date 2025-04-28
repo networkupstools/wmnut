@@ -33,9 +33,6 @@
 #include <stdint.h>	/* For size_t, may require C99+ */
 #include "wmnut.h"
 
-/* defines */
-#define LARGEBUF	1024
-
 void	ParseCMDLine(int argc, char *argv[]);
 void	InitHosts(void);
 int	AddHost(char *hostname);
