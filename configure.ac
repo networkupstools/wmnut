@@ -133,7 +133,11 @@ AC_ARG_ENABLE(debug,
 	[  --enable-debug          turn on debugging [default=no]],, enable_debug=no)
 
 if test x"$enable_debug" = xyes; then
-	DBGFLAGS="-Wall -g -ansi -pedantic"
+	DBGFLAGS="-Wall -g -pedantic"
+
+	dnl Avoid "-ansi": it requires C89 which the modern system
+	dnl headers are not compatible with generally
+	dnl DBGFLAGS="$DBGFLAGS -ansi"
 fi
 
 AC_ARG_ENABLE(Werror,
