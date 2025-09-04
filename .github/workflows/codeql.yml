@@ -61,7 +61,7 @@ jobs:
             ~/.ccache
             ~/.cache/ccache
             ~/.config/ccache/ccache.conf
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stats') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}
           ${{ runner.os }}-build-
