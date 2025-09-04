@@ -27,10 +27,9 @@ jobs:
       fail-fast: false
       matrix:
         # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
-        language: [ 'c-cpp' ]
-          # CodeQL supports [ 'c-cpp'/'c'/'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+        language: [ 'cpp' ]
+          # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
           # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
-          # and https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning#changing-the-languages-that-are-analyzed
         nutsrc: [ 'pkg280', 'trunk' ]
           # Build with OS-provided NUT package (or build v2.8.0 if pkg is too old), or NUT trunk?
         os: [ 'ubuntu-latest' ]
@@ -49,7 +48,7 @@ jobs:
       uses: actions/checkout@v3
 
     # Using hints from https://askubuntu.com/questions/272248/processing-triggers-for-man-db
-    - if: matrix.language == 'c-cpp' && matrix.os == 'ubuntu-latest'
+    - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (Ubuntu)
       run: |
         echo "set man-db/auto-update false" | sudo debconf-communicate
@@ -81,7 +80,7 @@ jobs:
         ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
         rm -f .timestamp-init
 
-    - if: matrix.language == 'c-cpp' && matrix.os == 'ubuntu-latest'
+    - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (ensure NUT 2.8.0+)
       run: |
         GITVER=''
@@ -134,7 +133,7 @@ jobs:
         ### Avoid installing obsolete libupsclient-dev
         CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
 
-    - if: matrix.build-mode != 'autobuild' && matrix.language == 'c-cpp'
+    - if: matrix.build-mode != 'autobuild' && matrix.language == 'cpp'
       name: WMNut CI Build
       run: |
         case x"${{matrix.build-mode}}" in
@@ -152,7 +151,7 @@ jobs:
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
         make -s -j 8 || exit
 
-    - if: matrix.build-mode != 'autobuild' && matrix.language == 'c-cpp'
+    - if: matrix.build-mode != 'autobuild' && matrix.language == 'cpp'
       name: WMNut CI Check
       run: make -s -j 8 check || exit
 
