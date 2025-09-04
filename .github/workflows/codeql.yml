@@ -110,6 +110,7 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         queries: +security-and-quality
+        build-mode: none
 
     # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
     #- name: Autobuild
@@ -123,8 +124,8 @@ jobs:
     - if: matrix.language == 'cpp'
       name: WMNut CI Build
       run: |
-        #PATH="/usr/lib/ccache:$PATH" ; export PATH
-        #ccache --version || true
+        PATH="/usr/lib/ccache:$PATH" ; export PATH
+        ccache --version || true
         ( ${{matrix.compiler}} ; echo "=== CC: $CC => `command -v $CC` =>" ; $CC --version ; echo "=== CXX: $CXX => `command -v $CXX` =>" ; $CXX --version ) || true
         ./autogen.sh
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
