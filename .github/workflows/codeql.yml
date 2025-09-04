@@ -46,7 +46,24 @@ jobs:
       run: |
         sudo apt-get update
         case x"${{matrix.compiler}}" in x*clang*) sudo apt install clang ;; x*) sudo apt install gcc g++ ;; esac
-        sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross
+        sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross ccache
+
+    - name: Prepare ccache
+      # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
+      id: cache-ccache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-ccache-${{ env.compiler }}
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stats') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: CCache stats before build
+      run: ccache -s || echo "FAILED to read ccache info, oh well"
 
     - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (ensure NUT 2.8.0+)
@@ -63,6 +80,7 @@ jobs:
             "trunk") GITVER="master" ;;
         esac
         if [ x"$GITVER" != x ] ; then
+                PATH="/usr/lib/ccache:$PATH" ; export PATH
                 set -e    ### abort on any non-zero exit code below
                 ### Follow nut::docs/config-prereqs.txt chapter for Debian/Ubuntu
                 ### to be sure, with a minimal set of third-party dependencies for
@@ -71,7 +89,7 @@ jobs:
                 ### is little run-time impact of the APT operation here normally;
                 ### these explicit installations help bolt down some auto-deps so
                 ### they are surely not "apt-get remove"'d with the operation below:
-                sudo apt-get install build-essential git python3 perl curl make autoconf automake libtool pkg-config gcc ### g++ libltdl-dev python-is-python3 ### TODO: ccache + persistent build area?
+                sudo apt-get install build-essential git python3 perl curl make autoconf automake libtool pkg-config gcc ### g++ libltdl-dev python-is-python3
                 git clone -b "$GITVER" -o upstream https://github.com/networkupstools/nut
                 cd nut
                 ./autogen.sh
@@ -100,6 +118,7 @@ jobs:
     - if: matrix.language == 'cpp'
       name: WMNut CI Build
       run: |
+        PATH="/usr/lib/ccache:$PATH" ; export PATH
         ./autogen.sh
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
         make -s -j 8 || exit
@@ -107,6 +126,9 @@ jobs:
     - if: matrix.language == 'cpp'
       name: WMNut CI check
       run: make -s -j 8 check || exit
+
+    - name: CCache stats after build
+      run: ccache -s || echo "FAILED to read ccache info, oh well"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
