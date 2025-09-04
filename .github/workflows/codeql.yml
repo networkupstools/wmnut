@@ -119,6 +119,8 @@ jobs:
       name: WMNut CI Build
       run: |
         PATH="/usr/lib/ccache:$PATH" ; export PATH
+        ccache --version || true
+        ( ${{matrix.compiler}} ; echo "=== CC: $CC => `command -v $CC` =>" ; $CC --version ; echo "=== CXX: $CXX => `command -v $CXX` =>" ; $CXX --version ) || true
         ./autogen.sh
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
         make -s -j 8 || exit
