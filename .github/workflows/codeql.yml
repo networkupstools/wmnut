@@ -56,17 +56,14 @@ jobs:
         cache-name: cache-ccache-${{ matrix.nutsrc }}-${{ matrix.compiler }}
       with:
         path: ~/.ccache
-        ### key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stats') }}
         key: ${{ runner.os }}-build-${{ env.cache-name }}
-        ### ${{ runner.os }}-build-${{ env.cache-name }}-
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}
           ${{ runner.os }}-build-
           ${{ runner.os }}-
-        save-always: true
 
     - name: CCache stats before build
-      run: ccache -s || echo "FAILED to read ccache info, oh well"
+      run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
 
     - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (ensure NUT 2.8.0+)
@@ -133,7 +130,7 @@ jobs:
       run: make -s -j 8 check || exit
 
     - name: CCache stats after build
-      run: ccache -s || echo "FAILED to read ccache info, oh well"
+      run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
