@@ -19,7 +19,9 @@ jobs:
     name: Analyze
     runs-on: ${{ matrix.os }}
     permissions:
-      actions: read
+      actions: write
+        # "write" seems needed for cache maintenance and replacement,
+        # see https://github.com/actions/stale/issues/1090
       contents: read
       security-events: write
 
