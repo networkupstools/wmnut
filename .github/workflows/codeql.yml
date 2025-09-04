@@ -48,9 +48,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # Using hints from https://askubuntu.com/questions/272248/processing-triggers-for-man-db
     - if: matrix.language == 'c-cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (Ubuntu)
       run: |
+        echo "set man-db/auto-update false" | sudo debconf-communicate
+        sudo dpkg-reconfigure man-db
         sudo apt-get update
         case x"${{matrix.compiler}}" in x*clang*) sudo apt install clang ;; x*) sudo apt install gcc g++ ;; esac
         sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross ccache
