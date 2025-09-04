@@ -34,19 +34,29 @@ jobs:
           # Build with OS-provided NUT package (or build v2.8.0 if pkg is too old), or NUT trunk?
         os: [ 'ubuntu-latest' ]
           # TOTHINK: windows-latest, macos-latest?
+        build-mode: [ 'none' ]
+          # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+          # Abusing "none" here to try building with ccache (and
+          # have codeql not intercept that build but parse C/C++
+          # files on its own), and "manual" to custom-build without;
+          # the "autobuild" mode is handled by codeql itself but
+          # would probably ignore our CC/CXX setting
         compiler: [ 'CC=gcc CXX=g++', 'CC=clang CXX=clang++' ]
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+    # Using hints from https://askubuntu.com/questions/272248/processing-triggers-for-man-db
     - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (Ubuntu)
       run: |
+        echo "set man-db/auto-update false" | sudo debconf-communicate
+        sudo dpkg-reconfigure man-db
         sudo apt-get update
         case x"${{matrix.compiler}}" in x*clang*) sudo apt install clang ;; x*) sudo apt install gcc g++ ;; esac
         sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross ccache
+        date > .timestamp-init
 
     - name: Prepare ccache
       # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
@@ -59,14 +69,16 @@ jobs:
             ~/.ccache
             ~/.cache/ccache
             ~/.config/ccache/ccache.conf
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.timestamp-init') }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}
+          ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
           ${{ runner.os }}-
 
     - name: CCache stats before build
-      run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
+      run: |
+        ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
+        rm -f .timestamp-init
 
     - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (ensure NUT 2.8.0+)
@@ -105,33 +117,42 @@ jobs:
                 pkg-config --modversion libupsclient
         fi
 
+    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         queries: +security-and-quality
+        build-mode: ${{ matrix.build-mode }}
 
     # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
-    #- name: Autobuild
-    #  uses: github/codeql-action/autobuild@v3
-    #  env:
-    #    ### Avoid installing obsolete libupsclient-dev
-    #    CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
+    - if: matrix.build-mode == 'autobuild'
+      name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+      env:
+        ### Avoid installing obsolete libupsclient-dev
+        CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
 
-    # For CodeQL scanning, it seems we should actually pass the build of
-    # tested code base -- not skip it thanks to unmodified-object caching
-    - if: matrix.language == 'cpp'
+    - if: matrix.build-mode != 'autobuild' && matrix.language == 'cpp'
       name: WMNut CI Build
       run: |
-        #PATH="/usr/lib/ccache:$PATH" ; export PATH
-        #ccache --version || true
+        case x"${{matrix.build-mode}}" in
+        xnone)
+            PATH="/usr/lib/ccache:$PATH" ; export PATH
+            CCACHE_COMPRESS=true; export CCACHE_COMPRESS
+            ccache --version || true
+            ;;
+        xmanual|*)
+            echo "NOTE: NOT USING CCACHE for the CI-tested code base" >&2
+            ;;
+        esac
         ( ${{matrix.compiler}} ; echo "=== CC: $CC => `command -v $CC` =>" ; $CC --version ; echo "=== CXX: $CXX => `command -v $CXX` =>" ; $CXX --version ) || true
         ./autogen.sh
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
         make -s -j 8 || exit
 
-    - if: matrix.language == 'cpp'
-      name: WMNut CI check
+    - if: matrix.build-mode != 'autobuild' && matrix.language == 'cpp'
+      name: WMNut CI Check
       run: make -s -j 8 check || exit
 
     - name: CCache stats after build
