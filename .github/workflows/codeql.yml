@@ -67,7 +67,7 @@ jobs:
             ~/.ccache
             ~/.cache/ccache
             ~/.config/ccache/ccache.conf
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('/.timestamp-init') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.timestamp-init') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}
           ${{ runner.os }}-build-
