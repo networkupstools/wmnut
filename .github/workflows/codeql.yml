@@ -119,8 +119,6 @@ jobs:
         ### Avoid installing obsolete libupsclient-dev
         CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
 
-    # For CodeQL scanning, it seems we should actually pass the build of
-    # tested code base -- not skip it thanks to unmodified-object caching
     - if: matrix.build-mode != 'autobuild' && matrix.language == 'c-cpp'
       name: WMNut CI Build
       run: |
@@ -146,7 +144,8 @@ jobs:
       # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
       # and https://github.com/actions/cache/tree/main/save/README.md#always-save-cache
       id: cache-ccache-save
-      if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      if: always()
+        # && steps.cache-ccache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: |
