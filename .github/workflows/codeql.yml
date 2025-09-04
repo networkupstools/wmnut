@@ -35,11 +35,13 @@ jobs:
           # Build with OS-provided NUT package (or build v2.8.0 if pkg is too old), or NUT trunk?
         os: [ 'ubuntu-latest' ]
           # TOTHINK: windows-latest, macos-latest?
-        build-mode: [ 'manual' ]
+        build-mode: [ 'none' ]
           # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
-          # Abusing "manual" here to try building with ccache,
-          # and "none" to custom-build without; the "autobuild"
-          # by codeql itself would probably ignore CC/CXX setting
+          # Abusing "none" here to try building with ccache (and
+          # have codeql not intercept that build but parse C/C++
+          # files on its own), and "manual" to custom-build without;
+          # the "autobuild" mode is handled by codeql itself but
+          # would probably ignore our CC/CXX setting
         compiler: [ 'CC=gcc CXX=g++', 'CC=clang CXX=clang++' ]
 
     steps:
@@ -133,12 +135,12 @@ jobs:
       name: WMNut CI Build
       run: |
         case x"${{matrix.build-mode}}" in
-        xmanual)
+        xnone)
             PATH="/usr/lib/ccache:$PATH" ; export PATH
             CCACHE_COMPRESS=true; export CCACHE_COMPRESS
             ccache --version || true
             ;;
-        xnone|*)
+        xmanual|*)
             echo "NOTE: NOT USING CCACHE for the CI-tested code base" >&2
             ;;
         esac
