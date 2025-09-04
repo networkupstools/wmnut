@@ -35,12 +35,13 @@ jobs:
         os: [ 'ubuntu-latest' ]
           # TOTHINK: windows-latest, macos-latest?
         compiler: [ 'CC=gcc CXX=g++', 'CC=clang CXX=clang++' ]
+        build-mode: [ 'manual' ]
+          # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
     - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
       name: Initialize dependencies (Ubuntu)
       run: |
@@ -110,21 +111,22 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         queries: +security-and-quality
-        build-mode: none
+        build-mode: ${{ matrix.build-mode }}
 
     # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
-    #- name: Autobuild
-    #  uses: github/codeql-action/autobuild@v3
-    #  env:
-    #    ### Avoid installing obsolete libupsclient-dev
-    #    CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
+    - if: matrix.build-mode == 'autobuild'
+      name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+      env:
+        ### Avoid installing obsolete libupsclient-dev
+        CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
 
     # For CodeQL scanning, it seems we should actually pass the build of
     # tested code base -- not skip it thanks to unmodified-object caching
-    - if: matrix.language == 'cpp'
+    - if: matrix.build-mode != 'autobuild' && matrix.language == 'cpp'
       name: WMNut CI Build
       run: |
-        if [ x"${{steps.codeql-init.outputs.build-mode}}" = xnone ] || [ x"${{steps.codeql-init.outputs.build-mode}}" = xmanual ] ; then
+        if [ x"${{matrix.build-mode}}" = xnone ] || [ x"${{matrix.build-mode}}" = xmanual ] ; then
             PATH="/usr/lib/ccache:$PATH" ; export PATH
             ccache --version || true
         else
@@ -135,8 +137,8 @@ jobs:
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
         make -s -j 8 || exit
 
-    - if: matrix.language == 'cpp'
-      name: WMNut CI check
+    - if: matrix.build-mode != 'autobuild' && matrix.language == 'cpp'
+      name: WMNut CI Check
       run: make -s -j 8 check || exit
 
     - name: CCache stats after build
