@@ -37,9 +37,12 @@ jobs:
           # Build with OS-provided NUT package (or build v2.8.0 if pkg is too old), or NUT trunk?
         os: [ 'ubuntu-latest' ]
           # TOTHINK: windows-latest, macos-latest?
-        compiler: [ 'CC=gcc CXX=g++', 'CC=clang CXX=clang++' ]
-        build-mode: [ 'manual' ]
+        build-mode: [ 'none' ]
           # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+          # Abusing "manual" here to try building with ccache,
+          # and "none" to custom-build without; the "autobuild"
+          # by codeql itself would probably ignore CC/CXX setting
+        compiler: [ 'CC=gcc CXX=g++', 'CC=clang CXX=clang++' ]
 
     steps:
     - name: Checkout repository
@@ -124,12 +127,15 @@ jobs:
     - if: matrix.build-mode != 'autobuild' && matrix.language == 'c-cpp'
       name: WMNut CI Build
       run: |
-        if [ x"${{matrix.build-mode}}" = xnone ] || [ x"${{matrix.build-mode}}" = xmanual ] ; then
+        case x"${{matrix.build-mode}}" in
+        xmanual)
             PATH="/usr/lib/ccache:$PATH" ; export PATH
             ccache --version || true
-        else
+            ;;
+        xnone|*)
             echo "NOTE: NOT USING CCACHE for the CI-tested code base" >&2
-        fi
+            ;;
+        esac
         ( ${{matrix.compiler}} ; echo "=== CC: $CC => `command -v $CC` =>" ; $CC --version ; echo "=== CXX: $CXX => `command -v $CXX` =>" ; $CXX --version ) || true
         ./autogen.sh
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
