@@ -73,7 +73,6 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.timestamp-init') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-${{ env.cache-name }}
           ${{ runner.os }}-build-
           ${{ runner.os }}-
 
