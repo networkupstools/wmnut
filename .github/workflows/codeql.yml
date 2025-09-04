@@ -35,7 +35,7 @@ jobs:
           # Build with OS-provided NUT package (or build v2.8.0 if pkg is too old), or NUT trunk?
         os: [ 'ubuntu-latest' ]
           # TOTHINK: windows-latest, macos-latest?
-        build-mode: [ 'none' ]
+        build-mode: [ 'manual' ]
           # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
           # Abusing "manual" here to try building with ccache,
           # and "none" to custom-build without; the "autobuild"
@@ -133,6 +133,7 @@ jobs:
         case x"${{matrix.build-mode}}" in
         xmanual)
             PATH="/usr/lib/ccache:$PATH" ; export PATH
+            CCACHE_COMPRESS=true; export CCACHE_COMPRESS
             ccache --version || true
             ;;
         xnone|*)
