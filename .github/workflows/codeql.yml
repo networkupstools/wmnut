@@ -50,10 +50,11 @@ jobs:
         case x"${{matrix.compiler}}" in x*clang*) sudo apt install clang ;; x*) sudo apt install gcc g++ ;; esac
         sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross ccache
 
-    - name: Prepare ccache
+    - name: Restore ccache
       # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
-      id: cache-ccache
-      uses: actions/cache@v4
+      # and https://github.com/actions/cache/tree/main/save/README.md
+      id: cache-ccache-restore
+      uses: actions/cache/restore@v4
       env:
         cache-name: cache-ccache-${{ matrix.nutsrc }}-${{ matrix.compiler }}
       with:
@@ -61,11 +62,7 @@ jobs:
             ~/.ccache
             ~/.cache/ccache
             ~/.config/ccache/ccache.conf
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stats') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
 
     - name: CCache stats before build
       run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
@@ -144,6 +141,19 @@ jobs:
 
     - name: CCache stats after build
       run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
+
+    - name: Save ccache data (always)
+      # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
+      # and https://github.com/actions/cache/tree/main/save/README.md#always-save-cache
+      id: cache-ccache-save
+      if: always() && steps.cache-ccache-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: |
+            ~/.ccache
+            ~/.cache/ccache
+            ~/.config/ccache/ccache.conf
+        key: ${{ steps.cache-ccache-restore.outputs.cache-primary-key }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
