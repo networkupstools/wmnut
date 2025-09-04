@@ -17,7 +17,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       actions: read
       contents: read
@@ -26,19 +26,50 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ cpp ]
-        nutsrc: [pkg280, trunk]
+        # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+        language: [ 'cpp' ]
+          # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+          # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+        nutsrc: [ 'pkg280', 'trunk' ]
+          # Build with OS-provided NUT package (or build v2.8.0 if pkg is too old), or NUT trunk?
+        os: [ 'ubuntu-latest' ]
+          # TOTHINK: windows-latest, macos-latest?
+        compiler: [ 'CC=gcc CXX=g++', 'CC=clang CXX=clang++' ]
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Initialize dependencies (Ubuntu)
+    # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+    - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
+      name: Initialize dependencies (Ubuntu)
       run: |
         sudo apt-get update
-        sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross
+        case x"${{matrix.compiler}}" in x*clang*) sudo apt install clang ;; x*) sudo apt install gcc g++ ;; esac
+        sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross ccache
 
-    - name: Initialize dependencies (ensure NUT 2.8.0+)
+    - name: Prepare ccache
+      # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
+      id: cache-ccache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-ccache-${{ matrix.nutsrc }}-${{ matrix.compiler }}
+      with:
+        path: |
+            ~/.ccache
+            ~/.cache/ccache
+            ~/.config/ccache/ccache.conf
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: CCache stats before build
+      run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
+
+    - if: matrix.language == 'cpp' && matrix.os == 'ubuntu-latest'
+      name: Initialize dependencies (ensure NUT 2.8.0+)
       run: |
         GITVER=''
         case "${{matrix.nutsrc}}" in
@@ -52,6 +83,7 @@ jobs:
             "trunk") GITVER="master" ;;
         esac
         if [ x"$GITVER" != x ] ; then
+                PATH="/usr/lib/ccache:$PATH" ; export PATH
                 set -e    ### abort on any non-zero exit code below
                 ### Follow nut::docs/config-prereqs.txt chapter for Debian/Ubuntu
                 ### to be sure, with a minimal set of third-party dependencies for
@@ -60,11 +92,11 @@ jobs:
                 ### is little run-time impact of the APT operation here normally;
                 ### these explicit installations help bolt down some auto-deps so
                 ### they are surely not "apt-get remove"'d with the operation below:
-                sudo apt-get install build-essential git python3 perl curl make autoconf automake libtool pkg-config gcc ### g++ libltdl-dev python-is-python3 ### TODO: ccache + persistent build area?
+                sudo apt-get install build-essential git python3 perl curl make autoconf automake libtool pkg-config gcc ### g++ libltdl-dev python-is-python3
                 git clone -b "$GITVER" -o upstream https://github.com/networkupstools/nut
                 cd nut
                 ./autogen.sh
-                ./configure --prefix=/usr --sysconfdir=/etc --with-user=nut --with-group=nut --with-dev --without-all --without-docs --without-nut-scanner --enable-silent-rules
+                ./configure ${{matrix.compiler}} --prefix=/usr --sysconfdir=/etc --with-user=nut --with-group=nut --with-dev --without-all --without-docs --without-nut-scanner --enable-silent-rules
                 make -j 8 -s
                 sudo apt-get remove libupsclient-dev    ### avoid conflicts/confusion just in case
                 sudo apt-get remove libupsclient4 || true
@@ -79,11 +111,29 @@ jobs:
         languages: ${{ matrix.language }}
         queries: +security-and-quality
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
-      env:
-        ### Avoid installing obsolete libupsclient-dev
-        CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
+    # https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+    #- name: Autobuild
+    #  uses: github/codeql-action/autobuild@v3
+    #  env:
+    #    ### Avoid installing obsolete libupsclient-dev
+    #    CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
+
+    - if: matrix.language == 'cpp'
+      name: WMNut CI Build
+      run: |
+        PATH="/usr/lib/ccache:$PATH" ; export PATH
+        ccache --version || true
+        ( ${{matrix.compiler}} ; echo "=== CC: $CC => `command -v $CC` =>" ; $CC --version ; echo "=== CXX: $CXX => `command -v $CXX` =>" ; $CXX --version ) || true
+        ./autogen.sh
+        ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
+        make -s -j 8 || exit
+
+    - if: matrix.language == 'cpp'
+      name: WMNut CI check
+      run: make -s -j 8 check || exit
+
+    - name: CCache stats after build
+      run: ccache -sv || ccache -s || echo "FAILED to read ccache info, oh well"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
