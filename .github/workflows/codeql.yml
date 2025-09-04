@@ -118,11 +118,13 @@ jobs:
     #    ### Avoid installing obsolete libupsclient-dev
     #    CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
 
+    # For CodeQL scanning, it seems we should actually pass the build of
+    # tested code base -- not skip it thanks to unmodified-object caching
     - if: matrix.language == 'cpp'
       name: WMNut CI Build
       run: |
-        PATH="/usr/lib/ccache:$PATH" ; export PATH
-        ccache --version || true
+        #PATH="/usr/lib/ccache:$PATH" ; export PATH
+        #ccache --version || true
         ( ${{matrix.compiler}} ; echo "=== CC: $CC => `command -v $CC` =>" ; $CC --version ; echo "=== CXX: $CXX => `command -v $CXX` =>" ; $CXX --version ) || true
         ./autogen.sh
         ./configure ${{matrix.compiler}} --enable-debug --enable-Werror
