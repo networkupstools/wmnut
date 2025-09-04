@@ -1,4 +1,4 @@
-2025-03-28  Jim Klimov <jimklimov@gmail.com>
+2025-03-28  Jim Klimov <jimklimov+nut@gmail.com>
 	* wmnut-0.71:
 
 	  + Welcome at least 3 contributors enhancing this release! :)
@@ -12,7 +12,7 @@
 	  + Make sure `X11/X.h` is also available, it may be packaged separately
 	  + Streamline the release process with a `make dist-files` goal
 
-2024-08-12  Jim Klimov <jimklimov@gmail.com>
+2024-08-12  Jim Klimov <jimklimov+nut@gmail.com>
 	* wmnut-0.70:
 
 	  + Address compilation warnings exposed by new toolkits during
@@ -26,12 +26,12 @@
 	    for the `README.asciidoc` and to remove more build products
 	    when asked to clean up
 
-2023-09-01  Jim Klimov <jimklimov@gmail.com>
+2023-09-01  Jim Klimov <jimklimov+nut@gmail.com>
 	* wmnut-0.69:
 
 	  + Further documentation and build recipe modernization
 
-2023-08-13  Jim Klimov <jimklimov@gmail.com>
+2023-08-13  Jim Klimov <jimklimov+nut@gmail.com>
 	* wmnut-0.68:
 
 	  + Numerous documentation updates (building, spelling...)
