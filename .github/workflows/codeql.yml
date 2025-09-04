@@ -52,6 +52,7 @@ jobs:
         sudo apt-get update
         case x"${{matrix.compiler}}" in x*clang*) sudo apt install clang ;; x*) sudo apt install gcc g++ ;; esac
         sudo apt-get install libxpm-dev libxext-dev libupsclient-dev libc6-dev-amd64-cross libgcc-s1-amd64-cross ccache
+        date > ~/.timestamp-init
 
     - name: Prepare ccache
       # Based on https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action example
@@ -64,7 +65,7 @@ jobs:
             ~/.ccache
             ~/.cache/ccache
             ~/.config/ccache/ccache.conf
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stats') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('~/.timestamp-init') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}
           ${{ runner.os }}-build-
