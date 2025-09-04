@@ -34,7 +34,7 @@ Download
 --------
 
 - link:https://github.com/networkupstools/wmnut/releases[Tagged official releases on GitHub]
-- link:https://github.com/networkupstools/wmnut/releases/download/v0.71/wmnut-0.71.tar.gz[wmnut-0.71.tar.gz]
+- link:https://github.com/networkupstools/wmnut/releases/download/v0.72/wmnut-0.72.tar.gz[wmnut-0.72.tar.gz]
 - link:https://github.com/networkupstools/wmnut/raw/master/ChangeLog[ChangeLog]
 
 ////////////////////////////////////////////////////////////////////////////////

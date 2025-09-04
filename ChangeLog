@@ -1,3 +1,19 @@
+2025-09-04  Jim Klimov <jimklimov+nut@gmail.com>
+	* wmnut-0.72:
+
+	  + Update GitHub Actions recipes to test both GCC and CLANG,
+	    use CCACHE to speed up the phase of custom-built NUT [#23]
+	  + Revise `configure.ac` for better portability (or detection
+	    of incapable build environments); introduce `wmnut-common.h`
+	    to handle platform specifics (like `NUT_PATH_MAX`) once [#20]
+	  + Code-hardening (address static analysis warnings, suggestions
+	    from GitHub code scanning AI bots, manual review) [#17, #21, #22]
+	  + Safer use of configuration file path relative to the user
+	    home directory [#18]
+	  + Fix conflicts of global and method-local variable names,
+	    rename some of the variables and methods to better match
+	    their purpose [#16, #19]
+
 2025-03-28  Jim Klimov <jimklimov+nut@gmail.com>
 	* wmnut-0.71:
 
