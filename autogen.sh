@@ -15,4 +15,13 @@ if (command -v pkg-config) >/dev/null 2>/dev/null ; then
     esac
 fi
 
-autoreconf -i
+RES=0
+autoreconf -i || RES=$?
+
+if [ x"$RES" = x0 ] ; then
+    echo "$0: SUCCESS"
+else
+    echo "$0: FAILED ($RES)"
+fi >&2
+
+exit $RES
