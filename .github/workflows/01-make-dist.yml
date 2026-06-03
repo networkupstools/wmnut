@@ -100,34 +100,6 @@ jobs:
         wait-for-completion: true
         sync-status: true
 
-    # Inspired by https://javahelps.com/manage-github-artifact-storage-quota
-    # This is the part which needs "actions: write" permission.
-    # Note that the code below wipes everything matched by the filter!
-    # We may want another script block (after this cleanup of obsolete data)
-    # to iterate clearing the way build by build until there's X MB available
-    # (at least 300KB as of Nov 2025).
-    - if: env.GITHUB_REF_TYPE != 'tag' && steps.subst-github-ref-name.outputs.result != 'master'
-      name: Delete Old Artifacts for this feature branch/PR
-      uses: actions/github-script@v6
-      id: delete_old_artifact_for_pr
-      continue-on-error: true
-      with:
-        script: |
-          const res = await github.rest.actions.listArtifactsForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-          })
-
-          res.data.artifacts
-            .filter(({ name }) => name === '${{ steps.set-artifact-name.outputs.artifact_name }}')
-            .forEach(({ id }) => {
-              github.rest.actions.deleteArtifact({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                artifact_id: id,
-              })
-            })
-
     # The artifact was already uploaded by the "Worker" job.
     # We need to find the artifact URL and report it below.
     - name: Get Artifact URL
@@ -150,9 +122,43 @@ jobs:
             var workflowRunId = artifact.workflow_run_id || ${{ steps.launch_worker.outputs.runId }};
             core.setOutput('artifact_url', `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts/${artifact.id}`);
             core.setOutput('real_artifact_url', `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts/${artifact.id}`);
+                core.setOutput('artifact_id', `${artifact.id}`);
+                console.log(`Detected newest artifact ${artifact.id} from workflow run ${workflowRunId}`);
           } else {
             core.setFailed(`Artifact ${artifactName} not found`);
           }
+
+    # Inspired by https://javahelps.com/manage-github-artifact-storage-quota
+    # This is the part which needs "actions: write" permission.
+    # Note that the code below wipes everything matched by the filter!
+    # We may want another script block (after this cleanup of obsolete data)
+    # to iterate clearing the way build by build until there's X MB available
+    # (at least 300KB as of Nov 2025).
+    - if: env.GITHUB_REF_TYPE != 'tag' && steps.subst-github-ref-name.outputs.result != 'master'
+      name: Delete Old Artifacts for this feature branch/PR
+      uses: actions/github-script@v6
+      id: delete_old_artifact_for_pr
+      continue-on-error: true
+      with:
+        script: |
+          const res = await github.rest.actions.listArtifactsForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          })
+
+          const artifact_id = '${{ steps.get_artifact_url.outputs.artifact_id }}';
+
+          res.data.artifacts
+            .filter(({ name }) => name === '${{ steps.set-artifact-name.outputs.artifact_name }}')
+            .forEach(({ id }) => {
+              if (id == artifact_id) return;
+              console.log(`Deleting artifact ${id}`);
+              github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: id,
+              })
+            })
 
     - name: "GHA-01: Create/update new GH PR comment with link"
       if: github.event.pull_request.number > 0
