@@ -1,3 +1,11 @@
+UNRELEASED  Jim Klimov <jimklimov+nut@gmail.com>
+	* wmnut-0.73:
+
+	  + Added GitHub Actions recipes to provide `make dist` tarballs.
+	  + Enabled Dependabot to help maintain the GitHub Actions recipes.
+	  + Added support for NUT AuthConf files (subject to building
+	    against a sufficiently new NUT `libupsclient` version).
+
 2025-09-04  Jim Klimov <jimklimov+nut@gmail.com>
 	* wmnut-0.72:
 
