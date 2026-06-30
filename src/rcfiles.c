@@ -4,7 +4,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 - 2025  Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2026  Jim Klimov <jimklimov+nut@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,6 +225,9 @@ void ParseCMDLine(int argc, char *argv[])
 #ifdef HAVE_GETOPT_LONG
 		static struct option long_options[] =
 		{
+# ifdef HAVE_UPSCLI_INIT_AUTHCONF
+			{"authconf",required_argument,NULL,'a'},
+# endif
 			{"alarmint",required_argument,NULL,'A'},
 			{"blinkrate",required_argument,NULL,'b'},
 			{"beepvol",required_argument,NULL,'B'},
@@ -249,11 +252,20 @@ void ParseCMDLine(int argc, char *argv[])
 
 	while(1)
 	{
-		if ((c=GETOPTFUNC (argc, argv, "A:b:B:C:d:hlL:U:vVw")) == GETOPTENDCHAR)
+		if ((c=GETOPTFUNC (argc, argv,
+			"aA:b:B:C:d:hlL:U:vVw")) == GETOPTENDCHAR
+		)
 			break;
 
 		switch (c)
 		{
+			case 'a':
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+				nutauth = optarg;
+#else
+				printf("option 'a' not supported in this build (NUT libupsclient too old)\n");
+#endif
+				break;
 			case 'A':
 				Alert = 1;
 				printf ("option A : valeur %s\n", optarg);
@@ -314,6 +326,11 @@ void ParseCMDLine(int argc, char *argv[])
 				printf("Built against NUT version: %s\n", NUT_VERSION);
 #endif
 				printf("\nUsage: %s [arguments]\n\n", PACKAGE_NAME);
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+				printf("-a <NUTCONF>\tUse specified NUT auth conf file or keyword.\n");
+#else
+				printf("-a <NUTCONF>\tNOT SUPPORTED IN THIS BUILD.\n");
+#endif
 				printf("-A <T1,T2>\tSend messages to users terminals when Low and critical.\n");
 				printf("             \tT1 is seconds between messages when Low.\n");
 				printf("             \tT2 is seconds between messages when Critical.\n");
