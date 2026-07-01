@@ -77,8 +77,7 @@ rckeys	wmnut_keys[WMNUT_KEYS_AMOUNT];
 
 #ifdef HAVE_UPSCLI_INIT_AUTHCONF
 upscli_authconf_t	*ac_default = NULL;
-/* Custom location of nutauth.conf (required to exist; otherwise try
- * a best-effort search in locatoins defaulted by NUT libupsclient) */
+/* Custom location of nutauth.conf (required to exist) or a keyword */
 char	*nutauth = NULL;
 #endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
 int	flags_ssl_default = UPSCLI_CONN_TRYSSL;
@@ -292,10 +291,13 @@ int main(int argc, char *argv[]) {
 				upscli_read_authconf_file(nutauth, 1);
 			}
 		}
-	} else {
+	}
+# ifdef WITH_NUTAUTH_UNSOLICITED
+	else {
 		DEBUGOUT("Using best-effort auth config detection");
 		upscli_read_authconf_file(NULL, 0);
 	}
+# endif
 
 /*
 	if (upscli_init_default_connect_timeout(net_connect_timeout, NULL, UPSCLI_DEFAULT_CONNECT_TIMEOUT) < 0) {

@@ -62,8 +62,7 @@ typedef struct {
 
 extern Display	*display;
 #ifdef HAVE_UPSCLI_INIT_AUTHCONF
-/* Custom location of nutauth.conf (required to exist; otherwise try
- * a best-effort search in locatoins defaulted by NUT libupsclient) */
+/* Custom location of nutauth.conf (required to exist) or a keyword */
 extern char	*nutauth;
 #endif
 
