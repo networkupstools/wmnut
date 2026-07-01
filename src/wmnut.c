@@ -3,7 +3,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 - 2025  Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2026  Jim Klimov <jimklimov+nut@gmail.com>
  *          2024  desertwitch <dezertwitsh@gmail.com>
  *
  * based on wmapm originally written by
@@ -74,6 +74,13 @@ rckeys	wmnut_keys[WMNUT_KEYS_AMOUNT];
 /* Debug macros */
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
 #define DEBUGERR(...)	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
+
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+upscli_authconf_t	*ac_default = NULL;
+/* Custom location of nutauth.conf (required to exist) or a keyword */
+char	*nutauth = NULL;
+#endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
+int	flags_ssl_default = UPSCLI_CONN_TRYSSL;
 
 /* Set and clear UPS status flags */
 void setflag(int *val, int flag)
@@ -236,6 +243,9 @@ int main(int argc, char *argv[]) {
 	Hosts.curhosts_number = Hosts.hosts_number = 0;
 
 	/* Create default parameters table */
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+	AddRcKey(&wmnut_keys[0], "AUTHCONF", TYPE_STRING, nutauth);
+#endif
 	AddRcKey(&wmnut_keys[0], "UPS", TYPE_STRING, upshost);
 	AddRcKey(&wmnut_keys[1], "LAlertRate", TYPE_FLOAT, &LAlertRate);
 	AddRcKey(&wmnut_keys[2], "CAlertRate", TYPE_FLOAT, &CAlertRate);
@@ -264,6 +274,43 @@ int main(int argc, char *argv[]) {
 	/* Parse any command line arguments.
 	 * Note that it overrides RCFiles params */
 	ParseCMDLine(argc, argv);
+
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+	/* Detected presence of this method means a number of others
+	 * from earlier NUT v2.8.x timeline should be here too */
+
+	if (nutauth) {
+		if (!strcmp(nutauth, "none")) {
+			DEBUGOUT("Using nutauth='%s': skipping auth config", nutauth);
+		} else {
+			if (!strcmp(nutauth, "default")) {
+				DEBUGOUT("Using nutauth='%s': require a user or system provided file", nutauth);
+				upscli_read_authconf_file(NULL, 1);
+			} else {
+				DEBUGOUT("Using nutauth='%s': require this file", nutauth);
+				upscli_read_authconf_file(nutauth, 1);
+			}
+		}
+	}
+# ifdef WITH_NUTAUTH_UNSOLICITED
+	else {
+		DEBUGOUT("Using best-effort auth config detection");
+		upscli_read_authconf_file(NULL, 0);
+	}
+# endif
+
+/*
+	if (upscli_init_default_connect_timeout(net_connect_timeout, NULL, UPSCLI_DEFAULT_CONNECT_TIMEOUT) < 0) {
+		DEBUGERR("Error: invalid network timeout: %s", net_connect_timeout);
+		exit(EXIT_FAILURE);
+	}
+*/
+
+	ac_default = upscli_find_authconf_item(NULL, NULL, NULL);
+	if (ac_default) {
+		upscli_authconf_update_conn_flags(ac_default, &flags_ssl_default);
+	}
+#endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
 
 	for (i = 0; i < (WMNUT_KEYS_AMOUNT - 1); i++ ) {
 		switch (wmnut_keys[i].type) {
@@ -646,13 +693,32 @@ void InitCom(void)
 
 	for ( i = 1; i <= Hosts.hosts_number ; i++ )
 	{
+		int	flags_ssl = flags_ssl_default;
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+		/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
+		 *  shared by all connections, specifically the CERTIDENT of the client.
+		 *  We can have multiple CERTHOST certificates (and/or reading
+		 *  users/passwords) though. */
+		char	str_port[16];
+		upscli_authconf_t	*ac_current = upscli_get_authconf_item(
+			NULL, CurHost->hostname,
+			snprintf(str_port, sizeof(str_port), "%" PRIu16, CurHost->port) > 0
+			? str_port : NULL,
+			1);
+
+		/* Always call this, to register possible CERTHOSTs etc. */
+		if (upscli_init_authconf(ac_current) > 0) {
+			upscli_authconf_update_conn_flags(ac_current, &flags_ssl);
+		}
+#endif
+
 		/* Close existing com, to re-connect below?
 		if ( &CurHost->connexion)
 			upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 		*/
 
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
-			CurHost->port, UPSCLI_CONN_TRYSSL) < 0
+			CurHost->port, flags_ssl) < 0
 		) {
 			fprintf(stderr, "Error: %s\n",
 				upscli_strerror(&CurHost->connexion));
@@ -661,6 +727,11 @@ void InitCom(void)
 			DEBUGERR("Communication established with UPS %s\n", CurHost->hostname);
 			CurHost->comm_status = COM_OK;
 		}
+
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+		/* Best-effort login (if present in the file) */
+		upscli_authenticate_authconf(&CurHost->connexion, ac_current);
+#endif
 
 		query[0] = "VAR";
 		query[1] = CurHost->upsname;

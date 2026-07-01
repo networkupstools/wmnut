@@ -192,11 +192,12 @@ AS_IF([test x"$NUT_VERSION" = x],
 )
 
 dnl NOTE: `upscli_str_contains_token()` is expected since NUT v2.8.3
+dnl NOTE: `upscli_init_authconf()` is expected since NUT v2.8.6
 myCFLAGS="$CFLAGS"
 myLIBS="$LIBS"
 CFLAGS="$NUT_CFLAGS"
 LIBS="$NUT_LIBS"
-AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token)
+AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token upscli_init_authconf)
 CFLAGS="$myCFLAGS"
 LIBS="$myLIBS"
 
