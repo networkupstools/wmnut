@@ -327,9 +327,9 @@ void ParseCMDLine(int argc, char *argv[])
 #endif
 				printf("\nUsage: %s [arguments]\n\n", PACKAGE_NAME);
 #ifdef HAVE_UPSCLI_INIT_AUTHCONF
-				printf("-a <NUTCONF>\tUse specified NUT auth conf file or keyword.\n");
+				printf("-a <AUTHCONF>\tUse specified NUT auth conf file or keyword.\n");
 #else
-				printf("-a <NUTCONF>\tNOT SUPPORTED IN THIS BUILD.\n");
+				printf("-a <AUTHCONF>\tNOT SUPPORTED IN THIS BUILD.\n");
 #endif
 				printf("-A <T1,T2>\tSend messages to users terminals when Low and critical.\n");
 				printf("             \tT1 is seconds between messages when Low.\n");

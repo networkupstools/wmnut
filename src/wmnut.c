@@ -68,7 +68,12 @@ ups_info	*CurHost;
 /* List of all UPSs monitored */
 nut_info	Hosts;
 
-#define WMNUT_KEYS_AMOUNT	13	/* This many fields are populated in main() below */
+/* This many fields are populated in main() below */
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+# define WMNUT_KEYS_AMOUNT	14
+#else
+# define WMNUT_KEYS_AMOUNT	13
+#endif
 rckeys	wmnut_keys[WMNUT_KEYS_AMOUNT];
 
 /* Debug macros */
@@ -243,9 +248,6 @@ int main(int argc, char *argv[]) {
 	Hosts.curhosts_number = Hosts.hosts_number = 0;
 
 	/* Create default parameters table */
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
-	AddRcKey(&wmnut_keys[0], "AUTHCONF", TYPE_STRING, nutauth);
-#endif
 	AddRcKey(&wmnut_keys[0], "UPS", TYPE_STRING, upshost);
 	AddRcKey(&wmnut_keys[1], "LAlertRate", TYPE_FLOAT, &LAlertRate);
 	AddRcKey(&wmnut_keys[2], "CAlertRate", TYPE_FLOAT, &CAlertRate);
@@ -258,7 +260,12 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[9], "UseLowColorPixmap", TYPE_BOOL, &UseLowColorPixmap);
 	AddRcKey(&wmnut_keys[10], "Verbose", TYPE_BOOL, &Verbose);
 	AddRcKey(&wmnut_keys[11], "WithDrawn", TYPE_BOOL, &WithDrawn);
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+	AddRcKey(&wmnut_keys[12], "AUTHCONF", TYPE_STRING, nutauth);
+	AddRcKey(&wmnut_keys[13], NULL, TYPE_NULL, NULL);
+#else
 	AddRcKey(&wmnut_keys[12], NULL, TYPE_NULL, NULL);
+#endif
 
 	atexit(exit_cleanup);
 
