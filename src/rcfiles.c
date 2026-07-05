@@ -142,16 +142,25 @@ void ParseRCFile(const char *filename, rckeys *keys)
 						switch(keys[key].type)
 						{
 							case TYPE_STRING:
-#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
 								if (keys[key].var.str != NULL)
 									free(keys[key].var.str);
-								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);
-								strncpy(keys[key].var.str, p, strlen(p));
+								{ /* scoping */
+									size_t	l = strlen(p);
+#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
+									keys[key].var.str = (char *)xmalloc(l + 1);
 #else
-								printf("TYPE_STRING parameter ignored because !HAVE_XMALLOC\n");
+									keys[key].var.str = (char *)malloc(l + 1);
+									if (keys[key].var.str == NULL) {
+										fprintf(stderr, "FAILED to allocate buffer for TYPE_STRING handling\n");
+										exit(EXIT_FAILURE);
+									}
 #endif	/* HAVE_XMALLOC */
-								if (!strcmp(keys[key].label, "UPS"))
-									AddHost(p);
+									strncpy(keys[key].var.str, p, l);
+
+
+									if (!strcmp(keys[key].label, "UPS"))
+										AddHost(p);
+								}
 								break;
 							case TYPE_BOOL:
 								*keys[key].var.boolean = strncmp(p, "on", 2) == 0;
