@@ -304,6 +304,10 @@ int main(int argc, char *argv[]) {
 	 * Note that the 2nd override the 1st */
 	LoadRCFile(wmnut_keys);
 
+#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+	nutauth = wmnut_keys[12].var.str;
+#endif
+
 	/* Parse any command line arguments.
 	 * Note that it overrides RCFiles params */
 	ParseCMDLine(argc, argv);
