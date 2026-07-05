@@ -87,6 +87,9 @@ char	*nutauth = NULL;
 #endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
 int	flags_ssl_default = UPSCLI_CONN_TRYSSL;
 
+/* from libupsclient */
+extern int nut_debug_level;
+
 /* Set and clear UPS status flags */
 void setflag(int *val, int flag)
 {
@@ -231,6 +234,7 @@ int main(int argc, char *argv[]) {
 	int		time_left, hour_left, min_left;
 	int		i, m, n, nMax, k, Toggle = OFF;
 	int		batt_load, batt_perc, yoffset;
+	char		*str;
 #if 0
 	int		mMax, retVal;
 	long int	r, rMax, s, sMax;
@@ -243,6 +247,28 @@ int main(int argc, char *argv[]) {
 	/* Set default values */
 	BlinkRate = 3.0;
 	UpdateRate = 1.0 / 1.25;
+
+	/* NOTE: Caller must `export NUT_DEBUG_LEVEL` to see debugs for the
+	 * client and NUT (libupsclient C binding) methods called from it.
+	 * This line aims to just initialize the subsystem, and set initial
+	 * timestamp. Debugging the client is primarily of use to developers,
+	 * so is not exposed via `-D` or similar args.
+	 * It does enable built-in Verbosity though.
+	 */
+	str = getenv("NUT_DEBUG_LEVEL");
+	if (str && sscanf(str, "%i", &i) > 0 && i > 0) {
+		Verbose = 1;
+
+#if defined(HAVE_UPSCLI_UPSLOG_SET_DEBUG_LEVEL) && HAVE_UPSCLI_UPSLOG_SET_DEBUG_LEVEL
+		upscli_upslog_set_debug_level(i, NULL);
+		DEBUGOUT("Enabled WMNut verbose debug and set nut_debug_level to %i\n", i);
+#elif defined(HAVE_NUT_DEBUG_LEVEL) && HAVE_NUT_DEBUG_LEVEL
+		nut_debug_level = i;
+		DEBUGOUT("Enabled WMNut verbose debug and set nut_debug_level to %i\n", i);
+#else
+		DEBUGOUT("WARNING: libupsclient does not expose nut_debug_level; only enabled WMNut verbose debug\n");
+#endif
+	}
 
 	/* Multiple hosts setup */
 	Hosts.curhosts_number = Hosts.hosts_number = 0;

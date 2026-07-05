@@ -3,6 +3,7 @@ UNRELEASED  Jim Klimov <jimklimov+nut@gmail.com>
 
 	  + Added GitHub Actions recipes to provide `make dist` tarballs.
 	  + Enabled Dependabot to help maintain the GitHub Actions recipes.
+	  + Integrated with `NUT_DEBUG_LEVEL` environment variable.
 	  + Added support for NUT AuthConf files (subject to building
 	    against a sufficiently new NUT `libupsclient` version).
 
