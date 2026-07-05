@@ -288,23 +288,25 @@ int main(int argc, char *argv[]) {
 
 	if (nutauth) {
 		if (!strcmp(nutauth, "none")) {
-			DEBUGOUT("Using nutauth='%s': skipping auth config", nutauth);
+			DEBUGOUT("Using nutauth='%s': skipping auth config\n", nutauth);
 		} else {
 			if (!strcmp(nutauth, "default")) {
-				DEBUGOUT("Using nutauth='%s': require a user or system provided file", nutauth);
+				DEBUGOUT("Using nutauth='%s': require a user or system provided file\n", nutauth);
 				upscli_read_authconf_file(NULL, 1);
 			} else {
-				DEBUGOUT("Using nutauth='%s': require this file", nutauth);
+				DEBUGOUT("Using nutauth='%s': require this file\n", nutauth);
 				upscli_read_authconf_file(nutauth, 1);
 			}
 		}
 	}
-# ifdef WITH_NUTAUTH_UNSOLICITED
 	else {
-		DEBUGOUT("Using best-effort auth config detection");
+# ifdef WITH_NUTAUTH_UNSOLICITED
+		DEBUGOUT("Using best-effort auth config detection\n");
 		upscli_read_authconf_file(NULL, 0);
-	}
+# else
+		DEBUGOUT("Not trying unsolicited auth config detection\n");
 # endif
+	}
 
 /*
 	if (upscli_init_default_connect_timeout(net_connect_timeout, NULL, UPSCLI_DEFAULT_CONNECT_TIMEOUT) < 0) {
@@ -317,6 +319,8 @@ int main(int argc, char *argv[]) {
 	if (ac_default) {
 		upscli_authconf_update_conn_flags(ac_default, &flags_ssl_default);
 	}
+#else
+	DEBUGOUT("Not trying auth config detection: not supported in this build\n");
 #endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
 
 	for (i = 0; i < (WMNUT_KEYS_AMOUNT - 1); i++ ) {
@@ -332,7 +336,7 @@ int main(int argc, char *argv[]) {
 				DEBUGOUT("%s = %f\n", wmnut_keys[i].label, (float) *wmnut_keys[i].var.floater);
 				break;
 			case TYPE_NULL:
-				DEBUGOUT("wmnut_keys[%d] is a sentinel entry (TYPE_NULL)", i);
+				DEBUGOUT("wmnut_keys[%d] is a sentinel entry (TYPE_NULL)\n", i);
 				break;
 		}
 	}
@@ -698,6 +702,8 @@ void InitCom(void)
 	 */
 	GetFirstHost();
 
+	DEBUGOUT("Iterating %i hosts...\n", Hosts.hosts_number);
+
 	for ( i = 1; i <= Hosts.hosts_number ; i++ )
 	{
 		int	flags_ssl = flags_ssl_default;
@@ -707,6 +713,8 @@ void InitCom(void)
 		 *  We can have multiple CERTHOST certificates (and/or reading
 		 *  users/passwords) though. */
 		char	str_port[16];
+
+		DEBUGOUT("Calling upscli_get_authconf_item()...\n");
 		upscli_authconf_t	*ac_current = upscli_get_authconf_item(
 			NULL, CurHost->hostname,
 			snprintf(str_port, sizeof(str_port), "%" PRIu16, CurHost->port) > 0
@@ -714,6 +722,7 @@ void InitCom(void)
 			1);
 
 		/* Always call this, to register possible CERTHOSTs etc. */
+		DEBUGOUT("Calling upscli_init_authconf()...\n");
 		if (upscli_init_authconf(ac_current) > 0) {
 			upscli_authconf_update_conn_flags(ac_current, &flags_ssl);
 		}
@@ -723,6 +732,11 @@ void InitCom(void)
 		if ( &CurHost->connexion)
 			upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 		*/
+
+		DEBUGOUT("Connecting to %s:%u (flags 0x%02X)\n",
+			CurHost->hostname,
+			CurHost->port,
+			(unsigned int)flags_ssl);
 
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
 			CurHost->port, flags_ssl) < 0

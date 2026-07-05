@@ -147,6 +147,8 @@ void ParseRCFile(const char *filename, rckeys *keys)
 									free(keys[key].var.str);
 								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);
 								strncpy(keys[key].var.str, p, strlen(p));
+#else
+								printf("TYPE_STRING parameter ignored because !HAVE_XMALLOC\n");
 #endif	/* HAVE_XMALLOC */
 								if (!strcmp(keys[key].label, "UPS"))
 									AddHost(p);
