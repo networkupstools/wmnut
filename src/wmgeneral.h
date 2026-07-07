@@ -66,6 +66,10 @@ extern Display	*display;
 extern char	*nutauth;
 #endif
 
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+extern const char	*net_connect_timeout;
+#endif
+
   /***********************/
  /* Function Prototypes */
 /***********************/

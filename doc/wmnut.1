@@ -3,7 +3,7 @@
 WMNUT \- Dockable UPS Monitor
 .SH SYNOPSIS
 .B wmnut
-[\-a <AUTHCONF>] [\-A T1 T2] [\-b BlinkRate] [\-B BeepVolume] [\-C CriticalLevel] [\-d display] [\-h] [\-l] [\-L LowLevel] [\-U upsname] [\-v] [\-V] [\-w]
+[\-a <AUTHCONF>] [\-A T1 T2] [\-b BlinkRate] [\-B BeepVolume] [\-C CriticalLevel] [\-d display] [\-h] [\-l] [\-L LowLevel] [\-U upsname] [\-v] [\-V] [\-w] [\-W secs]
 .SH DESCRIPTION
 .PP
 WMNUT is an UPS Monitor. It is used to visually display and
@@ -75,6 +75,13 @@ Verbose mode : display NUT available feature and base value.
 .TP
 .B \-w                    
 Windowed mode (opposite to native withdrawn mode for Window Maker).
+.TP
+.B \-w secs               
+Customize NUT data server connection timeout, to balance CPU churn
+and debug/error logging intensity vs. responsiveness and ability to
+handle other devices, if some UPS (or rather its data server) does
+not respond quickly. Takes priority over `NUT_DEFAULT_CONNECT_TIMEOUT`
+environment variable that can ve used for similar effect. Default: 10s.
 
 .SH BUGS
 None are known

@@ -68,6 +68,11 @@ ups_info	*CurHost;
 /* List of all UPSs monitored */
 nut_info	Hosts;
 
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+# define UPSCLI_DEFAULT_CONNECT_TIMEOUT	"10"
+const char	*net_connect_timeout = NULL;
+#endif
+
 /* This many fields are populated in main() below */
 #ifdef HAVE_UPSCLI_INIT_AUTHCONF
 # define WMNUT_KEYS_AMOUNT	14
@@ -338,13 +343,6 @@ int main(int argc, char *argv[]) {
 # endif
 	}
 
-/*
-	if (upscli_init_default_connect_timeout(net_connect_timeout, NULL, UPSCLI_DEFAULT_CONNECT_TIMEOUT) < 0) {
-		DEBUGERR("Error: invalid network timeout: %s", net_connect_timeout);
-		exit(EXIT_FAILURE);
-	}
-*/
-
 	ac_default = upscli_find_authconf_item(NULL, NULL, NULL);
 	if (ac_default) {
 		upscli_authconf_update_conn_flags(ac_default, &flags_ssl_default);
@@ -352,6 +350,13 @@ int main(int argc, char *argv[]) {
 #else
 	DEBUGOUT("Not trying auth config detection: not supported in this build\n");
 #endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
+
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+	if (upscli_init_default_connect_timeout(net_connect_timeout, NULL, UPSCLI_DEFAULT_CONNECT_TIMEOUT) < 0) {
+		DEBUGERR("Error: invalid network timeout: %s\n", net_connect_timeout);
+		exit(EXIT_FAILURE);
+	}
+#endif
 
 	for (i = 0; i < (WMNUT_KEYS_AMOUNT - 1); i++ ) {
 		switch (wmnut_keys[i].type) {

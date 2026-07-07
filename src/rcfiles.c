@@ -264,7 +264,7 @@ void ParseCMDLine(int argc, char *argv[])
 	while(1)
 	{
 		if ((c=GETOPTFUNC (argc, argv,
-			"aA:b:B:C:d:hlL:U:vVw")) == GETOPTENDCHAR
+			"aA:b:B:C:d:hlL:U:vVW:w")) == GETOPTENDCHAR
 		)
 			break;
 
@@ -320,6 +320,13 @@ void ParseCMDLine(int argc, char *argv[])
 				 * http://web.archive.org/web/20111003175836/http://wmnut.mgeops.org/
 				 */
 				exit(1);
+			case 'W':
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+				net_connect_timeout = optarg;
+#else
+				printf("option 'W' not supported in this build (NUT libupsclient too old)\n");
+#endif
+				break;
 			case 'w':
 				WithDrawn = 0; /* not in default withdrawn mode, so in windowed mode */
 				break;
@@ -357,6 +364,11 @@ void ParseCMDLine(int argc, char *argv[])
 				printf("-v \t\tPrint version (includes important WMNUT info).\n");
 				printf("-V \t\tVerbose mode : display NUT available features and base value.\n");
 				printf("-w \t\tWindowed mode (opposite to native Window Maker withdrawn mode).\n\n");
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+				printf("-W <secs>\tNetwork timeout for initial connections.\n");
+#else
+				printf("-W <secs>\tNOT SUPPORTED IN THIS BUILD.\n");
+#endif
 				exit (1);
 		}
 	}
