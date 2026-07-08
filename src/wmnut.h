@@ -101,6 +101,11 @@ typedef struct ups_info {
 	char	*upsname;
 	char	*hostname;
 	UPSCONN_t	connexion;
+
+	/* Somehow port got corrupted during upscli_connect,
+	 * use a scrap honeypot buffer while investigating */
+	char	scrap[128];
+
 	uint16_t	port;
 	int	ups_status;	/* -1 if not init'ed */
 	int	comm_status;	/* -1 if not init'ed, -2 if not available */
