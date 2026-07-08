@@ -752,6 +752,13 @@ void InitCom(void)
 	{
 		size_t	vars_count = 0;
 
+		if (CurHost->comm_status == COM_OK) {
+			DEBUGOUT("InitCom(): SKIP %s@%s:%u - already/still connected\n",
+				CurHost->upsname,
+				CurHost->hostname,
+				CurHost->port);
+		}
+
 #if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 		if (CurHost->ac == NULL) {
 			/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
