@@ -817,8 +817,11 @@ void InitCom(void)
 		}
 
 #if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
-		/* Best-effort login (if present in the file) */
-		upscli_authenticate_authconf(&CurHost->connexion, CurHost->ac);
+		/* Best-effort login (if present in the file,
+		 * non-interactive). Note that historically
+		 * NUT reads are anonymous, free for all. */
+		if (CurHost->ac && CurHost->ac->user && CurHost->ac->pass)
+			upscli_authenticate_authconf(&CurHost->connexion, CurHost->ac);
 #endif
 
 		query[0] = "VAR";
