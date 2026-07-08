@@ -884,10 +884,10 @@ int AddHost(char *hostname)
 	if (Hosts.hosts_number < MAX_HOSTS_NUMBER) {
 		/* CurHost = Hosts.Ups_list[nbHosts - 1]; */
 
-		/* UPS auto discovery mode : */
+		/* UPS auto discovery mode (all on localhost): */
 		if (strchr(hostname, '@') == NULL) {
 			/* Connect to host at default port... */
-			if (upscli_connect(&ups, hostname, 3493, UPSCLI_CONN_TRYSSL) < 0)
+			if (upscli_connect(&ups, hostname, NUT_PORT, UPSCLI_CONN_TRYSSL) < 0)
 				return 0;
 
 			/* ... and retrieve UPS list */

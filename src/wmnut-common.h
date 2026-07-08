@@ -63,6 +63,10 @@
 #define SMALLBUF	256
 #define LARGEBUF	1024
 
+#ifndef NUT_PORT
+# define NUT_PORT	3493
+#endif
+
 /* Portable max path length, may be or not be defined in NUT headers too */
 #ifndef NUT_PATH_MAX
 # define NUT_PATH_MAX	SMALLBUF
