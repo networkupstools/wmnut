@@ -107,6 +107,10 @@ typedef struct ups_info {
 	int	battery_percentage;	/* -1 if not init'ed, -2 if not available */
 	int	battery_load;	/* -1 if not init'ed, -2 if not available */
 	int	battery_runtime;	/* -1 if not init'ed, -2 if not available */
+	int	flags_ssl;
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+	upscli_authconf_t	*ac;
+#endif
 } ups_info;
 
 /*

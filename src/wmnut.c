@@ -751,25 +751,30 @@ void InitCom(void)
 	for ( i = 1; i <= Hosts.hosts_number ; i++ )
 	{
 		size_t	vars_count = 0;
-		int	flags_ssl = flags_ssl_default;
+
 #if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
-		/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
-		 *  shared by all connections, specifically the CERTIDENT of the client.
-		 *  We can have multiple CERTHOST certificates (and/or reading
-		 *  users/passwords) though. */
-		char	str_port[16];
+		if (CurHost->ac == NULL) {
+			/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
+			 *  shared by all connections, specifically the CERTIDENT of the client.
+			 *  We can have multiple CERTHOST certificates (and/or reading
+			 *  users/passwords) though. */
+			char	str_port[16];
 
-		DEBUGOUT("Calling upscli_get_authconf_item()...\n");
-		upscli_authconf_t	*ac_current = upscli_get_authconf_item(
-			NULL, CurHost->hostname,
-			snprintf(str_port, sizeof(str_port), "%" PRIu16, CurHost->port) > 0
-			? str_port : NULL,
-			1);
+			DEBUGOUT("Calling upscli_get_authconf_item()...\n");
 
-		/* Always call this, to register possible CERTHOSTs etc. */
-		DEBUGOUT("Calling upscli_init_authconf()...\n");
-		if (upscli_init_authconf(ac_current) > 0) {
-			upscli_authconf_update_conn_flags(ac_current, &flags_ssl);
+			CurHost->ac = upscli_get_authconf_item(
+				NULL, CurHost->hostname,
+				snprintf(str_port, sizeof(str_port), "%" PRIu16, CurHost->port) > 0
+				? str_port : NULL,
+				1);
+
+			CurHost->flags_ssl = flags_ssl_default;
+
+			/* Always call this, to register possible CERTHOSTs etc. */
+			DEBUGOUT("Calling upscli_init_authconf()...\n");
+			if (upscli_init_authconf(CurHost->ac) > 0) {
+				upscli_authconf_update_conn_flags(CurHost->ac, &CurHost->flags_ssl);
+			}
 		}
 #endif
 
@@ -781,10 +786,10 @@ void InitCom(void)
 		DEBUGOUT("Connecting to %s:%u (flags 0x%02X)\n",
 			CurHost->hostname,
 			CurHost->port,
-			(unsigned int)flags_ssl);
+			(unsigned int)CurHost->flags_ssl);
 
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
-			CurHost->port, flags_ssl) < 0
+			CurHost->port, CurHost->flags_ssl) < 0
 		) {
 			fprintf(stderr, "Error connecting to %s:%u: %s\n",
 				CurHost->hostname, CurHost->port,
@@ -798,7 +803,7 @@ void InitCom(void)
 
 #if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 		/* Best-effort login (if present in the file) */
-		upscli_authenticate_authconf(&CurHost->connexion, ac_current);
+		upscli_authenticate_authconf(&CurHost->connexion, CurHost->ac);
 #endif
 
 		query[0] = "VAR";
@@ -970,6 +975,16 @@ int AddHost(char *hostname)
 		Hosts.Ups_list[nbHosts - 1]->battery_percentage = -1;
 		Hosts.Ups_list[nbHosts - 1]->battery_load = -1;
 		Hosts.Ups_list[nbHosts - 1]->battery_runtime = -1;
+
+		/* At this time may be just the hard-coded default,
+		 * not from nutauth file (if any) */
+		Hosts.Ups_list[nbHosts - 1]->flags_ssl = flags_ssl_default;
+
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+		/* Populate durimg first initial connect attempt,
+		 * after we've loaded all configs and CLI options */
+		Hosts.Ups_list[nbHosts - 1]->ac = NULL;
+#endif
 
 		return 1;
 	}
