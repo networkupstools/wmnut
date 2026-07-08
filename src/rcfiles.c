@@ -236,7 +236,7 @@ void ParseCMDLine(int argc, char *argv[])
 #ifdef HAVE_GETOPT_LONG
 		static struct option long_options[] =
 		{
-# ifdef HAVE_UPSCLI_INIT_AUTHCONF
+# if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 			{"authconf",required_argument,NULL,'a'},
 # endif
 			{"alarmint",required_argument,NULL,'A'},
@@ -271,7 +271,7 @@ void ParseCMDLine(int argc, char *argv[])
 		switch (c)
 		{
 			case 'a':
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 				nutauth = optarg;
 #else
 				printf("option 'a' not supported in this build (NUT libupsclient too old)\n");
@@ -344,7 +344,7 @@ void ParseCMDLine(int argc, char *argv[])
 				printf("Built against NUT version: %s\n", NUT_VERSION);
 #endif
 				printf("\nUsage: %s [arguments]\n\n", PACKAGE_NAME);
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 				printf("-a <AUTHCONF>\tUse specified NUT auth conf file or keyword.\n");
 #else
 				printf("-a <AUTHCONF>\tNOT SUPPORTED IN THIS BUILD.\n");

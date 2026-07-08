@@ -74,7 +74,7 @@ const char	*net_connect_timeout = NULL;
 #endif
 
 /* This many fields are populated in main() below */
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 # define WMNUT_KEYS_AMOUNT	14
 #else
 # define WMNUT_KEYS_AMOUNT	13
@@ -85,7 +85,7 @@ rckeys	wmnut_keys[WMNUT_KEYS_AMOUNT];
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
 #define DEBUGERR(...)	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
 
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 upscli_authconf_t	*ac_default = NULL;
 /* Custom location of nutauth.conf (required to exist) or a keyword */
 char	*nutauth = NULL;
@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[9], "UseLowColorPixmap", TYPE_BOOL, &UseLowColorPixmap);
 	AddRcKey(&wmnut_keys[10], "Verbose", TYPE_BOOL, &Verbose);
 	AddRcKey(&wmnut_keys[11], "WithDrawn", TYPE_BOOL, &WithDrawn);
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 	AddRcKey(&wmnut_keys[12], "AUTHCONF", TYPE_STRING, nutauth);
 	AddRcKey(&wmnut_keys[13], NULL, TYPE_NULL, NULL);
 #else
@@ -318,7 +318,7 @@ int main(int argc, char *argv[]) {
 	 * Note that the 2nd override the 1st */
 	LoadRCFile(wmnut_keys);
 
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 	nutauth = wmnut_keys[12].var.str;
 #endif
 
@@ -326,7 +326,7 @@ int main(int argc, char *argv[]) {
 	 * Note that it overrides RCFiles params */
 	ParseCMDLine(argc, argv);
 
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 	/* Detected presence of this method means a number of others
 	 * from earlier NUT v2.8.x timeline should be here too */
 
@@ -752,7 +752,7 @@ void InitCom(void)
 	{
 		size_t	vars_count = 0;
 		int	flags_ssl = flags_ssl_default;
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 		/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
 		 *  shared by all connections, specifically the CERTIDENT of the client.
 		 *  We can have multiple CERTHOST certificates (and/or reading
@@ -796,7 +796,7 @@ void InitCom(void)
 			CurHost->comm_status = COM_OK;
 		}
 
-#ifdef HAVE_UPSCLI_INIT_AUTHCONF
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
 		/* Best-effort login (if present in the file) */
 		upscli_authenticate_authconf(&CurHost->connexion, ac_current);
 #endif
