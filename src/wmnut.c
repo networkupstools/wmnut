@@ -196,6 +196,14 @@ void get_ups_info(void)
 		CurHost->ups_status = 0;
 	}
 
+	if (CurHost->comm_status == COM_LOST) {
+		/* We failed a query, re-InitCom'ed, and still failed.
+		 * Do not spam it (nor make UI unresponsive for too long).
+		 */
+		DEBUGERR("SKIP the rest of get_ups_info() queries: device or data server does not respond\n");
+		return;
+	}
+
 	/* Get battery charge level */
 	if ((CurHost->battery_runtime != VARNOTSUPP)
 	 || (TryCount >= RETRY_COUNT)
