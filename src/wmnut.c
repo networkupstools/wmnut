@@ -741,6 +741,7 @@ void InitCom(void)
 
 	for ( i = 1; i <= Hosts.hosts_number ; i++ )
 	{
+		size_t	vars_count = 0;
 		int	flags_ssl = flags_ssl_default;
 #ifdef HAVE_UPSCLI_INIT_AUTHCONF
 		/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
@@ -776,11 +777,13 @@ void InitCom(void)
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
 			CurHost->port, flags_ssl) < 0
 		) {
-			fprintf(stderr, "Error: %s\n",
+			fprintf(stderr, "Error connecting to %s:%u: %s\n",
+				CurHost->hostname, CurHost->port,
 				upscli_strerror(&CurHost->connexion));
 		}
 		else {
-			DEBUGERR("Communication established with UPS %s\n", CurHost->hostname);
+			DEBUGERR("Communication established with data server %s:%u\n",
+				CurHost->hostname, CurHost->port);
 			CurHost->comm_status = COM_OK;
 		}
 
@@ -797,12 +800,13 @@ void InitCom(void)
 		/* if (upscli_getlist(&CurHost->connexion, CurHost->upsname,
 			 UPSCLI_LIST_VARS, vars, sizeof(vars)) < 0) */
 		{
-			DEBUGERR("Unable to get variable list for %s - %s\n",
-				CurHost->upsname, upscli_strerror(&CurHost->connexion));
+			DEBUGERR("Unable to get variable list for %s@%s:%u - %s\n",
+				CurHost->upsname, CurHost->hostname, CurHost->port,
+				upscli_strerror(&CurHost->connexion));
 		}
 		else {
-			DEBUGERR("Got variables list for %s@%s\n",
-				CurHost->upsname, CurHost->hostname);
+			DEBUGERR("Got variables list for %s@%s:%u\n",
+				CurHost->upsname, CurHost->hostname, CurHost->port);
 
 			CurHost->comm_status = COM_OK;
 			CurHost->ups_status = 0;
@@ -820,14 +824,21 @@ void InitCom(void)
 				}
 				DEBUGERR("%s: %s\n", answer[2], answer[3]);
 				ret = upscli_list_next(&CurHost->connexion, numq, query, &numa, &answer);
+				vars_count++;
 			}
 		}
 
 		/* FIXME: With code commented away, we might in fact
-		 * have no vars because we do not fetch any */
-		if (strlen(vars) == 0) {
-			DEBUGERR("%s", "No data available check your configuration (ups.conf)\n");
+		 * have no vars[] because we do not fetch any */
+		if (vars_count == 0 /* && strlen(vars) == 0 */) {
+			DEBUGERR("No data available for %s@%s:%u - check your configuration (ups.conf)\n",
+				CurHost->upsname, CurHost->hostname, CurHost->port);
+		} else {
+			DEBUGERR("OK: Collected %zu vars for %s@%s:%u\n",
+				vars_count,
+				CurHost->upsname, CurHost->hostname, CurHost->port);
 		}
+
 		GetNextHost();
 	}
 }
