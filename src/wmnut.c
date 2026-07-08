@@ -141,10 +141,19 @@ int get_ups_var (char *variable, char *value)
 		if (CurHost->connexion.upserror == UPSCLI_ERR_DATASTALE)
 			CurHost->comm_status = COM_LOST;
 
-		if ((CurHost->connexion.upserror == UPSCLI_ERR_READ) ||
-			(CurHost->connexion.upserror == UPSCLI_ERR_INVALIDARG)) {
-
+		if ((CurHost->connexion.upserror == UPSCLI_ERR_READ)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_INVALIDARG)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_SRVDISC)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_BINDFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_CONNFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_SENDFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_RECVFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_NOSUCHHOST)	/* DNS fault? */
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_UNKNOWNUPS)	/* server is being reconfigured? */
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_DRVNOTCONN)
+		) {
 			CurHost->comm_status = COM_LOST;
+			DEBUGERR("FAILED upscli_get() with a connection error, try to re-InitCom()\n");
 			InitCom();
 		}
 
