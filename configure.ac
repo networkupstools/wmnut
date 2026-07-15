@@ -197,7 +197,7 @@ myCFLAGS="$CFLAGS"
 myLIBS="$LIBS"
 CFLAGS="$NUT_CFLAGS"
 LIBS="$NUT_LIBS"
-AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token upscli_init_authconf upscli_upslog_set_debug_level upscli_init_default_connect_timeout)
+AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token upscli_init_authconf upscli_upslog_set_debug_level upscli_upslog_setproctag upscli_init_default_connect_timeout)
 
 AC_LANG_PUSH([C])
 

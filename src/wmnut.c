@@ -281,6 +281,10 @@ int main(int argc, char *argv[]) {
 	if (str && sscanf(str, "%i", &i) > 0 && i > 0) {
 		Verbose = 1;
 
+#if defined(HAVE_UPSCLI_UPSLOG_SETPROCTAG) && HAVE_UPSCLI_UPSLOG_SETPROCTAG
+		upscli_upslog_setproctag("wmnut", 0);
+#endif
+
 #if defined(HAVE_UPSCLI_UPSLOG_SET_DEBUG_LEVEL) && HAVE_UPSCLI_UPSLOG_SET_DEBUG_LEVEL
 		upscli_upslog_set_debug_level(i, NULL);
 		DEBUGOUT("Enabled WMNut verbose debug and set nut_debug_level to %i\n", i);
