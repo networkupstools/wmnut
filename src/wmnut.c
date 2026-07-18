@@ -3,7 +3,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 - 2025  Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2026  Jim Klimov <jimklimov+nut@gmail.com>
  *          2024  desertwitch <dezertwitsh@gmail.com>
  *
  * based on wmapm originally written by
@@ -68,12 +68,32 @@ ups_info	*CurHost;
 /* List of all UPSs monitored */
 nut_info	Hosts;
 
-#define WMNUT_KEYS_AMOUNT	13	/* This many fields are populated in main() below */
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+# define UPSCLI_DEFAULT_CONNECT_TIMEOUT	"10"
+const char	*net_connect_timeout = NULL;
+#endif
+
+/* This many fields are populated in main() below */
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+# define WMNUT_KEYS_AMOUNT	14
+#else
+# define WMNUT_KEYS_AMOUNT	13
+#endif
 rckeys	wmnut_keys[WMNUT_KEYS_AMOUNT];
 
 /* Debug macros */
 #define DEBUGOUT(...)	{ if (Verbose) fprintf(stdout, __VA_ARGS__); }
 #define DEBUGERR(...)	{ if (Verbose) fprintf(stderr, __VA_ARGS__); }
+
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+upscli_authconf_t	*ac_default = NULL;
+/* Custom location of nutauth.conf (required to exist) or a keyword */
+char	*nutauth = NULL;
+#endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
+int	flags_ssl_default = UPSCLI_CONN_TRYSSL;
+
+/* from libupsclient */
+extern int nut_debug_level;
 
 /* Set and clear UPS status flags */
 void setflag(int *val, int flag)
@@ -121,10 +141,19 @@ int get_ups_var (char *variable, char *value)
 		if (CurHost->connexion.upserror == UPSCLI_ERR_DATASTALE)
 			CurHost->comm_status = COM_LOST;
 
-		if ((CurHost->connexion.upserror == UPSCLI_ERR_READ) ||
-			(CurHost->connexion.upserror == UPSCLI_ERR_INVALIDARG)) {
-
+		if ((CurHost->connexion.upserror == UPSCLI_ERR_READ)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_INVALIDARG)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_SRVDISC)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_BINDFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_CONNFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_SENDFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_RECVFAILURE)
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_NOSUCHHOST)	/* DNS fault? */
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_UNKNOWNUPS)	/* server is being reconfigured? */
+		 || (CurHost->connexion.upserror == UPSCLI_ERR_DRVNOTCONN)
+		) {
 			CurHost->comm_status = COM_LOST;
+			DEBUGERR("FAILED upscli_get() with a connection error, try to re-InitCom()\n");
 			InitCom();
 		}
 
@@ -165,6 +194,14 @@ void get_ups_info(void)
 		}
 	} else {
 		CurHost->ups_status = 0;
+	}
+
+	if (CurHost->comm_status == COM_LOST) {
+		/* We failed a query, re-InitCom'ed, and still failed.
+		 * Do not spam it (nor make UI unresponsive for too long).
+		 */
+		DEBUGERR("SKIP the rest of get_ups_info() queries: device or data server does not respond\n");
+		return;
 	}
 
 	/* Get battery charge level */
@@ -219,6 +256,7 @@ int main(int argc, char *argv[]) {
 	int		time_left, hour_left, min_left;
 	int		i, m, n, nMax, k, Toggle = OFF;
 	int		batt_load, batt_perc, yoffset;
+	char		*str;
 #if 0
 	int		mMax, retVal;
 	long int	r, rMax, s, sMax;
@@ -231,6 +269,32 @@ int main(int argc, char *argv[]) {
 	/* Set default values */
 	BlinkRate = 3.0;
 	UpdateRate = 1.0 / 1.25;
+
+	/* NOTE: Caller must `export NUT_DEBUG_LEVEL` to see debugs for the
+	 * client and NUT (libupsclient C binding) methods called from it.
+	 * This line aims to just initialize the subsystem, and set initial
+	 * timestamp. Debugging the client is primarily of use to developers,
+	 * so is not exposed via `-D` or similar args.
+	 * It does enable built-in Verbosity though.
+	 */
+	str = getenv("NUT_DEBUG_LEVEL");
+	if (str && sscanf(str, "%i", &i) > 0 && i > 0) {
+		Verbose = 1;
+
+#if defined(HAVE_UPSCLI_UPSLOG_SETPROCTAG) && HAVE_UPSCLI_UPSLOG_SETPROCTAG
+		upscli_upslog_setproctag("wmnut", 0);
+#endif
+
+#if defined(HAVE_UPSCLI_UPSLOG_SET_DEBUG_LEVEL) && HAVE_UPSCLI_UPSLOG_SET_DEBUG_LEVEL
+		upscli_upslog_set_debug_level(i, NULL);
+		DEBUGOUT("Enabled WMNut verbose debug and set nut_debug_level to %i\n", i);
+#elif defined(HAVE_NUT_DEBUG_LEVEL) && HAVE_NUT_DEBUG_LEVEL
+		nut_debug_level = i;
+		DEBUGOUT("Enabled WMNut verbose debug and set nut_debug_level to %i\n", i);
+#else
+		DEBUGOUT("WARNING: libupsclient does not expose nut_debug_level; only enabled WMNut verbose debug\n");
+#endif
+	}
 
 	/* Multiple hosts setup */
 	Hosts.curhosts_number = Hosts.hosts_number = 0;
@@ -248,7 +312,12 @@ int main(int argc, char *argv[]) {
 	AddRcKey(&wmnut_keys[9], "UseLowColorPixmap", TYPE_BOOL, &UseLowColorPixmap);
 	AddRcKey(&wmnut_keys[10], "Verbose", TYPE_BOOL, &Verbose);
 	AddRcKey(&wmnut_keys[11], "WithDrawn", TYPE_BOOL, &WithDrawn);
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+	AddRcKey(&wmnut_keys[12], "AUTHCONF", TYPE_STRING, nutauth);
+	AddRcKey(&wmnut_keys[13], NULL, TYPE_NULL, NULL);
+#else
 	AddRcKey(&wmnut_keys[12], NULL, TYPE_NULL, NULL);
+#endif
 
 	atexit(exit_cleanup);
 
@@ -261,9 +330,54 @@ int main(int argc, char *argv[]) {
 	 * Note that the 2nd override the 1st */
 	LoadRCFile(wmnut_keys);
 
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+	nutauth = wmnut_keys[12].var.str;
+#endif
+
 	/* Parse any command line arguments.
 	 * Note that it overrides RCFiles params */
 	ParseCMDLine(argc, argv);
+
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+	/* Detected presence of this method means a number of others
+	 * from earlier NUT v2.8.x timeline should be here too */
+
+	if (nutauth) {
+		if (!strcmp(nutauth, "none")) {
+			DEBUGOUT("Using nutauth='%s': skipping auth config\n", nutauth);
+		} else {
+			if (!strcmp(nutauth, "default")) {
+				DEBUGOUT("Using nutauth='%s': require a user or system provided file\n", nutauth);
+				upscli_read_authconf_file(NULL, 1);
+			} else {
+				DEBUGOUT("Using nutauth='%s': require this file\n", nutauth);
+				upscli_read_authconf_file(nutauth, 1);
+			}
+		}
+	}
+	else {
+# ifdef WITH_NUTAUTH_UNSOLICITED
+		DEBUGOUT("Using best-effort auth config detection\n");
+		upscli_read_authconf_file(NULL, 0);
+# else
+		DEBUGOUT("Not trying unsolicited auth config detection\n");
+# endif
+	}
+
+	ac_default = upscli_find_authconf_item(NULL, NULL, NULL);
+	if (ac_default) {
+		upscli_authconf_update_conn_flags(ac_default, &flags_ssl_default);
+	}
+#else
+	DEBUGOUT("Not trying auth config detection: not supported in this build\n");
+#endif	/* HAVE_UPSCLI_INIT_AUTHCONF */
+
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+	if (upscli_init_default_connect_timeout(net_connect_timeout, NULL, UPSCLI_DEFAULT_CONNECT_TIMEOUT) < 0) {
+		DEBUGERR("Error: invalid network timeout: %s\n", net_connect_timeout);
+		exit(EXIT_FAILURE);
+	}
+#endif
 
 	for (i = 0; i < (WMNUT_KEYS_AMOUNT - 1); i++ ) {
 		switch (wmnut_keys[i].type) {
@@ -278,7 +392,7 @@ int main(int argc, char *argv[]) {
 				DEBUGOUT("%s = %f\n", wmnut_keys[i].label, (float) *wmnut_keys[i].var.floater);
 				break;
 			case TYPE_NULL:
-				DEBUGOUT("wmnut_keys[%d] is a sentinel entry (TYPE_NULL)", i);
+				DEBUGOUT("wmnut_keys[%d] is a sentinel entry (TYPE_NULL)\n", i);
 				break;
 		}
 	}
@@ -644,23 +758,75 @@ void InitCom(void)
 	 */
 	GetFirstHost();
 
+	DEBUGOUT("Iterating %i hosts...\n", Hosts.hosts_number);
+
 	for ( i = 1; i <= Hosts.hosts_number ; i++ )
 	{
+		size_t	vars_count = 0;
+
+		if (CurHost->comm_status == COM_OK) {
+			DEBUGOUT("InitCom(): SKIP %s@%s:%u - already/still connected\n",
+				CurHost->upsname,
+				CurHost->hostname,
+				CurHost->port);
+		}
+
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+		if (CurHost->ac == NULL) {
+			/* FIXME [nut#3494]: Currently libupsclient allows for *one* SSL context
+			 *  shared by all connections, specifically the CERTIDENT of the client.
+			 *  We can have multiple CERTHOST certificates (and/or reading
+			 *  users/passwords) though. */
+			char	str_port[16];
+
+			DEBUGOUT("Calling upscli_get_authconf_item()...\n");
+
+			CurHost->ac = upscli_get_authconf_item(
+				NULL, CurHost->hostname,
+				snprintf(str_port, sizeof(str_port), "%" PRIu16, CurHost->port) > 0
+				? str_port : NULL,
+				1);
+
+			CurHost->flags_ssl = flags_ssl_default;
+
+			/* Always call this, to register possible CERTHOSTs etc. */
+			DEBUGOUT("Calling upscli_init_authconf()...\n");
+			if (upscli_init_authconf(CurHost->ac) > 0) {
+				upscli_authconf_update_conn_flags(CurHost->ac, &CurHost->flags_ssl);
+			}
+		}
+#endif
+
 		/* Close existing com, to re-connect below?
 		if ( &CurHost->connexion)
 			upscli_disconnect ( &Hosts.Ups_list[i - 1]->connexion );
 		*/
 
+		DEBUGOUT("Connecting to %s:%u (flags 0x%02X)\n",
+			CurHost->hostname,
+			CurHost->port,
+			(unsigned int)CurHost->flags_ssl);
+
 		if (upscli_connect(&CurHost->connexion, CurHost->hostname,
-			CurHost->port, UPSCLI_CONN_TRYSSL) < 0
+			CurHost->port, CurHost->flags_ssl) < 0
 		) {
-			fprintf(stderr, "Error: %s\n",
+			fprintf(stderr, "Error connecting to %s:%u: %s\n",
+				CurHost->hostname, CurHost->port,
 				upscli_strerror(&CurHost->connexion));
 		}
 		else {
-			DEBUGERR("Communication established with UPS %s\n", CurHost->hostname);
+			DEBUGERR("Communication established with data server %s:%u\n",
+				CurHost->hostname, CurHost->port);
 			CurHost->comm_status = COM_OK;
 		}
+
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+		/* Best-effort login (if present in the file,
+		 * non-interactive). Note that historically
+		 * NUT reads are anonymous, free for all. */
+		if (CurHost->ac && CurHost->ac->user && CurHost->ac->pass)
+			upscli_authenticate_authconf(&CurHost->connexion, CurHost->ac);
+#endif
 
 		query[0] = "VAR";
 		query[1] = CurHost->upsname;
@@ -670,12 +836,13 @@ void InitCom(void)
 		/* if (upscli_getlist(&CurHost->connexion, CurHost->upsname,
 			 UPSCLI_LIST_VARS, vars, sizeof(vars)) < 0) */
 		{
-			DEBUGERR("Unable to get variable list for %s - %s\n",
-				CurHost->upsname, upscli_strerror(&CurHost->connexion));
+			DEBUGERR("Unable to get variable list for %s@%s:%u - %s\n",
+				CurHost->upsname, CurHost->hostname, CurHost->port,
+				upscli_strerror(&CurHost->connexion));
 		}
 		else {
-			DEBUGERR("Got variables list for %s@%s\n",
-				CurHost->upsname, CurHost->hostname);
+			DEBUGERR("Got variables list for %s@%s:%u\n",
+				CurHost->upsname, CurHost->hostname, CurHost->port);
 
 			CurHost->comm_status = COM_OK;
 			CurHost->ups_status = 0;
@@ -693,14 +860,21 @@ void InitCom(void)
 				}
 				DEBUGERR("%s: %s\n", answer[2], answer[3]);
 				ret = upscli_list_next(&CurHost->connexion, numq, query, &numa, &answer);
+				vars_count++;
 			}
 		}
 
 		/* FIXME: With code commented away, we might in fact
-		 * have no vars because we do not fetch any */
-		if (strlen(vars) == 0) {
-			DEBUGERR("%s", "No data available check your configuration (ups.conf)\n");
+		 * have no vars[] because we do not fetch any */
+		if (vars_count == 0 /* && strlen(vars) == 0 */) {
+			DEBUGERR("No data available for %s@%s:%u - check your configuration (ups.conf)\n",
+				CurHost->upsname, CurHost->hostname, CurHost->port);
+		} else {
+			DEBUGERR("OK: Collected %zu vars for %s@%s:%u\n",
+				vars_count,
+				CurHost->upsname, CurHost->hostname, CurHost->port);
 		}
+
 		GetNextHost();
 	}
 }
@@ -757,10 +931,10 @@ int AddHost(char *hostname)
 	if (Hosts.hosts_number < MAX_HOSTS_NUMBER) {
 		/* CurHost = Hosts.Ups_list[nbHosts - 1]; */
 
-		/* UPS auto discovery mode : */
+		/* UPS auto discovery mode (all on localhost): */
 		if (strchr(hostname, '@') == NULL) {
 			/* Connect to host at default port... */
-			if (upscli_connect(&ups, hostname, 3493, UPSCLI_CONN_TRYSSL) < 0)
+			if (upscli_connect(&ups, hostname, NUT_PORT, UPSCLI_CONN_TRYSSL) < 0)
 				return 0;
 
 			/* ... and retrieve UPS list */
@@ -823,6 +997,16 @@ int AddHost(char *hostname)
 		Hosts.Ups_list[nbHosts - 1]->battery_percentage = -1;
 		Hosts.Ups_list[nbHosts - 1]->battery_load = -1;
 		Hosts.Ups_list[nbHosts - 1]->battery_runtime = -1;
+
+		/* At this time may be just the hard-coded default,
+		 * not from nutauth file (if any) */
+		Hosts.Ups_list[nbHosts - 1]->flags_ssl = flags_ssl_default;
+
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+		/* Populate durimg first initial connect attempt,
+		 * after we've loaded all configs and CLI options */
+		Hosts.Ups_list[nbHosts - 1]->ac = NULL;
+#endif
 
 		return 1;
 	}

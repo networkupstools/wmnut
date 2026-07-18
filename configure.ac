@@ -192,11 +192,32 @@ AS_IF([test x"$NUT_VERSION" = x],
 )
 
 dnl NOTE: `upscli_str_contains_token()` is expected since NUT v2.8.3
+dnl NOTE: `upscli_init_authconf()` is expected since NUT v2.8.6
 myCFLAGS="$CFLAGS"
 myLIBS="$LIBS"
 CFLAGS="$NUT_CFLAGS"
 LIBS="$NUT_LIBS"
-AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token)
+AC_CHECK_FUNCS(upscli_strerror upscli_str_contains_token upscli_init_authconf upscli_upslog_set_debug_level upscli_upslog_setproctag upscli_init_default_connect_timeout)
+
+AC_LANG_PUSH([C])
+
+dnl Starting with some 2.8.x release, libupsclient happens to expose
+dnl the internal variable. Methods came later - cca 2.8.5.
+AC_MSG_CHECKING([whether libupsclient exports nut_debug_level])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <upsclient.h>
+extern int nut_debug_level;],
+	[nut_debug_level = 6])],
+	[have_ndl=yes
+	 AC_DEFINE([HAVE_NUT_DEBUG_LEVEL], 1, [Does libupsclient export nut_debug_level?])
+	],
+	[have_ndl=no
+	 AC_DEFINE([HAVE_NUT_DEBUG_LEVEL], 0, [Does libupsclient export nut_debug_level?])
+	])
+AC_MSG_RESULT([${have_ndl}])
+
+AC_LANG_POP([C])
+
+
 CFLAGS="$myCFLAGS"
 LIBS="$myLIBS"
 

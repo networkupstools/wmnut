@@ -62,6 +62,15 @@ typedef struct {
 
 extern Display	*display;
 
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+/* Custom location of nutauth.conf (required to exist) or a keyword */
+extern char	*nutauth;
+#endif
+
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+extern const char	*net_connect_timeout;
+#endif
+
   /***********************/
  /* Function Prototypes */
 /***********************/

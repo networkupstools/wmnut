@@ -101,12 +101,21 @@ typedef struct ups_info {
 	char	*upsname;
 	char	*hostname;
 	UPSCONN_t	connexion;
+
+	/* Somehow port got corrupted during upscli_connect,
+	 * use a scrap honeypot buffer while investigating */
+	char	scrap[128];
+
 	uint16_t	port;
 	int	ups_status;	/* -1 if not init'ed */
 	int	comm_status;	/* -1 if not init'ed, -2 if not available */
 	int	battery_percentage;	/* -1 if not init'ed, -2 if not available */
 	int	battery_load;	/* -1 if not init'ed, -2 if not available */
 	int	battery_runtime;	/* -1 if not init'ed, -2 if not available */
+	int	flags_ssl;
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+	upscli_authconf_t	*ac;
+#endif
 } ups_info;
 
 /*

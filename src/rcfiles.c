@@ -4,7 +4,7 @@
  *
  * Copyright (C)
  *   2002 - 2012  Arnaud Quette <arnaud.quette@free.fr>
- *   2022 - 2025  Jim Klimov <jimklimov+nut@gmail.com>
+ *   2022 - 2026  Jim Klimov <jimklimov+nut@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,14 +142,25 @@ void ParseRCFile(const char *filename, rckeys *keys)
 						switch(keys[key].type)
 						{
 							case TYPE_STRING:
-#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
 								if (keys[key].var.str != NULL)
 									free(keys[key].var.str);
-								keys[key].var.str = (char *)xmalloc(strlen(p) + 1);
-								strncpy(keys[key].var.str, p, strlen(p));
+								{ /* scoping */
+									size_t	l = strlen(p);
+#if (defined HAVE_XMALLOC) && HAVE_XMALLOC
+									keys[key].var.str = (char *)xmalloc(l + 1);
+#else
+									keys[key].var.str = (char *)malloc(l + 1);
+									if (keys[key].var.str == NULL) {
+										fprintf(stderr, "FAILED to allocate buffer for TYPE_STRING handling\n");
+										exit(EXIT_FAILURE);
+									}
 #endif	/* HAVE_XMALLOC */
-								if (!strcmp(keys[key].label, "UPS"))
-									AddHost(p);
+									strncpy(keys[key].var.str, p, l);
+
+
+									if (!strcmp(keys[key].label, "UPS"))
+										AddHost(p);
+								}
 								break;
 							case TYPE_BOOL:
 								*keys[key].var.boolean = strncmp(p, "on", 2) == 0;
@@ -225,6 +236,9 @@ void ParseCMDLine(int argc, char *argv[])
 #ifdef HAVE_GETOPT_LONG
 		static struct option long_options[] =
 		{
+# if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+			{"authconf",required_argument,NULL,'a'},
+# endif
 			{"alarmint",required_argument,NULL,'A'},
 			{"blinkrate",required_argument,NULL,'b'},
 			{"beepvol",required_argument,NULL,'B'},
@@ -249,11 +263,20 @@ void ParseCMDLine(int argc, char *argv[])
 
 	while(1)
 	{
-		if ((c=GETOPTFUNC (argc, argv, "A:b:B:C:d:hlL:U:vVw")) == GETOPTENDCHAR)
+		if ((c=GETOPTFUNC (argc, argv,
+			"aA:b:B:C:d:hlL:U:vVW:w")) == GETOPTENDCHAR
+		)
 			break;
 
 		switch (c)
 		{
+			case 'a':
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+				nutauth = optarg;
+#else
+				printf("option 'a' not supported in this build (NUT libupsclient too old)\n");
+#endif
+				break;
 			case 'A':
 				Alert = 1;
 				printf ("option A : valeur %s\n", optarg);
@@ -297,6 +320,13 @@ void ParseCMDLine(int argc, char *argv[])
 				 * http://web.archive.org/web/20111003175836/http://wmnut.mgeops.org/
 				 */
 				exit(1);
+			case 'W':
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+				net_connect_timeout = optarg;
+#else
+				printf("option 'W' not supported in this build (NUT libupsclient too old)\n");
+#endif
+				break;
 			case 'w':
 				WithDrawn = 0; /* not in default withdrawn mode, so in windowed mode */
 				break;
@@ -314,6 +344,11 @@ void ParseCMDLine(int argc, char *argv[])
 				printf("Built against NUT version: %s\n", NUT_VERSION);
 #endif
 				printf("\nUsage: %s [arguments]\n\n", PACKAGE_NAME);
+#if defined(HAVE_UPSCLI_INIT_AUTHCONF) && HAVE_UPSCLI_INIT_AUTHCONF
+				printf("-a <AUTHCONF>\tUse specified NUT auth conf file or keyword.\n");
+#else
+				printf("-a <AUTHCONF>\tNOT SUPPORTED IN THIS BUILD.\n");
+#endif
 				printf("-A <T1,T2>\tSend messages to users terminals when Low and critical.\n");
 				printf("             \tT1 is seconds between messages when Low.\n");
 				printf("             \tT2 is seconds between messages when Critical.\n");
@@ -329,6 +364,11 @@ void ParseCMDLine(int argc, char *argv[])
 				printf("-v \t\tPrint version (includes important WMNUT info).\n");
 				printf("-V \t\tVerbose mode : display NUT available features and base value.\n");
 				printf("-w \t\tWindowed mode (opposite to native Window Maker withdrawn mode).\n\n");
+#if defined(HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT) && HAVE_UPSCLI_INIT_DEFAULT_CONNECT_TIMEOUT
+				printf("-W <secs>\tNetwork timeout for initial connections.\n");
+#else
+				printf("-W <secs>\tNOT SUPPORTED IN THIS BUILD.\n");
+#endif
 				exit (1);
 		}
 	}
