@@ -348,17 +348,17 @@ int main(int argc, char *argv[]) {
 		} else {
 			if (!strcmp(nutauth, "default")) {
 				DEBUGOUT("Using nutauth='%s': require a user or system provided file\n", nutauth);
-				upscli_read_authconf_file(NULL, 1);
+				upscli_read_authconf_file(NULL, 1, -1);
 			} else {
 				DEBUGOUT("Using nutauth='%s': require this file\n", nutauth);
-				upscli_read_authconf_file(nutauth, 1);
+				upscli_read_authconf_file(nutauth, 1, -1);
 			}
 		}
 	}
 	else {
 # ifdef WITH_NUTAUTH_UNSOLICITED
 		DEBUGOUT("Using best-effort auth config detection\n");
-		upscli_read_authconf_file(NULL, 0);
+		upscli_read_authconf_file(NULL, 0, 1);
 # else
 		DEBUGOUT("Not trying unsolicited auth config detection\n");
 # endif
