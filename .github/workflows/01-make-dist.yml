@@ -112,27 +112,27 @@ jobs:
       id: get_artifact_url
       uses: actions/github-script@v9
       with:
-        script: |
-          const res = await github.rest.actions.listArtifactsForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-          })
-          const artifactName = '${{ steps.set-artifact-name.outputs.artifact_name }}';
-          // Find the most recent artifact with this name
-          const artifacts = res.data.artifacts
-            .filter(a => a.name === artifactName)
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          script: |
+              const res = await github.rest.actions.listArtifactsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              })
+              const artifactName = '${{ steps.set-artifact-name.outputs.artifact_name }}';
+              // Find the most recent artifact with this name
+              const artifacts = res.data.artifacts
+                .filter(a => a.name === artifactName)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-          if (artifacts.length > 0) {
-            const artifact = artifacts[0];
-            var workflowRunId = artifact.workflow_run_id || ${{ steps.launch_worker.outputs.runId }};
-            core.setOutput('artifact_url', `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts/${artifact.id}`);
-            core.setOutput('real_artifact_url', `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts/${artifact.id}`);
+              if (artifacts.length > 0) {
+                const artifact = artifacts[0];
+                var workflowRunId = artifact.workflow_run_id || ${{ steps.launch_worker.outputs.runId }};
+                core.setOutput('artifact_url', `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts/${artifact.id}`);
+                core.setOutput('real_artifact_url', `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts/${artifact.id}`);
                 core.setOutput('artifact_id', `${artifact.id}`);
                 console.log(`Detected newest artifact ${artifact.id} from workflow run ${workflowRunId}`);
-          } else {
-            core.setFailed(`Artifact ${artifactName} not found`);
-          }
+              } else {
+                core.setFailed(`Artifact ${artifactName} not found`);
+              }
 
     # Inspired by https://javahelps.com/manage-github-artifact-storage-quota
     # This is the part which needs "actions: write" permission.
