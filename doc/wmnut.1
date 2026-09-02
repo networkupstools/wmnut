@@ -31,6 +31,8 @@ WMNUT provides the following information:
 Location of NUT auth conf file, or one of special values:
 "none" to avoid using it, or "default" to require one of the
 locations defaulted by NUT libupsclient to exist.
+Any non-absolute paths would be resolved relatively to NUT
+configuration file location.
 Similar effect can be achieved by an "AUTHCONF <AUTHCONF>" in
 a `wmnutrc` file (CLI option has precedence).
 Subject to wmnut being built and used against a version of
